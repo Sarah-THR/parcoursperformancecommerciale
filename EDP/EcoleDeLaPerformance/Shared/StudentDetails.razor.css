@@ -1,0 +1,22 @@
+﻿::deep .mud-avatar {
+    width: 170px !important;
+    height: 170px !important;
+}
+
+::deep .mud-icon-size-medium {
+    font-size: 35px !important;
+}
+
+::deep .mud-grid {
+    align-items: center;
+}
+
+::deep .mud-chip-text {
+    background-color: white !important;
+    box-shadow: 3px 3px 10px 3px #dddddd;
+}
+
+::deep .textcontent {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}

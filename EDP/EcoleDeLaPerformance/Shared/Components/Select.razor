@@ -1,0 +1,41 @@
+﻿<div>
+    <MudSelect T="string" Label="@label" Dense="true" Variant="Variant.Outlined" TextChanged="SelectFilter" OnClearButtonClick="ClearFilter" Clearable="true">
+        @{
+            if (filterList != null && filterList.Count != 0)
+            {
+                foreach (var filter in filterList)
+                {
+                    <MudSelectItem Value="@filter.ToUpper()"/>
+                }
+            }
+        }
+    </MudSelect>
+</div>
+
+@code {
+    [Parameter]
+    public string? label { get; set; }
+
+    [Parameter]
+    public string? selectedFilter { get; set; }
+
+    [Parameter]
+    public List<string>? filterList { get; set; }
+
+    [Parameter]
+    public EventCallback<string> onFilterSelected { get; set; }
+    
+    [Parameter]
+    public EventCallback<MouseEventArgs> onClear { get; set; }
+
+    private async Task SelectFilter(string value)
+    {
+        selectedFilter = value;
+        await onFilterSelected.InvokeAsync(value);
+    }
+
+    private async Task ClearFilter()
+    {
+        await onClear.InvokeAsync();
+    }
+}

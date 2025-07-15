@@ -1,0 +1,20 @@
+﻿::deep .mud-paper {
+    /*color: #fff !important;*/
+    /*background-color: #0A324E !important;*/
+    /*border-radius: 15px;*/
+    height: 128px !important;
+}
+
+::deep .mud-drop-zone {
+    display: flex;
+    justify-content: space-around;
+}
+
+::deep .mud-drop-item{
+    padding:15px
+}
+
+h4 {
+    transform: rotate(-90deg);
+    font-weight: bold;
+}

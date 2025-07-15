@@ -1,0 +1,15 @@
+﻿@using EcoleDeLaPerformance.Ui.Shared.Components
+
+<div class="d-flex justify-content-center mt-8">
+    <MudChip Variant="Variant.Text" Color="@((activeIndex == 1) ? Color.Error : Color.Default)" Class="text-center"> <strong>Période 1</strong></MudChip>
+    <hr class="connector">
+    <MudChip Variant="Variant.Text" Color="@((activeIndex == 2) ? Color.Error : Color.Default)" Class="text-center"> <strong>Période 2</strong></MudChip>
+    <hr class="connector">
+    <MudChip Variant="Variant.Text" Color="@((activeIndex == 3) ? Color.Error : Color.Default)" Class="text-center"> <strong>Période 3</strong></MudChip>
+</div>
+
+
+@code {
+    [Parameter]
+    public int activeIndex { get; set; }
+}

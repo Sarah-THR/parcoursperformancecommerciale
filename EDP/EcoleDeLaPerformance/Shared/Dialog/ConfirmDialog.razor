@@ -1,0 +1,32 @@
+﻿@inject ISnackbar snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudText>@mainMessage</MudText>
+        @if(warningMessage != null)
+        {
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="my-2">@warningMessage</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@buttonCancel</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Confirm">@buttonConfirm</MudButton>
+    </DialogActions>
+</MudDialog>
+@code {
+    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+
+    [Parameter] public string mainMessage { get; set; }
+    [Parameter] public string warningMessage { get; set; }
+    [Parameter] public string buttonConfirm { get; set; }
+    [Parameter] public string buttonCancel { get; set; }
+
+
+    void Submit() => mudDialog.Close(DialogResult.Ok(true));
+    public void Confirm()
+    {
+        mudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => mudDialog.Cancel();
+}

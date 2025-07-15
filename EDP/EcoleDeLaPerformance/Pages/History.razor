@@ -1,0 +1,111 @@
+﻿@using EcoleDeLaPerformance.Ui.Services
+@using EcoleDeLaPerformance.Ui.Interfaces;
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@using EcoleDeLaPerformance.Ui.Models
+@inject StateContainerService stateContainerService
+@inject IContractService contractService
+@inject ISnackbar snackbar
+@inject IUserService userService
+@inject NavigationManager navigationManager
+
+@page "/History"
+
+<div>
+    <MudGrid>
+        <MudItem xs=12 Class="pb-12">
+            <ProgressBar activeIndex="@period"></ProgressBar>
+        </MudItem>
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.Center">
+                <MudItem xs=11 Class="pa-12">
+                    <MudGrid>
+                        <MudItem>
+                            <MudText Typo="Typo.h6" Color="Color.Primary" Class="text-uppercase">
+                                Historique
+                            </MudText>
+                        </MudItem>
+                        <MudItem>
+                            <MudImage Src="/images/History.png" Width="40" />
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12" Class="d-flex justify-center">
+                    <MudTable Items="@allWeek" T=TempClass Hover="true" Style="width:70%" OnRowClick="RowClicked">
+                        <HeaderContent>
+                            <MudTh><MudText Color="Color.Primary"><strong>Semaines passées</strong></MudText></MudTh>
+                            <MudTh><MudText Color="Color.Primary"><strong>Sauvegarde</strong></MudText></MudTh>
+                            <MudTh><MudText Color="Color.Primary"><strong>Maintenance</strong></MudText></MudTh>
+                            <MudTh><MudText Color="Color.Primary"><strong>Sécurité</strong></MudText></MudTh>
+                            <MudTh><MudText Color="Color.Primary"><strong>Compte PRLVT</strong></MudText></MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Semaines passées">@("Semaine " + context.week.WeekNumber.ToString())</MudTd>
+                            <MudTd DataLabel="Sécurité">@(context.signedContractList.Count(x => x.Sauvegarde == "OUI"))</MudTd>
+                            <MudTd DataLabel="Maintenance">@(context.signedContractList.Count(x => x.Maintenance == "OUI"))</MudTd>
+                            <MudTd DataLabel="Sauvegarde">@(context.signedContractList.Count(x => x.Sécurité == "OUI"))</MudTd>
+                            <MudTd DataLabel="Compte PRLVT">@context.openAccounts.Amount</MudTd>
+                        </RowTemplate>
+                    </MudTable>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+</div>
+
+@code {
+    List<TempClass> allWeek = new List<TempClass>();
+    public User userInfo => stateContainerService.UserInfo;
+    int period = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!userInfo.Role.Contains("Commercial"))
+        {
+            navigationManager.NavigateTo("/");
+        }
+        else
+        {
+            try
+            {
+                var weekListFromTheStart = userInfo.Weeks.Where(x => x.EndDateWeek <= DateOnly.FromDateTime(DateTime.Now)).ToList();
+                foreach (var oneWeek in weekListFromTheStart)
+                {
+                    TempClass temp = new TempClass();
+                    temp.week = oneWeek;
+
+                    var studentName = (userInfo.FirstName + " " + userInfo.LastName);
+
+                    temp.signedContractList = contractService.GetContractsByPeriod(studentName, oneWeek.StartDateWeek, oneWeek.EndDateWeek);
+
+                    var nbOpenAccounts = await userService.GetNbOpenAccountsAsync(userInfo.FirstName + " " + userInfo.LastName.ToUpper());
+                    temp.openAccounts = new CRMData { Label = "", Amount = nbOpenAccounts };
+                    allWeek.Add(temp);
+                }
+                var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+                var currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && week.EndDateWeek >= currentDate);
+                if (currentWeek != null)
+                {
+                    period = currentWeek.PeriodNumber;
+                }
+            }
+            catch (Exception ex)
+            {
+                SentrySdk.CaptureException(ex);
+                snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+            }
+        }
+
+    }
+
+    public class TempClass
+    {
+        public Week week { get; set; } = new Week();
+        public List<SignedContract?> signedContractList { get; set; } = new List<SignedContract?>();
+        public CRMData openAccounts { get; set; }
+    }
+
+    public void RowClicked(TableRowClickEventArgs<TempClass> week)
+    {
+        navigationManager.NavigateTo($"/summary/{week.Item.week.WeekId}");
+    }
+}

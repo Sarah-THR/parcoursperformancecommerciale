@@ -1,0 +1,115 @@
+﻿@inject ISnackbar Snackbar
+
+<MudStack Style="width: 100%">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                   AppendMultipleFiles
+                   Accept=".pdf"
+                   OnFilesChanged="Upload"
+                   Hidden="@false"
+                   InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20 cursor-pointer"
+                   InputStyle="opacity:0"
+                   @ondragenter="@SetDragClass"
+                   @ondragleave="@ClearDragClass"
+                   @ondragend="@ClearDragClass">
+        <ButtonTemplate>
+            <MudPaper Height="300px"
+                      Outlined="true"
+                      Class="@dragClass">
+                <MudText Typo="Typo.h6" Class="text-center row">
+                    <div class="col-12">
+                        <MudIconButton Icon="@Icons.Material.Filled.NoteAdd" Color="Color.Primary" Size="Size.Large" />
+                    </div>
+                    <div class="col-12">
+                        Glisser vos PDF ici (10Mo Max)
+                    </div>
+                </MudText>
+            </MudPaper>
+        </ButtonTemplate>
+    </MudFileUpload>
+    @if (filesList != null)
+    {
+        <MudList>
+            @foreach (var file in filesList)
+            {
+                <MudListItem @key="@file">
+                    <MudChip Variant="Variant.Outlined" Color="Color.Primary" OnClose="Closed" CloseIcon="@Icons.Material.Filled.Close" Text="@file.Name">@file.Name</MudChip>
+                </MudListItem>
+            }
+        </MudList>
+    }
+</MudStack>
+
+@code {
+    private const string defaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10  d-flex align-items-center justify-content-center";
+    private string dragClass = defaultDragClass;
+
+    [Parameter]
+    public List<IBrowserFile>? filesList { get; set; }
+
+    [Parameter]
+    public EventCallback<List<IBrowserFile>> filesUploadList { get; set; }
+
+    private async Task Clear(string fileName)
+    {
+        filesList.RemoveAll(x => x.Name == fileName);
+        filesUploadList.InvokeAsync(filesList);
+        ClearDragClass();
+        await Task.Delay(100);
+    }
+
+    private async Task Upload(InputFileChangeEventArgs e)
+    {
+        long maxSize = 10L * 1024 * 1024;
+        bool exist = false;
+        var files = e.GetMultipleFiles();
+
+        foreach (var file in filesList)
+        {
+            foreach (var fileUpload in files)
+            {
+                if (file.Name == fileUpload.Name)
+                {
+                    exist = true;
+                    Snackbar.Add("Le fichier a déjà été upload.", MudBlazor.Severity.Warning);
+                }
+            }
+        }
+        if (!exist)
+        {
+
+            foreach (var fileUpload in files)
+            {
+                if (fileUpload.ContentType != "application/pdf")
+                {
+                    exist = true;
+                    Snackbar.Add("Le fichier doit être au format .pdf", MudBlazor.Severity.Warning);
+                }
+                else
+                {
+                    if (fileUpload.Size <= maxSize)
+                    {
+                        ClearDragClass();
+                        filesList.Add(fileUpload);
+                        filesUploadList.InvokeAsync(filesList);
+                    }
+                    else
+                    {
+                        Snackbar.Add("La taille du fichier ne doit pas dépasser 10Mo.", MudBlazor.Severity.Error);
+                    }
+                }
+            }
+        }
+    }
+
+    async void Closed(MudChip chip)
+    {
+        var fileName = chip.Text.ToString();
+        await Clear(fileName);
+    }
+
+    private void SetDragClass()
+        => dragClass = $"{defaultDragClass} mud-border-primary";
+
+    private void ClearDragClass()
+        => dragClass = defaultDragClass;
+}

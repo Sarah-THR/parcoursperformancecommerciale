@@ -1,0 +1,32 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@inject StateContainerService stateContainerService
+@inject IUserService userService
+@inject NavigationManager NavigationManager
+@page "/profile"
+
+<div class="mt-5">
+    <h1>Mon profil <img src="/images/user.png" class="ms-2" width="30px" /></h1>
+    <MudGrid class="mt-5 d-flex align-items-center">
+        <MudItem sm="12" md="3" lg="3" Class="w-100">
+            <PicturePicker userInfo="userInfo" />
+        </MudItem>
+        <MudItem sm="12" md="7" lg="7" Class="w-100">
+            <UserForm userInfo="userInfo" />
+        </MudItem>
+    </MudGrid>
+</div>
+
+@code {
+    public User userInfo => stateContainerService.UserInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!userInfo.Role.Contains("Commercial"))
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

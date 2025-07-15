@@ -1,0 +1,12 @@
+﻿::deep .mud-grid-spacing-xs-3 {
+    width: calc(100%) !important;
+    margin: -12px;
+}
+
+::deep p {
+    font-size: 21px !important
+}
+
+::deep h3{
+    text-transform: uppercase
+}

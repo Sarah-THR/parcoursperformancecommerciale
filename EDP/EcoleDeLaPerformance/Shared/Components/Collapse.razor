@@ -1,0 +1,161 @@
+﻿@using EcoleDeLaPerformance.Ui.Models
+
+<div>
+
+    <MudPaper Class="pa-4">
+        @if (_expanded)
+        {
+            <MudButton OnClick="OnExpandCollapseClick" StartIcon="@Icons.Material.Filled.Remove" IconColor="Color.Primary">Infos semaine</MudButton>
+        }
+        else
+        {
+            <MudButton OnClick="OnExpandCollapseClick" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Primary">Infos semaine</MudButton>
+        }
+        <MudDivider />
+        <MudCollapse Expanded="_expanded" class="mt-5">
+            <MudPaper Class="py-8 px-4" Elevation="3">
+                <h3 class="text-uppercase">Semaine @currentWeek.WeekNumber du @currentWeek.StartDateWeek au @currentWeek.EndDateWeek.AddDays(-3) <img src="/images/Calendar.png" class="ms-2" width="30px" /></h3>
+                <Planning halfDayPlanningsList="halfDayPlanningsList" />
+            </MudPaper>
+            <MudTabs Class="mt-3 full-width-tabs" PanelClass="pa-6" Centered="true">
+                <MudTabPanel Text="Briefing">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem sm="12" md="6" lg="6" Class="w-100">
+                            <MudPaper Class="d-flex flex-column py-8 px-4 overflow-scroll" Elevation="3" Height="350px">
+                                <h5 class="d-flex align-items-start text-uppercase"><img src="/images/chart.png" width="30px" class="me-2" /> Engagement de signature de la semaine</h5>
+                                <MudList Clickable="false" Dense="false" >
+                                    @foreach (var commitment in commitmentList)
+                                    {
+                                        <MudListItem Text="@commitment" Icon="@Icons.Material.Filled.ArrowRight" IconColor="Color.Primary" IconSize="Size.Large" Style="word-wrap:break-word;" />
+                                    }
+                                </MudList>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem sm="12" md="6" lg="6" Class="w-100">
+                            <MudPaper Class="d-flex flex-column py-8 px-4 overflow-scroll" Elevation="3" Height="350px">
+                                <h5 class="d-flex align-items-start text-uppercase"><img src="/images/folder.png" width="30px" class="me-2" /> Dossiers à checker </h5>
+                                <MudList Clickable="false" Dense="false">
+                                    @foreach (var fileToCheck in fileToCheckList)
+                                    {
+                                        <MudListItem Text="@fileToCheck" Icon="@Icons.Material.Filled.ArrowRight" IconColor="Color.Primary" IconSize="Size.Large" Style="word-wrap:break-word;" />
+                                    }
+                                </MudList>
+                            </MudPaper>
+                        </MudItem>
+                        @* <MudItem sm="12" md="4" lg="4" Class="w-100">
+                            @if (meetingsList != null && meetingsList.First().Amount != 0)
+                            {
+                                @* <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="meetingsBriefNote" /> *@
+                               @*  <h4 class="fw-bold">Rendez-vous à venir</h4>
+                                <h4 class="fw-bold">@meetingsList.First().Amount</h4>
+                            }
+                            else
+                            {
+                                <h4 class="fw-bold">Rendez-vous à venir</h4>
+                                <h4 class="fw-bold">0</h4>
+                            } *@
+                        @*</MudItem> *@
+                    </MudGrid>
+                </MudTabPanel>
+                <MudTabPanel Text="Debriefing">
+                    <MudGrid Justify="Justify.Center">
+                        <MudItem sm="12" md="6" lg="6" Class="w-100">
+                            <MudPaper Class="d-flex flex-column py-8 px-4 overflow-scroll" Elevation="3" Height="350px">
+                                <h5 class="d-flex align-items-start text-uppercase"><img src="/images/chart.png" width="30px" class="me-2" /> Affaires en cours</h5>
+                                @foreach (var currentAffair in currentAffairsList)
+                                {
+                                    <MudListItem Text="@currentAffair" Icon="@Icons.Material.Filled.ArrowRight" IconColor="Color.Primary" IconSize="Size.Large" Style="word-wrap:break-word;" />
+                                }
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem sm="12" md="6" lg="6" Class="w-100">
+                            <MudPaper Class="d-flex flex-column py-8 px-4 overflow-scroll" Elevation="3" Height="350px">
+                                <h5 class="d-flex align-items-start text-uppercase"><img src="/images/chart.png" width="30px" class="me-2 " /> Affaires levées</h5>
+                                @foreach (var caseLifted in casesLiftedList)
+                                {
+                                    <MudListItem Text="@caseLifted" Icon="@Icons.Material.Filled.ArrowRight" IconColor="Color.Primary" IconSize="Size.Large" Style="word-wrap:break-word;" />
+                                }
+                            </MudPaper>
+                        </MudItem>
+                       @*  <MudItem sm="12" md="4" lg="4" Class="w-100">
+                            @if (meetingsList != null && meetingsList.First().Amount != 0)
+                            {
+                                @* <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="meetingsBriefNote" /> *@
+                               @*  <h4 class="fw-bold">Rendez-vous à venir</h4>
+                                <h4 class="fw-bold">@meetingsList.First().Amount</h4>
+                            }
+                            else
+                            {
+                                <h4 class="fw-bold">Rendez-vous à venir</h4>
+                                <h4 class="fw-bold">0</h4>
+                            } *@
+                        @*</MudItem> *@
+                        <MudItem sm="12" md="12" lg="12" Class="w-100">
+                            <MudPaper Class="d-flex flex-column py-8 px-4" Elevation="3" MinHeight="160px">
+                                <h5 class="d-flex align-items-start text-uppercase"><img src="/images/folder.png" width="30px" class="me-2" /> Dossiers et contrats signés</h5>
+                                <MudGrid Justify="Justify.Center" class="mt-3">
+                                    <MudItem sm="12" md="4" lg="4">
+                                        <Speedometer crmData="new CRMData{Amount = nexleaseContractList}" maxValue="6" title="Location" />
+                                    </MudItem>
+                                    <MudItem sm="12" md="4" lg="4">
+                                        <Speedometer crmData="new CRMData{Amount = saleContractList}" maxValue="6" title="Achat" />
+                                    </MudItem>
+                                    <MudItem sm="12" md="4" lg="4">
+                                        <Speedometer crmData="new CRMData{Amount = signedContractList.Count()}" maxValue="6" title="Contrats" />
+                                    </MudItem>
+                                </MudGrid>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudTabPanel>
+            </MudTabs>
+        </MudCollapse>
+    </MudPaper>
+
+</div>
+
+@code {
+    [Parameter]
+    public Week currentWeek { get; set; }
+
+    [Parameter]
+    public List<string> commitmentList { get; set; }
+
+    [Parameter]
+    public List<HalfDayPlanning>? halfDayPlanningsList { get; set; }
+
+    [Parameter]
+    public List<string> fileToCheckList { get; set; }
+
+    [Parameter]
+    public List<string> currentAffairsList { get; set; }
+
+    [Parameter]
+    public List<string> casesLiftedList { get; set; }
+
+    [Parameter]
+    public string meetingsBriefNote { get; set; }
+
+    [Parameter]
+    public List<CRMData> meetingsList { get; set; }
+
+    [Parameter]
+    public List<SignedContract> signedContractList { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> onCollapse { get; set; }
+
+    [Parameter]
+    public int saleContractList { get; set; }
+
+    [Parameter]
+    public int nexleaseContractList { get; set; }
+
+    bool _expanded = false;
+
+    private async void OnExpandCollapseClick()
+    {
+        _expanded = !_expanded;
+        await onCollapse.InvokeAsync(_expanded);
+    }
+}

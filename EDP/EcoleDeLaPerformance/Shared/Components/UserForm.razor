@@ -1,0 +1,81 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@inject StateContainerService stateContainerService
+@inject IUserService userService
+@using System.ComponentModel.DataAnnotations
+@inject ISnackbar Snackbar
+
+<div class="mt-14">
+    <MudForm @ref="form" Model="model">
+        <MudCard Class="p-5">
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudTextField Label="Email"
+                                      @bind-Value="model.EmailAdress" For="@(() => model.EmailAdress)" Validation="@(new EmailAddressAttribute() {ErrorMessage = "Veuillez saisir une adresse email valide"})" Required RequiredError="Email obligatoire !" />
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudTextField Label="Nom"
+                                      @bind-Value="model.LastName" For="@(() => model.LastName)" Required RequiredError="Nom obligatoire !" />
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudTextField Label="Prénom"
+                                      @bind-Value="model.FirstName" For="@(() => model.FirstName)" Required RequiredError="Prénom obligatoire !" />
+                    </MudItem>
+                    <MudItem md="6" lg="6" sm="12">
+                        <MudTextField Label="Entité/Site"
+                                      @bind-Value="model.Entity" For="@(() => model.Entity)" Required RequiredError="Entité/Site obligatoire !" />
+                    </MudItem>
+                    <MudItem md="6" lg="6" sm="12">
+                        <MudTextField Label="Superviseur"
+                                      @bind-Value="supervisorName" For="@(() => supervisorName)" Disabled />
+                    </MudItem>
+                    <MudItem md="6" lg="6" sm="12">
+                        <MudDatePicker Label="Date début suivi" @bind-Date="model.StartDate" For="@(() => model.StartDate)" Disabled />
+                    </MudItem>
+                    <MudItem md="6" lg="6" sm="12">
+                        <MudDatePicker Label="Date fin de suivi" @bind-Date="model.EndDate" For="@(() => model.EndDate)" Disabled />
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+        </MudCard>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto mt-5" OnClick="@(async () => await SubmitForm())">Enregistrer les modifications</MudButton>
+        </MudCardActions>
+    </MudForm>
+</div>
+
+@code {
+    [Parameter]
+    public User userInfo { get; set; }
+    private MudForm form;
+    User model = new User();
+    string supervisorName;
+
+    protected override void OnInitialized()
+    {
+        model = userInfo;
+        if (userInfo.SupervisorNavigation != null)
+        {
+            supervisorName = userInfo.SupervisorNavigation.FirstName + " " + userInfo.SupervisorNavigation.LastName;
+        }
+    }
+
+    private async Task SubmitForm()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            model.ProfilePicture = userInfo.ProfilePicture;
+            stateContainerService.UserInfo = await userService.UpdateUserAsync(model);
+            Snackbar.Add("Vos informations ont bien été enregistrées !", Severity.Success);
+
+        }
+        else
+        {
+            Snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
+        }
+    }
+
+}

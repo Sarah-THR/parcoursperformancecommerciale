@@ -1,0 +1,101 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <AssemblyVersion>1.9.1</AssemblyVersion>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\History.razor.css" />
+    <None Remove="Pages\Index.razor.css" />
+    <None Remove="Pages\Planning.razor.css" />
+    <None Remove="Pages\ManageContent.razor.css" />
+    <None Remove="Pages\Profile.razor.css" />
+    <None Remove="Pages\Utils.razor.css" />
+    <None Remove="Shared\Components\Collapse.razor.css" />
+    <None Remove="Shared\Components\Divider.razor.css" />
+    <None Remove="Shared\Components\DonutChart.razor.css" />
+    <None Remove="Shared\Components\GoalsPaper.razor.css" />
+    <None Remove="Shared\Components\ManageUserTable.razor.css" />
+    <None Remove="Shared\Components\PDFViewer.razor.css" />
+    <None Remove="Shared\Components\PeriodInfo.razor.css" />
+    <None Remove="Shared\Components\PicturePicker.razor.css" />
+    <None Remove="Shared\Components\Planning.razor.css" />
+    <None Remove="Shared\Components\ProgressBar.razor.css" />
+    <None Remove="Shared\Components\SearchBar.razor.css" />
+    <None Remove="Shared\Components\Select.razor.css" />
+    <None Remove="Shared\Components\Speedometer.razor.css" />
+    <None Remove="Shared\Components\StudentDetails.razor.css" />
+    <None Remove="Shared\Components\Table.razor.css" />
+    <None Remove="Shared\Components\UserForm.razor.css" />
+    <None Remove="Shared\Dialog\UpdateFileDialog.razor.css" />
+    <None Remove="Shared\LandingPage.razor.css" />
+    <None Remove="Shared\PeriodInfo.razor.css" />
+    <None Remove="Shared\StudentDetails.razor.css" />
+    <None Remove="Shared\SuperAdminView.razor.css" />
+    <None Remove="Shared\UnknowUser.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\History.razor.css" />
+    <Content Include="Pages\Index.razor.css" />
+    <Content Include="Pages\Planning.razor.css" />
+    <Content Include="Pages\ManageContent.razor.css" />
+    <Content Include="Pages\Profile.razor.css" />
+    <Content Include="Pages\Utils.razor.css" />
+    <Content Include="Shared\Components\Collapse.razor.css" />
+    <Content Include="Shared\Components\Divider.razor.css" />
+    <Content Include="Shared\Components\DonutChart.razor.css" />
+    <Content Include="Shared\Components\GoalsPaper.razor.css" />
+    <Content Include="Shared\Components\ManageUserTable.razor.css" />
+    <Content Include="Shared\Components\PDFViewer.razor.css" />
+    <Content Include="Shared\Components\PicturePicker.razor.css" />
+    <Content Include="Shared\Components\Planning.razor.css" />
+    <Content Include="Shared\Components\ProgressBar.razor.css" />
+    <Content Include="Shared\Components\SearchBar.razor.css" />
+    <Content Include="Shared\Components\Select.razor.css" />
+    <Content Include="Shared\Components\Speedometer.razor.css" />
+    <Content Include="Shared\Components\Table.razor.css" />
+    <Content Include="Shared\Components\UserForm.razor.css" />
+    <Content Include="Shared\Dialog\UpdateFileDialog.razor.css" />
+    <Content Include="Shared\LandingPage.razor.css" />
+    <Content Include="Shared\PeriodInfo.razor.css" />
+    <Content Include="Shared\StudentDetails.razor.css" />
+    <Content Include="Shared\SuperAdminView.razor.css" />
+    <Content Include="Shared\UnknowUser.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspose.Words" Version="24.7.0" />
+    <PackageReference Include="Aspose.Words-Cloud" Version="24.6.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Blazor-ApexCharts" Version="3.3.0" />
+    <PackageReference Include="Blazor.Bootstrap" Version="2.2.0" />
+    <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.4.20" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Identity.Web" Version="2.19.1" />
+    <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="2.19.1" />
+    <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.19.1" />
+    <PackageReference Include="MudBlazor" Version="6.20.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Radzen.Blazor" Version="4.32.8" />
+    <PackageReference Include="Sentry" Version="4.7.0" />
+    <PackageReference Include="Sentry.AspNetCore" Version="4.7.0" />
+    <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
+    <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.6" />
+  </ItemGroup>
+
+</Project>

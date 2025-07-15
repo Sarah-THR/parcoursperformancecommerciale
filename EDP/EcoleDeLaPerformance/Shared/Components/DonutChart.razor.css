@@ -1,0 +1,7 @@
+﻿::deep .apexcharts-legend {
+    margin-top: 20% !important;
+}
+
+::deep .apexcharts-datalabel-value {
+    font-size: 40px !important;
+}

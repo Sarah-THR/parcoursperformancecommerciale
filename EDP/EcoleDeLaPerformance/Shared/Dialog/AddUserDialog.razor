@@ -1,0 +1,193 @@
+﻿@using EcoleDeLaPerformance.Ui.Helper
+@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@using System.ComponentModel.DataAnnotations
+@inject ISnackbar snackbar
+@inject IUserService userService
+@inject MailHelper mailHelper
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" Model="model">
+            <MudGrid>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Email" Immediate="true"
+                                  @bind-Value="model.EmailAdress" For="@(() => model.EmailAdress)" Validation="@(new EmailAddressAttribute() {ErrorMessage = "Veuillez saisir une adresse email valide"})" Required RequiredError="Email obligatoire !" TextChanged="HandleSearchChange" />
+                </MudItem>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Nom"
+                                  @bind-Value="model.LastName" For="@(() => model.LastName)" Required RequiredError="Nom obligatoire !" />
+                </MudItem>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Prénom"
+                                  @bind-Value="model.FirstName" For="@(() => model.FirstName)" Required RequiredError="Prénom obligatoire !" />
+                </MudItem>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Entité/Site"
+                                  @bind-Value="model.Entity" For="@(() => model.Entity)" Required RequiredError="Entité/Site obligatoire !" />
+                </MudItem>
+                @if (userInfo.Role == "Superviseur")
+                {
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudSelect T="string" Label="Role" Dense="true" @bind-Value="selectedRole" Clearable Required RequiredError="Role obligatoire !">
+                            @foreach (var role in roleList)
+                            {
+                                <MudSelectItem Value="@role">@role</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    @if (selectedRole?.Contains("Commercial") == true)
+                    {
+                        <MudItem md="4" lg="4" sm="12">
+                            <MudSelect T="string" Label="Manager" Dense="true" TextChanged="SelectSupervisor" @bind-Value="selectedSupervisor" Clearable Required RequiredError="Manager obligatoire !">
+                                @{
+                                    if (supervisorList != null && supervisorList.Count != 0)
+                                    {
+                                        foreach (var supervisor in supervisorList)
+                                        {
+                                            <MudSelectItem Value="@(supervisor.ToUpper())" />
+                                        }
+                                    }
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+                }
+                @if (userInfo.Role == "Manager" || selectedRole?.Contains("Commercial") == true)
+                {
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudDatePicker Label="Date début suivi" Date="startDate" TextChanged="DatePickerTextChanged" Required RequiredError="Date obligatoire !" />
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudDatePicker Label="Date fin de suivi" @bind-Date="endDate" For="@(() => endDate)" ReadOnly />
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Confirm">Valider</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+
+    [Parameter]
+    public User userInfo { get; set; }
+
+    User model = new User();
+    private MudForm form;
+    public string? selectedRole { get; set; }
+    public string? selectedSupervisor;
+    DateTime? startDate = null;
+    public DateTime? endDate;
+    public List<string> roleList { get; } = new List<string> { "Commercial junior", "Commercial senior", "Manager", "Superviseur" };
+    public List<string> supervisorList = new List<string>();
+    public List<User> usersList = new List<User>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        usersList = await userService.GetUsersAsync();
+        supervisorList = usersList.Where(x => x.Role == "Manager").Select(x => x.FirstName + " " + x.LastName).ToList();
+    }
+
+    private async Task SelectSupervisor(string value)
+    {
+        selectedSupervisor = value;
+        StateHasChanged();
+    }
+
+    private void DatePickerTextChanged(string value)
+    {
+        if (value == null || value.Length < 6)
+        {
+            endDate = null;
+        }
+        else
+        {
+            startDate = Convert.ToDateTime(value);
+            endDate = startDate?.AddMonths(6);
+        }
+    }
+
+    async Task HandleSearchChange(string value)
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                var user = userService.GetUserAD(model.EmailAdress);
+                if (user != null)
+                {
+                    model.FirstName = user.FirstName;
+                    model.LastName = user.LastName;
+                    model.Entity = user.Entity;
+                }
+            }
+            else
+            {
+                model.FirstName = null;
+                model.LastName = null;
+                model.Entity = null;
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add($"Erreur lors de la recherche d'un utilisateur: {ex.Message}", Severity.Error);
+            SentrySdk.CaptureException(ex);
+        }
+    }
+
+    public async void Confirm()
+    {
+        try
+        {
+            await form.Validate();
+            if (form.IsValid)
+            {
+                User newUser = new User()
+                    {
+                        EmailAdress = model.EmailAdress,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Entity = model.Entity,
+                        StartDate = startDate,
+                        EndDate = endDate,
+                        IsActive = true,
+                        Role = selectedRole
+                    };
+
+                if (userInfo.Role == "Manager")
+                {
+                    newUser.Supervisor = userInfo.UserId;
+                }
+                else
+                {
+                    if (selectedRole.Contains("Commercial"))
+                    {
+                        User? supervisor = usersList.Where(x => (x.FirstName.ToUpper() + " " + x.LastName.ToUpper()) == selectedSupervisor).First();
+                        newUser.Supervisor = supervisor.UserId;
+                    }
+                }
+
+                await userService.CreateUserAsync(newUser);
+                mailHelper.SendMailNewAccount(newUser.EmailAdress, (newUser.FirstName + " " + newUser.LastName), (userInfo.FirstName + " " + userInfo.LastName), userInfo.EmailAdress);
+                snackbar.Add("L'utilisateur a bien été créé !", Severity.Success);
+                mudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add($"Erreur lors de l'enregistrement de l'utilisateur : {ex.Message}", Severity.Error);
+            SentrySdk.CaptureException(ex);
+        }
+        StateHasChanged();
+    }
+}

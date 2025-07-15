@@ -1,0 +1,139 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@using System.ComponentModel.DataAnnotations
+@inject ISnackbar snackbar
+@inject IUserService userService
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" Model="model">
+            <MudGrid>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Email"
+                                  @bind-Value="model.EmailAdress" For="@(() => model.EmailAdress)" Validation="@(new EmailAddressAttribute() {ErrorMessage = "Veuillez saisir une adresse email valide"})" Required RequiredError="Email obligatoire !" />
+                </MudItem>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Nom"
+                                  @bind-Value="model.LastName" For="@(() => model.LastName)" Required RequiredError="Nom obligatoire !" />
+                </MudItem>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Prénom"
+                                  @bind-Value="model.FirstName" For="@(() => model.FirstName)" Required RequiredError="Prénom obligatoire !" />
+                </MudItem>
+                <MudItem md="4" lg="4" sm="12">
+                    <MudTextField Label="Entité/Site"
+                                  @bind-Value="model.Entity" For="@(() => model.Entity)" Required RequiredError="Entité/Site obligatoire !" />
+                </MudItem>
+                @if (userInfo.Role == "Superviseur")
+                {
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudSelect T="string" Label="Role" Dense="true" @bind-Value="selectedRole" Clearable Required RequiredError="Role obligatoire !">
+                            @foreach (var role in roleList)
+                            {
+                                <MudSelectItem Value="@role" />
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    @if (selectedRole?.Contains("Commercial") == true)
+                    {
+                        <MudItem md="4" lg="4" sm="12">
+                            <MudSelect T="string" Label="Manager" Dense="true" TextChanged="SelectSupervisor" @bind-Value="selectedSupervisor" Clearable Required RequiredError="Manager obligatoire !">
+                                @{
+                                    if (supervisorList != null && supervisorList.Count != 0)
+                                    {
+                                        foreach (var supervisor in supervisorList)
+                                        {
+                                            <MudSelectItem Value="@(supervisor.ToUpper())" />
+                                        }
+                                    }
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    }
+                }
+                @if (selectedRole?.Contains("Commercial") == true || studentInfo.Role.Contains("Commercial"))
+                {
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudDatePicker Label="Date début suivi" @bind-Date="model.StartDate" For="@(() => model.StartDate)" ReadOnly Disabled />
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudDatePicker Label="Date fin de suivi" @bind-Date="model.EndDate" For="@(() => model.EndDate)" ReadOnly Disabled />
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Confirm">Valider</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+
+    [Parameter]
+    public User studentInfo { get; set; }
+
+    [Parameter]
+    public User userInfo { get; set; }
+
+    User model = new User();
+    private MudForm form;
+    public string? selectedRole { get; set; }
+    public string? selectedSupervisor;
+    public List<string> roleList { get; } = new List<string> { "Commercial junior", "Commercial senior", "Manager", "Superviseur" };
+    public List<string> supervisorList = new List<string>();
+    public List<User> usersList = new List<User>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = studentInfo;
+        if (studentInfo.SupervisorNavigation != null)
+        {
+            selectedSupervisor = studentInfo.SupervisorNavigation.FirstName + " " + studentInfo.SupervisorNavigation.LastName;
+        }
+
+        selectedRole = studentInfo.Role;
+        usersList = await userService.GetUsersAsync();
+        supervisorList = usersList.Where(x => x.Role == "Manager").Select(x => x.FirstName + " " + x.LastName).ToList();
+    }
+
+    private async Task SelectSupervisor(string value)
+    {
+        selectedSupervisor = value;
+        StateHasChanged();
+    }
+
+    public async void Confirm()
+    {
+        try
+        {
+            await form.Validate();
+            if (form.IsValid)
+            {
+                model.Role = selectedRole;
+
+                if (selectedRole.Contains("Commercial"))
+                {
+                    User? supervisor = usersList.Where(x => (x.FirstName.ToUpper() + " " + x.LastName.ToUpper()) == selectedSupervisor.ToUpper()).First();
+                    model.Supervisor = supervisor.UserId;
+                }
+
+                studentInfo = await userService.UpdateUserAsync(model);
+                snackbar.Add("Les informations de l'utilisateur ont bien été modifiées !", Severity.Success);
+                mudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add($"Erreur lors de l'enregistrement des modifications : {ex.Message}", Severity.Error);
+            SentrySdk.CaptureException(ex);
+        }
+        StateHasChanged();
+    }
+}

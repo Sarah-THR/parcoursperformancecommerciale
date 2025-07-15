@@ -1,0 +1,31 @@
+﻿.image-text {
+    position: relative;
+    bottom: 210px;
+    color: white;
+    padding: 8px;
+    font-size: 40px;
+    font-weight:bold;
+    text-align:center;
+    text-transform: uppercase
+}
+
+::deep .mud-card-media {
+    border-radius: 30px !important;
+}
+
+::deep .mud-grid-item:hover {
+    cursor: pointer !important;
+    opacity: 0.9 !important;
+}
+
+::deep .mud-grid {
+    margin-top: 14% !important;
+    margin-bottom: 10% !important;
+}
+
+#divContainer{
+    background-image: url(../images/vector.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-x : center;
+}

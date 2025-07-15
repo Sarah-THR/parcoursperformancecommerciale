@@ -1,0 +1,152 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@inject IUserService userService
+
+@if (isStudentSelected)
+{
+    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" OnClick="BackToHomePage" Class="mt-5">Retour</MudButton>
+    <StudentDetails student="studentSelected" userInfo="userInfo" />
+}
+else
+{
+    @if (isInitialized)
+    {
+        @if (studentList.Count > 1)
+        {
+            <div class="d-flex mt-8">
+                <div class="col-md-4 col-12 col-lg-4 me-8">
+                    <SearchBar placeholder="Rechercher un profil" onChangeSearch="Search" searchString="@searchString" />
+                </div>
+                <div class="col-md-4 col-12 col-lg-4">
+                    <Select label="Filtrer par Entité/Site" filterList="filterList" onFilterSelected="Filter" selectedFilter="@selectedFilter" onClear="ClearFilter" />
+                </div>
+            </div>
+
+            <Table userInfo="userInfo" usersList="filteredStudentList" onTableRowClick="OnTableRowClick" />
+        }
+        else if (studentList.Count == 1)
+        {
+            <StudentDetails student="studentList.First()" userInfo="userInfo" />
+        }
+        else if (studentList.Count == 0)
+        {
+            <div class="mt-8 d-flex justify-content-center">
+                Aucun commercial junior n'a été trouvé
+            </div>
+        }
+        else
+        {
+            <div class="mt-8 d-flex justify-content-center">
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            </div>
+        }
+
+    }
+    else
+    {
+        <div class="mt-8 d-flex justify-content-center">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </div>
+    }
+}
+@code {
+    [Parameter]
+    public User userInfo { get; set; }
+
+    [Parameter]
+    public int period { get; set; }
+
+    private bool isInitialized { get; set; }
+    List<User?> studentList = new List<User?>();
+    List<User?> filteredStudentList = new List<User?>();
+    List<string> filterList = new List<string>();
+    private string searchString = "";
+    private string selectedFilter = "";
+    private bool isStudentSelected = false;
+    private User studentSelected = new User();
+    DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
+
+    protected override async Task OnInitializedAsync()
+    {
+        var students = await userService.GetAllApprenticesBySupervisorId(userInfo.UserId);
+        studentList = students.Where(x => x.Weeks.Any(x => x.StartDateWeek <= currentDate)).ToList();
+        filteredStudentList = studentList;
+        filterList = studentList.Select(x => x.Entity.ToLower()).Distinct().ToList();
+        isInitialized = true;
+    }
+
+    async void OnTableRowClick(User value)
+    {
+        isStudentSelected = true;
+        studentSelected = value;
+        StateHasChanged();
+    }
+
+    void BackToHomePage()
+    {
+        isStudentSelected = false;
+        StateHasChanged();
+    }
+
+    async void Search(string value)
+    {
+        try
+        {
+            searchString = value.ToLower();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                filteredStudentList = studentList.Where(student => student.FirstName.ToLower().Contains(searchString) || student.LastName.ToLower().Contains(searchString)).ToList();
+            }
+            else
+            {
+                var students = await userService.GetAllApprenticesBySupervisorId(userInfo.UserId);
+                filteredStudentList = students.Where(x => x.Weeks.Any(x => x.StartDateWeek <= currentDate)).ToList();
+                selectedFilter = "";
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
+    }
+
+    async void Filter(string value)
+    {
+        try
+        {
+            selectedFilter = value;
+
+            if (!string.IsNullOrEmpty(selectedFilter))
+            {
+                filteredStudentList = studentList.Where(student => student.Entity.ToLower().Contains(selectedFilter.ToLower())).ToList();
+            }
+            else
+            {
+                var students = await userService.GetAllApprenticesBySupervisorId(userInfo.UserId);
+                filteredStudentList = students.Where(x => x.Weeks.Any(x => x.StartDateWeek <= currentDate)).ToList();
+                selectedFilter = "";
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
+    }
+
+    async void ClearFilter()
+    {
+        try
+        {
+            selectedFilter = "";
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
+    }
+}

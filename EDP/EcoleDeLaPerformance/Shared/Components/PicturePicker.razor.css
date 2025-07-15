@@ -1,0 +1,23 @@
+﻿::deep .mud-fab-size-large {
+    width: 250px;
+    height: 250px;
+}
+
+::deep .mud-avatar.mud-avatar-medium {
+    width: 250px;
+    height: 250px;
+}
+
+::deep .mud-icon-button {
+    max-width: 40px;
+    max-height: 40px;
+}
+
+::deep .mud-file-upload > .mud-input-control-input-container {
+    display: flex !important;
+    flex-direction: row;
+}
+
+::deep .mud-icon-size-medium {
+    font-size: 40px;
+}

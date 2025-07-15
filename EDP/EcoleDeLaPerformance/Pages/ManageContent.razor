@@ -1,0 +1,240 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@using EcoleDeLaPerformance.Ui.Shared.Dialog
+@inject StateContainerService stateContainerService
+@inject IClassService classService
+@inject IDialogService dialog
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@page "/managecontent"
+
+<div class="mt-8">
+    @if (isInitialized)
+    {
+        <div class="row justify-content-between">
+            <div class="col-md-3 col-12 col-lg-3 d-flex flex-column mb-4">
+                <MudForm @ref="form" Model="model">
+                    <MudSelect T="string" Label="Choisir la catégorie" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" @bind-Value="selectedClassId" Required RequiredError="Veuillez choisir une catégorie" Clearable>
+                        @foreach (var className in classesList)
+                        {
+                            <MudSelectItem Value="@className.ClassId.ToString()">@className.ClassName</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField @bind-Value="title" Label="Renseigner un titre" Variant="Variant.Outlined" Class="mt-4" Required RequiredError="Veuillez renseigner un titre" />
+                    <UploadFiles filesUploadList="FilesList" filesList="filesUploadList" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="@(async () => await SubmitForm())">Ajouter</MudButton>
+                </MudForm>
+            </div>
+            <div class="col-md-8 col-12 col-lg-8 d-flex flex-column">
+                <div class="col-md-6 col-12 col-lg-6 mt-2">
+                    <SearchBar placeholder="Rechercher un document" onChangeSearch="Search" searchString="@searchString" />
+                </div>
+                <MudTable T="Document" Items="@filteredDocumentsList" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable"
+                          RowClass="cursor-pointer" OnRowClick="RowClickEvent" Class="mt-8" FixedHeader="true" Height="400px">
+                    <HeaderContent>
+                        <MudTh>Document</MudTh>
+                        <MudTh>Catégorie</MudTh>
+                        <MudTh>Date d'ajout</MudTh>
+                        <MudTh>Date de dernière modification</MudTh>
+                        <MudTh></MudTh>
+                        <MudTh></MudTh>
+                        <MudTh></MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Document">@context.Title</MudTd>
+                        <MudTd DataLabel="Catégorie">@context.Class.ClassName</MudTd>
+                        <MudTd DataLabel="Date d'ajout">@context.CreateDate.ToShortDateString()</MudTd>
+                        <MudTd DataLabel="Date de dernière modification">@context.UpdateDate</MudTd>
+                        <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Download" aria-label="download" Color="Color.Secondary" OnClick="() => DownloadDocument(context)"></MudIconButton></MudTd>
+                        <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Create" aria-label="update" Color="Color.Secondary" OnClick="() => UpdateDocument(context)"></MudIconButton></MudTd>
+                        <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Close" aria-label="delete" Color="Color.Secondary" OnClick="() => DeleteDocument(context.DocumentId)"></MudIconButton></MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-center ">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </div>
+    }
+</div>
+
+@code {
+    private MudForm form;
+    private MudTable<Document> mudTable;
+    private bool isInitialized { get; set; }
+    Document model = new Document();
+    public User userInfo => stateContainerService.UserInfo;
+    public List<Class?> classesList = new List<Class?>();
+    public string title { get; set; }
+    public string selectedClassId { get; set; }
+    public List<IBrowserFile> filesUploadList = new();
+    private string searchString;
+    public List<Document>? documentsList = new List<Document>();
+    public List<Document>? filteredDocumentsList = new List<Document>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (userInfo.Role != "Superviseur")
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            classesList = await classService.GetClassesAsync();
+            classesList = classesList.Where(x => x.ClassName != "e-Learning").ToList();
+
+            documentsList = classesList.SelectMany(x => x.Documents).ToList();
+            filteredDocumentsList = documentsList;
+        }
+
+        isInitialized = true;
+    }
+
+    async void FilesList(List<IBrowserFile> value)
+    {
+        filesUploadList = value;
+    }
+
+    async void Search(string value)
+    {
+        try
+        {
+            searchString = value.ToLower();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                filteredDocumentsList = documentsList.Where(x => x.Title.ToLower().Contains(searchString)).ToList();
+            }
+            else
+            {
+                filteredDocumentsList = await classService.GetDocumentsAsync();
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erreur lors de la recherche d'un document: {ex.Message}", Severity.Error);
+            SentrySdk.CaptureException(ex);
+        }
+    }
+
+    async void DeleteDocument(int documentId)
+    {
+        var parameters = new DialogParameters<ConfirmDialog>();
+
+        parameters.Add("MainMessage", $"Voulez vous vraiment supprimer ce document ?");
+
+        parameters.Add("ButtonConfirm", "Oui");
+        parameters.Add("ButtonCancel", "Annuler");
+        var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
+        var dialogresponse = await (await dialog.ShowAsync<ConfirmDialog>("Supprimer", parameters, options)).Result;
+        if (!dialogresponse.Canceled)
+        {
+            await classService.DeleteDocumentAsync(documentId);
+            documentsList.RemoveAll(x => x.DocumentId == documentId);
+            Snackbar.Add("Le document a bien été supprimé", Severity.Warning);
+        }
+        StateHasChanged();
+    }
+
+    async void DownloadDocument(Document document)
+    {
+        await classService.DownloadDocumentAsync(document);
+        Snackbar.Add("Le document a bien été téléchargé", Severity.Success);
+        StateHasChanged();
+    }
+
+    private Document? selectedItem;
+    private async void RowClickEvent(TableRowClickEventArgs<Document> tableRowClickEventArgs)
+    {
+        if (tableRowClickEventArgs != null)
+        {
+            selectedItem = tableRowClickEventArgs.Item;
+            await UpdateDocument(selectedItem);
+        }
+    }
+
+    async Task UpdateDocument(Document document)
+    {
+        var parameters = new DialogParameters<UpdateFileDialog>();
+
+        parameters.Add("userInfo", userInfo);
+        parameters.Add("classesList", classesList);
+        parameters.Add("document", document);
+        parameters.Add("selectedClassId", document.ClassId.ToString());
+
+        var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
+        var dialogrespons = await (await dialog.ShowAsync<UpdateFileDialog>("Modifier un document", parameters, options)).Result;
+
+        StateHasChanged();
+    }
+
+    private async Task SubmitForm()
+    {
+        await form.Validate();
+        if (form.IsValid)
+        {
+            if (filesUploadList.Count != 0)
+            {
+                foreach (var file in filesUploadList)
+                {
+                    try
+                    {
+                        Document newDocument = new Document
+                            {
+                                Title = title,
+                                CreateDate = DateTime.Now,
+                                CreateBy = userInfo.UserId,
+                                ClassId = int.Parse(selectedClassId)
+                            };
+
+                        var parameters = new DialogParameters<LoadingFileDialog>();
+
+                        parameters.Add("userInfo", userInfo);
+                        parameters.Add("selectedClassId", selectedClassId);
+                        parameters.Add("newDocument", newDocument);
+                        parameters.Add("title", title);
+                        parameters.Add("file", file);
+                        parameters.Add("isUpdate", false);
+
+                        var options = new DialogOptions() { CloseButton = false, ClassBackground = "DialogBackgroundBlurEffect", NoHeader = false, CloseOnEscapeKey = false, DisableBackdropClick = true };
+                        var result = await (await dialog.ShowAsync<LoadingFileDialog>("", parameters, options)).Result;
+
+                        if (!result.Cancelled)
+                        {
+                            bool isSuccess = (bool)result.Data;
+                            if (isSuccess)
+                            {
+                                newDocument.Class = classesList.Where(x => x.ClassId == newDocument.ClassId).First();
+                                documentsList.Add(newDocument);
+                            }
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Snackbar.Add($"Erreur lors de l'enregistrement du document : {ex.Message}", Severity.Error);
+                        return;
+                    }
+                }
+                title = "";
+                selectedClassId = "";
+                filesUploadList.Clear();
+                StateHasChanged();
+            }
+            else
+            {
+                Snackbar.Add("Veuillez insérer un document PDF !", Severity.Error);
+            }
+        }
+        else
+        {
+            Snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
+        }
+    }
+}

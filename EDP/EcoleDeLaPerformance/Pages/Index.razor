@@ -1,0 +1,40 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@using EcoleDeLaPerformance.Ui.Shared
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@inject StateContainerService stateContainerService
+@inject IUserService userService
+@page "/"
+
+<PageTitle>Tableau de bord</PageTitle>
+
+@if (userInfo.Role == "Manager")
+{
+    <SupervisorInfo userInfo="userInfo" period="period" />
+}
+else if (userInfo.Role.Contains("Commercial"))
+{
+    <ProgressBar activeIndex="@period" />
+    <PeriodInfo period="@period" currentWeek="@currentWeek" userInfo="userInfo" />
+}
+else
+{
+    <SuperAdminView userInfo="userInfo" period="period" />
+}
+
+@code {
+    public User userInfo => stateContainerService.UserInfo;
+    int period = 0;
+    Week currentWeek;
+
+    protected override void OnInitialized()
+    {
+        var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+        if (currentWeek != null)
+        {
+            period = currentWeek.PeriodNumber;
+        }
+    }
+}

@@ -1,0 +1,27 @@
+::deep .linkmenu .mud-nav-link-text {
+    display: flex !important;
+    font-size: large !important;
+    justify-content: center !important;
+    margin: 0
+}
+
+::deep .linkmenu .mud-icon-size-medium {
+    font-size: 2.25rem !important;
+    color: rgba(10, 50, 78, 1) !important
+}
+
+::deep .linkmenu .mud-nav-link {
+    margin-top: 1rem;
+    align-items: flex-end !important;
+    display: flex !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+}
+
+::deep .linkmenu a:hover {
+    color: rgba(10, 50, 78, 1) !important
+}
+
+::deep .menuButtonClass {
+    color: rgba(10, 50, 78, 1) !important
+}

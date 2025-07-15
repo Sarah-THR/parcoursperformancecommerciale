@@ -1,0 +1,142 @@
+﻿@using EcoleDeLaPerformance.Ui.Models;
+@using EcoleDeLaPerformance.Ui.Services
+@inject ISnackbar snackbar
+@inject StateContainerService stateContainerService
+
+<MudPaper Elevation="3">
+    <MudItem Class="pa-5">
+        <MudGrid>
+            <MudItem>
+                <MudImage Src="@logoPath" Width="40" />
+            </MudItem>
+            <MudItem>
+                <MudText Typo="Typo.h6" Color="Color.Primary" Class="text-uppercase">
+                    @title
+                    <MudTooltip Text="@info" Arrow="true" Placement="Placement.Right">
+                        <MudIconButton Icon="@Icons.Material.Filled.Info" />
+                    </MudTooltip>
+                </MudText>
+            </MudItem>
+        </MudGrid>
+        <MudGrid Class="d-flex align-center">
+            <MudItem xs="12" lg="2">
+                <MudText Color="Color.Primary">Ajouter un élément</MudText>
+            </MudItem>
+            <MudItem xs="10" lg="8">
+                <MudItem xs="12">
+                    <MudTextField Clearable ShrinkLabel @bind-Value="noteList[0].TextNote" Margin="Margin.Dense" Variant="Variant.Outlined" AutoGrow Placeholder="Nom société / Chiffre d'affaire / Contrat / Périmètre" TextChanged="() => OnInputChange()" Immediate="true"></MudTextField>
+                </MudItem>
+            </MudItem>
+            <MudItem xs="2">
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="()=>DeleteNote(0)" aria-label="delete"></MudIconButton>
+            </MudItem>
+        </MudGrid>
+        <MudGrid>
+
+            @if (noteList.Count() > 1)
+            {
+                @for (int i = 1; i < noteList.Count(); i++)
+                {
+                    int tempindex = i;
+
+                    <MudItem xs="2" />
+                    <MudItem xs="8">
+                        <MudTextField Clearable ShrinkLabel @bind-Value="noteList[tempindex].TextNote" Margin="Margin.Dense" Variant="Variant.Outlined" AutoGrow Placeholder="Nom société / Chiffre d'affaire / Contrat / Périmètre" TextChanged="() => OnInputChange()" Immediate="true"></MudTextField>
+                    </MudItem>
+                    <MudItem xs="2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="()=>DeleteNote(tempindex)" aria-label="delete"></MudIconButton>
+                    </MudItem>
+                }
+            }
+            <MudItem xs="2" />
+            <MudItem>
+                <MudGrid>
+                    <MudItem>
+                        <MudFab OnClick="AddNote" Color="Color.Default" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" />
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudItem>
+</MudPaper>
+
+@code {
+    [Parameter] public string title { get; set; }
+    [Parameter] public string info { get; set; }
+    [Parameter] public string logoPath { get; set; }
+    [Parameter] public int type { get; set; }
+    [Parameter] public List<BriefNote> noteList { get; set; } = new List<BriefNote>();
+    [Parameter] public Action<int> deleteFunction { get; set; }
+    [Parameter]
+    public EventCallback<bool> onChange { get; set; }
+
+    public User userInfo => stateContainerService.UserInfo;
+
+    private bool isFirstRender = false;
+
+    public string textValue { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (noteList.Count == 0)
+        {
+            BriefNote tempBriefNote = new BriefNote();
+            tempBriefNote.TypeNote = type;
+            tempBriefNote.UserId = userInfo.UserId;
+            noteList.Add(tempBriefNote);
+        }
+
+        isFirstRender = true;
+    }
+
+    public void AddNote()
+    {
+        if (String.IsNullOrEmpty(noteList[noteList.Count() - 1].TextNote))
+        {
+            snackbar.Add("Vous ne pouvez ajouter un élément si l'élément précédent est vide.", Severity.Warning);
+        }
+        else
+        {
+            BriefNote tempBriefNote = new BriefNote();
+            tempBriefNote.TypeNote = type;
+            tempBriefNote.UserId = userInfo.UserId;
+            noteList.Add(tempBriefNote);
+            StateHasChanged();
+        }
+    }
+
+    public void DeleteNote(int indexNote)
+    {
+
+        if (indexNote >= 0 && indexNote < noteList.Count)
+        {
+            if (noteList[indexNote].BriefNoteId.Equals(Guid.Empty))
+                noteList.RemoveAt(indexNote);
+            else
+            {
+                deleteFunction(noteList[indexNote].BriefNoteId);
+                noteList.RemoveAt(indexNote);
+            }
+
+            StateHasChanged();
+        }
+        else
+            snackbar.Add("Une erreur est survenue, veuillez contactez DailyUp.", Severity.Error);
+
+
+        if (noteList.Count() == 0)
+        {
+            BriefNote tempBriefNote = new BriefNote();
+            tempBriefNote.TypeNote = type;
+            tempBriefNote.UserId = userInfo.UserId;
+            noteList.Add(tempBriefNote);
+            StateHasChanged();
+        }
+    }
+
+    public async void OnInputChange()
+    {
+        var change = true;
+        await onChange.InvokeAsync(change);
+    }
+}

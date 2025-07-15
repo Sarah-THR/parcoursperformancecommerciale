@@ -1,0 +1,339 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@inject IUserService userService
+@inject IHalfDayPlanningService halfDayPlanningService
+@inject IBriefNoteService briefNoteService
+@inject IContractService contractService
+
+<div class="mt-8">
+    <MudGrid Justify="Justify.Center">
+        <MudItem sm="12" md="2" lg="2">
+            @if (!string.IsNullOrEmpty(imageDataUrl))
+            {
+                <MudAvatar>
+                    <img src="@imageDataUrl" width="100%" />
+                </MudAvatar>
+            }
+            else
+            {
+                <MudAvatar>
+                    <MudIcon Icon="@Icons.Material.Filled.PhotoCamera" />
+                </MudAvatar>
+            }
+        </MudItem>
+
+        @if (userInfo.Role == "Superviseur")
+        {
+            <MudItem sm="12" md="2" lg="2" Class="w-100">
+                <MudText Typo="Typo.h5" Color="Color.Primary" Class="fw-bold textcontent">@student.FirstName @student.LastName</MudText>
+                <MudText Typo="Typo.body1" Color="Color.Primary">Période en cours : N @period</MudText>
+            </MudItem>
+
+            <MudItem sm="12" md="2" lg="2">
+                <MudChip Variant="Variant.Text" Size="Size.Large"><b>Date début suivi : </b> @student.StartDate.Value.ToShortDateString()</MudChip>
+            </MudItem>
+            <MudItem sm="12" md="2" lg="2">
+                <MudChip Variant="Variant.Text" Size="Size.Large"><b>Date fin suivi : </b> @student.EndDate.Value.ToShortDateString()</MudChip>
+            </MudItem>
+            <MudItem sm="12" md="2" lg="2">
+                <MudChip Variant="Variant.Text" Size="Size.Large"><b>Suivi par : </b> @student.SupervisorNavigation.FirstName @student.SupervisorNavigation.LastName</MudChip>
+            </MudItem>
+            <MudItem sm="12" md="2" lg="2">
+                <MudChip Variant="Variant.Text" Size="Size.Large"><b>Entité/site : </b> @student.Entity</MudChip>
+            </MudItem>
+        }
+        else
+        {
+            <MudItem sm="12" md="4" lg="4" Class="w-100">
+                <MudText Typo="Typo.h3" Color="Color.Primary" Class="fw-bold textcontent">@student.FirstName @student.LastName</MudText>
+                <MudText Typo="Typo.body1" Color="Color.Primary">Période en cours : N @period</MudText>
+            </MudItem>
+            <MudItem sm="12" md="3" lg="3">
+                <MudChip Variant="Variant.Text" Size="Size.Large"><b>Date début suivi : </b> @student.StartDate.Value.ToShortDateString()</MudChip>
+
+            </MudItem>
+            <MudItem sm="12" md="3" lg="3">
+                <MudChip Variant="Variant.Text" Size="Size.Large"><b>Date fin suivi : </b> @student.EndDate.Value.ToShortDateString()</MudChip>
+            </MudItem>
+        }
+        <MudItem sm="12" md="2" lg="2" Class="w-100">
+            <Divider title="A faire" elementsList='goalsList.Select(x => x.title).ToList()' />
+        </MudItem>
+        <MudItem sm="12" md="1" lg="1" Class="w-100">
+            <Divider title="Objectif" elementsList='goalsList.Select(x => x.goal.ToString()).ToList()' />
+        </MudItem>
+        <MudItem sm="12" md="1" lg="1" Class="w-100">
+            <Divider title="Fait" elementsList='goalsList.Select(x => x.perform.ToString()).ToList()' />
+        </MudItem>
+        <MudItem sm="12" md="1" lg="1" Class="w-100">
+            <Divider title="Indicateur" imagesList="goalsList.Select(x => x.image).ToList()" />
+        </MudItem>
+        <MudItem sm="12" md="3" lg="3" Class="w-100">
+            <MudPaper Class="d-flex flex-column py-5 px-5" Elevation="3">
+                <MudGrid Justify="Justify.SpaceAround">
+                    <MudItem sm="12" md="8" lg="8" Class="w-100">
+                        <h3 class="text-uppercase">CA généré</h3>
+                        <h1><strong>@turnover.ToString("F") €</strong> </h1>
+                    </MudItem>
+                    <MudItem sm="12" md="4" lg="4" Class="w-100">
+                        <img src="/images/money.png" width="100%" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+        <MudItem sm="12" md="3" lg="3" Class="w-100">
+            <MudPaper Class="d-flex flex-column py-5 px-5" Elevation="3">
+                <MudGrid Justify="Justify.SpaceAround">
+                    <MudItem sm="12" md="8" lg="8" Class="w-100">
+                        <h3 class="text-uppercase">
+                            Prime
+                            <MudTooltip Text="Estimation des primes avant validation définitive.">
+                                <MudIconButton Icon="@Icons.Material.Filled.Info" Size="Size.Small" />
+                            </MudTooltip>
+                        </h3>
+                        <h1><strong>@bonus €</strong></h1>
+                    </MudItem>
+                    <MudItem sm="12" md="4" lg="4" Class="w-100">
+                        <img src="/images/trophee.png" width="100%" />
+                    </MudItem>
+                </MudGrid>
+            </MudPaper>
+        </MudItem>
+        @if (student.Weeks.Count != 0)
+        {
+            <MudItem sm="12" md="12" lg="12" Class="w-100">
+                <MudGrid Justify="Justify.Center">
+                    @if (_collapseOn)
+                    {
+                        <MudItem sm="12" md="1" lg="1" Class="w-100">
+
+                            @if (currentWeek.WeekNumber > 1)
+                            {
+                                <div class="col-md-1 col-12 col-lg-1">
+                                    <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleLeft" Color="Color.Primary" @onclick="PreviousWeek" Size="Size.Large"></MudIconButton>
+                                </div>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleLeft" Color="Color.Primary" Disabled=true Size="Size.Large"></MudIconButton>
+
+                            }
+                        </MudItem>
+                    }
+                    <MudItem sm="12" md="10" lg="10" Class="w-100">
+                        <Collapse halfDayPlanningsList="halfDayPlanningsList" currentWeek="currentWeek" commitmentList="commitmentList" fileToCheckList="fileToCheckList" meetingsBriefNote="meetingsBriefNote" signedContractList="signedContractList" onCollapse="collapseOn" currentAffairsList="currentAffairsList" casesLiftedList="casesLiftedList" saleContractList="saleContractList" nexleaseContractList="nexleaseContractList" />
+                    </MudItem>
+                    @if (_collapseOn)
+                    {
+                        <MudItem sm="12" md="1" lg="1" Class="w-100">
+                            @if (currentWeek.WeekNumber < studentWeek.WeekNumber)
+                            {
+                                <div class="col-md-1 col-12 col-lg-1">
+                                    <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleRight" Color="Color.Primary" @onclick="NextWeek" Size="Size.Large"></MudIconButton>
+                                </div>
+                            }
+                            else
+                            {
+                                <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleRight" Color="Color.Primary" Disabled=true Size="Size.Large"></MudIconButton>
+                            }
+                        </MudItem>
+                    }
+
+                </MudGrid>
+            </MudItem>
+        }
+    </MudGrid>
+</div>
+
+@code {
+    [Parameter]
+    public User student { get; set; }
+
+    [Parameter]
+    public User userInfo { get; set; }
+
+    public Week studentWeek;
+    public Week currentWeek;
+    private string imageDataUrl;
+    public decimal turnover;
+    public decimal bonus;
+    private List<Goal> goalsList = new List<Goal>();
+    List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
+    public int? period;
+    List<string> commitmentList = new List<string>();
+    public List<string> fileToCheckList = new List<string>();
+    List<string> currentAffairsList = new List<string>();
+    List<string> casesLiftedList = new List<string>();
+    List<CRMData> meetingsList = new List<CRMData>();
+    string meetingsBriefNote;
+    List<SignedContract?> signedContractList = new List<SignedContract?>();
+    bool _collapseOn;
+    int nbOpenAccounts;
+    int saleContractList = 0;
+    int nexleaseContractList = 0;
+    DateOnly periodFirstDay;
+    DateOnly periodLastDay;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (student.ProfilePicture.Length != 0)
+            {
+                imageDataUrl = $"data:/images/jpg;base64,{Convert.ToBase64String(student.ProfilePicture)}";
+            }
+
+            var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            period = GetPeriodNumber(student, currentDate);
+            if (student.Weeks.Count != 0)
+            {
+                studentWeek = student.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+                currentWeek = studentWeek;
+                await GetWeekData(currentWeek);
+                periodFirstDay = student.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
+                periodLastDay = student.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
+                nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(student.FirstName + " " + student.LastName.ToUpper(), periodFirstDay, periodLastDay);
+                signedContractList = contractService.GetContractsByPeriod(student.FirstName + " " + student.LastName.ToUpper(), periodFirstDay, periodLastDay);
+            }
+            turnover = await userService.GetUserTurnover(student.EmailAdress, periodFirstDay, periodLastDay);
+            bonus = Math.Round(turnover / 12, 2);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+        var security = signedContractList.Where(x => x.Sécurité == "OUI").Count();
+        var maintenance = signedContractList.Where(x => x.Maintenance == "OUI").Count();
+        var save = signedContractList.Where(x => x.Sauvegarde == "OUI").Count();
+
+        if (period == 1)
+        {
+            goalsList.Add(new Goal { title = "Sauvegarde", goal = 5, perform = save, image = GoalsImageValue(5, save) });
+            goalsList.Add(new Goal { title = "Maintenance", goal = 0, perform = maintenance, image = GoalsImageValue(0, maintenance) });
+            goalsList.Add(new Goal { title = "Sécurité", goal = 0, perform = security, image = GoalsImageValue(0, security) });
+            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 4, perform = nbOpenAccounts, image = GoalsImageValue(4, nbOpenAccounts) });
+        }
+        else if (period == 2)
+        {
+            goalsList.Add(new Goal { title = "Sauvegarde", goal = 2, perform = save, image = GoalsImageValue(2, save) });
+            goalsList.Add(new Goal { title = "Maintenance", goal = 5, perform = maintenance, image = GoalsImageValue(5, maintenance) });
+            goalsList.Add(new Goal { title = "Sécurité", goal = 0, perform = security, image = GoalsImageValue(0, security) });
+            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 2, perform = nbOpenAccounts, image = GoalsImageValue(2, nbOpenAccounts) });
+        }
+        else if (period == 3)
+        {
+            goalsList.Add(new Goal { title = "Sauvegarde", goal = 1, perform = save, image = GoalsImageValue(1, save) });
+            goalsList.Add(new Goal { title = "Maintenance", goal = 1, perform = maintenance, image = GoalsImageValue(1, maintenance) });
+            goalsList.Add(new Goal { title = "Sécurité", goal = 5, perform = security, image = GoalsImageValue(5, security) });
+            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 0, perform = nbOpenAccounts, image = GoalsImageValue(0, nbOpenAccounts) });
+        };
+    }
+
+    private int? GetPeriodNumber(User user, DateOnly currentDate)
+    {
+        var currentWeek = user.Weeks?.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+        return currentWeek?.PeriodNumber;
+    }
+
+    public string GoalsImageValue(int goal, int perform)
+    {
+        if (perform != 0)
+        {
+            if (goal == perform)
+            {
+                return "FullBattery.png";
+            }
+            else if (goal / 2 == perform)
+            {
+                return "MediumBattery.png";
+            }
+            else if (goal < perform)
+            {
+                return "trophee.png";
+            }
+            else
+            {
+                return "LowBattery.png";
+            }
+        }
+        else if (goal == 0)
+        {
+            return "-";
+        }
+        else
+        {
+            return "LowBattery.png";
+        }
+    }
+
+    async void collapseOn(bool value)
+    {
+        _collapseOn = value;
+    }
+
+    private async Task GetWeekData(Week currentWeek)
+    {
+        if (currentWeek != null)
+        {
+            halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
+
+            var briefNoteList = await briefNoteService.GetWeekNoteByUserId(currentWeek.StartDateWeek.ToDateTime(new TimeOnly()), currentWeek.EndDateWeek.ToDateTime(new TimeOnly()), student.UserId);
+            if (briefNoteList.Count != 0)
+            {
+                meetingsBriefNote = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 2).Select(x => x.TextNote).FirstOrDefault();
+                commitmentList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 0).Select(x => x.TextNote).ToList();
+                fileToCheckList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 1).Select(x => x.TextNote).ToList();
+                casesLiftedList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 3).Select(x => x.TextNote).ToList();
+                currentAffairsList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 4).Select(x => x.TextNote).ToList();
+            }
+            else
+            {
+                meetingsBriefNote = "";
+                commitmentList = new List<string>();
+                fileToCheckList = new List<string>();
+            }
+            var periodFirstDay = student.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
+            var periodLastDay = student.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
+            var nbAppointments = await userService.GetNbAppointmentsAsync(student.EmailAdress, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+            meetingsList.Add(new CRMData { Label = "Rendez-vous à venir", Amount = nbAppointments });
+            var studentName = (student.FirstName + " " + student.LastName);
+            signedContractList = contractService.GetContractsByPeriod(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+            saleContractList = contractService.GetNbContractsSaleByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+            nexleaseContractList = contractService.GetNbContractsNexleaseByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+
+            StateHasChanged();
+        }
+    }
+
+    private async void PreviousWeek()
+    {
+        if (currentWeek != null)
+        {
+            var previousWeek = student.Weeks.FirstOrDefault(week => week.WeekNumber == currentWeek.WeekNumber - 1);
+
+            if (previousWeek != null)
+            {
+                currentWeek = previousWeek;
+
+                await GetWeekData(currentWeek);
+            }
+        }
+    }
+
+    private async void NextWeek()
+    {
+        if (currentWeek != null)
+        {
+            var nextWeek = student.Weeks.FirstOrDefault(week => week.WeekNumber == currentWeek.WeekNumber + 1);
+
+            if (nextWeek != null)
+            {
+                currentWeek = nextWeek;
+
+                await GetWeekData(currentWeek);
+            }
+        }
+    }
+}

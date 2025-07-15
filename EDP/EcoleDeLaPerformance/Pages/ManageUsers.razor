@@ -1,0 +1,111 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@using EcoleDeLaPerformance.Ui.Shared.Dialog
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@inject StateContainerService stateContainerService
+@inject IUserService userService
+@inject IDialogService dialog
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@page "/manageusers"
+
+<div>
+    <MudGrid Class="mt-8 d-flex align-items-center">
+        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
+            <MudText Typo="Typo.h4" Color="Color.Primary" Class="fw-bold text-uppercase">Gérer les utilisateurs <img src="/images/TeamManage.png" width="30px" class="ms-2" /></MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto mt-5" OnClick="@(async () => await CreateUser())">Ajouter</MudButton>
+        </MudItem>
+        <MudItem sm="12" md="4" lg="4">
+            <SearchBar placeholder="Rechercher un profil" onChangeSearch="Search" searchString="@searchString" />
+        </MudItem>
+        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
+            <ManageUserTable userInfo="userInfo" usersList="filteredUserList" OnUserDeleted="HandleUserDeleted" />
+        </MudItem>
+    </MudGrid>
+
+    <MudGrid Class="mt-8 d-flex align-items-center">
+        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
+            <MudText Typo="Typo.h4" Color="Color.Primary" Class="fw-bold text-uppercase">Utilisateurs archivés <img src="/images/TeamManage.png" width="30px" class="ms-2" /></MudText>
+        </MudItem>
+        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
+            <ManageUserTable userInfo="userInfo" usersList="deletedUserList" OnUserDeleted="HandleUserDeleted" />
+        </MudItem>
+    </MudGrid>
+</div>
+
+@code {
+    public User userInfo => stateContainerService.UserInfo;
+    List<User?> usersList = new List<User?>();
+    List<User?> filteredUserList = new List<User?>();
+    List<User?> deletedUserList = new List<User?>();
+    private string searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (userInfo.Role != "Superviseur")
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            usersList = await userService.GetUsersAsync();
+            filteredUserList = usersList;
+            deletedUserList = await userService.GetDeletedUsersAsync();
+        }
+    }
+
+    private async void HandleUserDeleted(bool wasDeleted)
+    {
+        if (wasDeleted)
+        {
+            usersList = await userService.GetUsersAsync();
+            filteredUserList = usersList;
+            deletedUserList = await userService.GetDeletedUsersAsync();
+        }
+        else
+        {
+            usersList = await userService.GetUsersAsync();
+            filteredUserList = usersList;
+            deletedUserList = await userService.GetDeletedUsersAsync();
+        }
+
+        StateHasChanged();
+    }
+
+    async void Search(string value)
+    {
+        try
+        {
+            searchString = value.ToLower();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                filteredUserList = usersList.Where(x => x.FirstName.ToLower().Contains(searchString) || x.LastName.ToLower().Contains(searchString)).ToList();
+            }
+            else
+            {
+                filteredUserList = await userService.GetUsersAsync();
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
+    }
+
+    private async Task CreateUser()
+    {
+        var parameters = new DialogParameters<AddUserDialog>();
+
+        parameters.Add("userInfo", userInfo);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect", FullWidth = true };
+        var dialogresponse = await (await dialog.ShowAsync<AddUserDialog>("Ajouter un utilisateur", parameters, options)).Result;
+        if (!dialogresponse.Canceled)
+        {
+            await OnInitializedAsync();
+            StateHasChanged();
+        }
+    }
+}
