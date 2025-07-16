@@ -34,7 +34,7 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
 
     public virtual DbSet<Status> Statuses { get; set; }
 
-    public virtual DbSet<Core.Entities.Task> Tasks { get; set; }
+    public virtual DbSet<Core.Domain.Entities.Task> Tasks { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -42,7 +42,7 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=XFISRVSQLPREPROD; Database=ParcoursPerformanceCommerciale; Integrated Security=True; TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb; Database=ParcoursPerformanceCommerciale; Integrated Security=True; TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -276,7 +276,7 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
                 .HasColumnName("updated_at");
         });
 
-        modelBuilder.Entity<Task>(entity =>
+        modelBuilder.Entity<Core.Domain.Entities.Task>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__tasks__3213E83FB9325923");
 

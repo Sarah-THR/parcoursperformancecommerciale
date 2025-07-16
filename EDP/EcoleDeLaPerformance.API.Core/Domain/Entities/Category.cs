@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
+﻿namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
 
 public partial class Category
 {
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     public string Title { get; set; } = null!;
 

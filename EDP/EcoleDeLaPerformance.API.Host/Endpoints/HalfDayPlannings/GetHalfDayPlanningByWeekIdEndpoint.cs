@@ -10,11 +10,11 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.HalfDayPlannings
 {
     [HttpGet("halfdayplanning/{WeekId:int}"), AllowAnonymous]
 
-    public class GetHalfDayPlanningByWeekIdEndpoint(IMapper mapper, IMediator mediator) : Endpoint<HalfDayPlanningByWeekIdRequest, IEnumerable<HalfDayPlanningResponse>>
+    public class GetHalfDayPlanningByWeekIdEndpoint(IMapper mapper, IMediator mediator) : Endpoint<HalfDayPlanningByWeekIdRequest, IEnumerable<PlanningResponse>>
     {
         public override async Task HandleAsync(HalfDayPlanningByWeekIdRequest req, CancellationToken ct)
         {
-            var result = mapper.Map<IEnumerable<HalfDayPlanningResponse>>(await mediator.Send(new GetHalfDayPlanningByWeekIdRequest
+            var result = mapper.Map<IEnumerable<PlanningResponse>>(await mediator.Send(new GetHalfDayPlanningByWeekIdRequest
             {
                 weekId = req.WeekId,
             }, ct));

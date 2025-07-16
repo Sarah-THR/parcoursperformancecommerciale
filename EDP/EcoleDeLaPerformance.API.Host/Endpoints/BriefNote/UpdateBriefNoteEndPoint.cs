@@ -9,7 +9,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
 {
     [HttpPut("briefnote/"), AllowAnonymous]
 
-    public class UpdateBriefNoteEndPoint : Endpoint<BriefNoteRequest>
+    public class UpdateBriefNoteEndPoint : Endpoint<BriefRequest>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -20,7 +20,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
             _mediator = mediator;
         }
 
-        public override async Task HandleAsync(BriefNoteRequest req, CancellationToken ct)
+        public override async Task HandleAsync(BriefRequest req, CancellationToken ct)
         {
             try
             {

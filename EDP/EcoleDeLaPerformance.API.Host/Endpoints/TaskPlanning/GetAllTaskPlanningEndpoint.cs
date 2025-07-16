@@ -11,7 +11,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.TaskPlanning
 {
     [HttpGet("taskplanning"), AllowAnonymous]
 
-    public class GetAllTaskPlanningEndpoint : EndpointWithoutRequest<IEnumerable<TaskPlanningResponse>>
+    public class GetAllTaskPlanningEndpoint : EndpointWithoutRequest<IEnumerable<TaskResponse>>
     {
 
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.TaskPlanning
         }
         public override async Task HandleAsync(CancellationToken ct)
         {
-            var result = _mapper.Map<IEnumerable<TaskPlanningResponse>>(await _mediator.Send(new GetAllTaskPlanningRequest(), ct));
+            var result = _mapper.Map<IEnumerable<TaskResponse>>(await _mediator.Send(new GetAllTaskPlanningRequest(), ct));
 
             if (result == null)
                 await SendNoContentAsync(ct);

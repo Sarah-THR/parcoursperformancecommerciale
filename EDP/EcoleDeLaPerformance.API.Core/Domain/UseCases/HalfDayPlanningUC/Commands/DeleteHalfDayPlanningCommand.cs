@@ -1,5 +1,4 @@
 ﻿using EcoleDeLaPerformance.API.Core.Domain.Repositories;
-using EcoleDeLaPerformance.API.Core.Domain.UseCases.BriefNoteUC.Commands;
 using MediatR;
 using System;
 using System.Collections.Generic;

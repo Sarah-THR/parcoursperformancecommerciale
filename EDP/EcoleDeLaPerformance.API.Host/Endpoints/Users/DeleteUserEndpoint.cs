@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Authorization;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Users
 {
     [HttpDelete("users/{userId:int}"), AllowAnonymous]
-    public class DeleteUserEndpoint : Endpoint<UsersRequest>
+    public class DeleteUserEndpoint : Endpoint<UserRequest>
     {
         private readonly IMediator _mediator;
         public DeleteUserEndpoint(IMediator mediator)
         {
             _mediator = mediator;
         }
-        public override async Task HandleAsync(UsersRequest req, CancellationToken ct)
+        public override async Task HandleAsync(UserRequest req, CancellationToken ct)
         {
             await _mediator.Send(new DeleteUserCommand
             {

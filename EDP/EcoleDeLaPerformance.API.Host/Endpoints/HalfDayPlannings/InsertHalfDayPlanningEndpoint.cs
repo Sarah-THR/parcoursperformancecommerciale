@@ -14,7 +14,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.HalfDayPlannings
 {
     [HttpPost("halfdayplanning/InsertHalfDayPlanning"), AllowAnonymous]
 
-    public class InsertHalfDayPlanningEndpoint : Endpoint<HalfDayPlanningRequest, HalfDayPlanningResponse>
+    public class InsertHalfDayPlanningEndpoint : Endpoint<HalfDayPlanningRequest, PlanningResponse>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -29,7 +29,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.HalfDayPlannings
         {
             try
             {
-                var result = _mapper.Map<HalfDayPlanningResponse>(await _mediator.Send(new InsertHalfDayPlanningCommand
+                var result = _mapper.Map<PlanningResponse>(await _mediator.Send(new InsertHalfDayPlanningCommand
                 {
                     halfDayPlanning = _mapper.Map<HalfDayPlanning>(req)
                 }, ct));

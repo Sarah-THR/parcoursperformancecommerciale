@@ -5,7 +5,7 @@ using System.Net;
 
 namespace EcoleDeLaPerformance.API.Host.Summaries.BriefNote
 {
-    public class InsertBriefNoteSummary : Summary<InsertBriefNoteEndpoint>
+    public class InsertBriefNoteSummary : Summary<InsertBriefEndPoint>
     {
         public InsertBriefNoteSummary()
         {

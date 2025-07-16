@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
+﻿namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
 
 public partial class PlanningsTask
 {
-    public long PlanningId { get; set; }
+    public int PlanningId { get; set; }
 
-    public long TaskId { get; set; }
+    public int TaskId { get; set; }
 
     public string TimeOfDay { get; set; } = null!;
 

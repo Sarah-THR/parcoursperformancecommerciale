@@ -8,14 +8,14 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Documents
 {
     [HttpDelete("documents/{documentId:int}"), AllowAnonymous]
 
-    public class DeleteDocumentEndpoint : Endpoint<DocumentsRequest>
+    public class DeleteDocumentEndpoint : Endpoint<DocumentRequest>
     {
         private readonly IMediator _mediator;
         public DeleteDocumentEndpoint(IMediator mediator)
         {
             _mediator = mediator;
         }
-        public override async Task HandleAsync(DocumentsRequest req, CancellationToken ct)
+        public override async Task HandleAsync(DocumentRequest req, CancellationToken ct)
         {
             await _mediator.Send(new DeleteDocumentCommand
             {

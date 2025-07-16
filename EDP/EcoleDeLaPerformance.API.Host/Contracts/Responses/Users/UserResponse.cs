@@ -1,42 +1,59 @@
-﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Documents;
-using EcoleDeLaPerformance.API.Host.Contracts.Responses.Weeks;
-using EcoleDeLaPerformance.API.Host.Contracts.Responses.BriefNotes;
+﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Briefs;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Debriefs;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Documents;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Grades;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Plannings;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.UsersFormations;
 
 namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Users
 {
     public class UserResponse
     {
-        public int UserId { get; set; }
+        public int Id { get; set; }
 
-        public string EmailAdress { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
-        public string FirstName { get; set; } = null!;
+        public string Email { get; set; } = null!;
 
-        public string LastName { get; set; } = null!;
+        public string? ProfilePicturePath { get; set; }
 
-        public string Entity { get; set; } = null!;
+        public string? Entity { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public DateOnly? StartFollowUp { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public DateOnly? EndFollowUp { get; set; }
 
-        public byte[]? ProfilePicture { get; set; }
+        public int? SupervisorId { get; set; }
 
-        public string Role { get; set; } = null!;
+        public int? DirectorId { get; set; }
 
-        public int? Supervisor { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        public bool? IsActive { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
-        public virtual ICollection<BriefNoteResponse>? BriefNotes { get; set; } = new List<BriefNoteResponse>();
+        public DateTime? DeletedAt { get; set; }
 
-        public virtual ICollection<DocumentResponse>? DocumentCreateByNavigations { get; set; } = new List<DocumentResponse>();
+        public int? GradeId { get; set; }
 
-        public virtual ICollection<DocumentResponse>? DocumentUpdateByNavigations { get; set; } = new List<DocumentResponse>();
+        public virtual ICollection<BriefResponse> Briefs { get; set; } = new List<BriefResponse>();
 
-        public virtual ICollection<WeekResponse>? Weeks { get; set; } = new List<WeekResponse>();
+        public virtual ICollection<DebriefResponse> Debriefs { get; set; } = new List<DebriefResponse>();
 
-        public virtual SupervisorNavigationResponse?SupervisorNavigation { get; set; } = null!;
+        public virtual UserResponse? Director { get; set; }
+
+        public virtual ICollection<DocumentResponse> Documents { get; set; } = new List<DocumentResponse>();
+
+        public virtual GradeResponse? Grade { get; set; }
+
+        public virtual ICollection<UserResponse> InverseDirector { get; set; } = new List<UserResponse>();
+
+        public virtual ICollection<UserResponse> InverseSupervisor { get; set; } = new List<UserResponse>();
+
+        public virtual ICollection<PlanningResponse> Plannings { get; set; } = new List<PlanningResponse>();
+
+        public virtual UserResponse? Supervisor { get; set; }
+
+        public virtual ICollection<UsersFormationResponse> UsersFormations { get; set; } = new List<UsersFormationResponse>();
     }
 
 }

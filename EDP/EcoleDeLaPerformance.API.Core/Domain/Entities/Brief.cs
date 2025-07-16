@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
+﻿namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
 
 public partial class Brief
 {
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     public string SignatureCommitment { get; set; } = null!;
 
@@ -13,7 +10,7 @@ public partial class Brief
 
     public string Note { get; set; } = null!;
 
-    public long UserId { get; set; }
+    public int UserId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
+﻿namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
 
 public partial class User
 {
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 
@@ -19,9 +16,9 @@ public partial class User
 
     public DateOnly? EndFollowUp { get; set; }
 
-    public long? SupervisorId { get; set; }
+    public int? SupervisorId { get; set; }
 
-    public long? DirectorId { get; set; }
+    public int? DirectorId { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -29,7 +26,7 @@ public partial class User
 
     public DateTime? DeletedAt { get; set; }
 
-    public long? GradeId { get; set; }
+    public int? GradeId { get; set; }
 
     public virtual ICollection<Brief> Briefs { get; set; } = new List<Brief>();
 

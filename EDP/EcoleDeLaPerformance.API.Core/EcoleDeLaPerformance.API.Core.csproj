@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Domain\Entities\CRM\" />
+    <Folder Include="Domain\UseCases\CategoryUC\" />
   </ItemGroup>
 
 </Project>

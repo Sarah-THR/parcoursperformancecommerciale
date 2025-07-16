@@ -3,8 +3,8 @@ using FastEndpoints;
 using Microsoft.AspNetCore.HttpOverrides;
 using EcoleDeLaPerformance.API.Infrastructure._Helpers;
 using EcoleDeLaPerformance.API.Core.Domain.UseCases.UserUC.Requests;
-using EcoleDeLaPerformance.API.Core.Domain.UseCases.BriefNoteUC.Requests;
 using EcoleDeLaPerformance.API.Core.Domain.UseCases.TaskPlanningUC;
+using EcoleDeLaPerformance.API.Core.Domain.UseCases.BriefUC.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen();
 
 // Register MediatR
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetUsersRequest).Assembly));
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetWeekNoteByUserRequest).Assembly));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetBriefByUserRequest).Assembly));
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTaskPlanningRequest).Assembly));
 
 // Register auto mapper (configuration in AutoMapper namespace)

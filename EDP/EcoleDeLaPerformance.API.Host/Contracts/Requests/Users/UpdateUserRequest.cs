@@ -2,21 +2,30 @@
 {
     public class UpdateUserRequest
     {
-        public int UserId { get; set; }
-        public string EmailAdress { get; set; } = null!;
+        public int Id { get; set; }
 
-        public string FirstName { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
-        public string LastName { get; set; } = null!;
+        public string Email { get; set; } = null!;
 
-        public string Entity { get; set; } = null!;
-        
-        public byte[]? ProfilePicture { get; set; }
+        public string? ProfilePicturePath { get; set; }
 
-        public string Role { get; set; } = null!;
+        public string? Entity { get; set; }
 
-        public int? Supervisor { get; set; }
+        public DateOnly? StartFollowUp { get; set; }
 
-        public bool? IsActive { get; set; }
+        public DateOnly? EndFollowUp { get; set; }
+
+        public int? SupervisorId { get; set; }
+
+        public int? DirectorId { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime UpdatedAt { get; set; }
+
+        public DateTime? DeletedAt { get; set; }
+
+        public int? GradeId { get; set; }
     }
 }

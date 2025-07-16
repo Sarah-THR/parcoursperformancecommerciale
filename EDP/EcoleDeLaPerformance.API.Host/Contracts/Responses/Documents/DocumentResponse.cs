@@ -1,30 +1,29 @@
-﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Users;
-using EcoleDeLaPerformance.API.Core.Domain.Entities;
-using EcoleDeLaPerformance.API.Host.Contracts.Responses.Classes;
+﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Categories;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Users;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.UsersFormations;
 
 namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Documents
 {
     public class DocumentResponse
     {
-        public int DocumentId { get; set; }
-
-        public string Pdffile { get; set; } = null!;
+        public int Id { get; set; }
 
         public string Title { get; set; } = null!;
 
-        public DateTime CreateDate { get; set; }
+        public string ContentPath { get; set; } = null!;
 
-        public DateTime? UpdateDate { get; set; }
+        public int UserId { get; set; }
 
-        public int? CreateBy { get; set; }
+        public DateTime CreatedAt { get; set; }
 
-        public int? UpdateBy { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
-        public int ClassId { get; set; }
+        public int? CategoryId { get; set; }
 
-        public virtual UserResponse? CreateByNavigation { get; set; }
+        public virtual CategoryResponse? Category { get; set; }
 
-        public virtual UserResponse? UpdateByNavigation { get; set; } = null!;
-        public virtual DocumentClassResponse Class { get; set; }
+        public virtual UserResponse User { get; set; } = null!;
+
+        public virtual ICollection<UsersFormationResponse> UsersFormations { get; set; } = new List<UsersFormationResponse>();
     }
 }

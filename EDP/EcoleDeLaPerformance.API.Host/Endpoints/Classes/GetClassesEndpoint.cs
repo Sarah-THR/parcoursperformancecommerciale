@@ -8,7 +8,7 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Classes
 {
     [HttpGet("classes"), AllowAnonymous]
-    public class GetClassesEndpoint : EndpointWithoutRequest<IEnumerable<ClassResponse>>
+    public class GetClassesEndpoint : EndpointWithoutRequest<IEnumerable<CategoryResponse>>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -21,7 +21,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Classes
 
         public override async Task HandleAsync(CancellationToken ct)
         {
-            var result = _mapper.Map<IEnumerable<ClassResponse>>(await _mediator.Send(new GetClassesRequest(), ct));
+            var result = _mapper.Map<IEnumerable<CategoryResponse>>(await _mediator.Send(new GetClassesRequest(), ct));
 
             if (result == null)
                 await SendNoContentAsync(ct);

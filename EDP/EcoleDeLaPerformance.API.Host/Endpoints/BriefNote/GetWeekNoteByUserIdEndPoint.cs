@@ -11,7 +11,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
 {
     [HttpGet("briefnote"), AllowAnonymous]
 
-    public class GetWeekNoteByUserIdByUserEndpoint : Endpoint<WeekNoteByUserRequest, IEnumerable<BriefNoteResponse>>
+    public class GetWeekNoteByUserIdByUserEndpoint : Endpoint<BriefByUserRequest, IEnumerable<BriefResponse>>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -21,7 +21,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
             _mediator = mediator;
         }
 
-        public override async Task HandleAsync(WeekNoteByUserRequest req, CancellationToken ct)
+        public override async Task HandleAsync(BriefByUserRequest req, CancellationToken ct)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
                     endDateWeek = req.EndDateWeek,
                 }, ct);
 
-                await SendOkAsync(_mapper.Map<IEnumerable<BriefNoteResponse>>(results), ct);
+                await SendOkAsync(_mapper.Map<IEnumerable<BriefResponse>>(results), ct);
             }
             catch (ArgumentNullException)
             {

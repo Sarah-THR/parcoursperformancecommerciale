@@ -1,45 +1,63 @@
 ﻿using EcoleDeLaPerformance.API.Core.Domain.Entities;
 using EcoleDeLaPerformance.API.Core.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 {
     public class UserReadRepository : IUserReadRepository
     {
-        private readonly ParcoursPerformanceCommercialContext _ecoleDeLaPerformancePreprodContext;
-
-        public UserReadRepository(ParcoursPerformanceCommercialContext ecoleDeLaPerformancePreprodContext)
+        private readonly ParcoursPerformanceCommercialeContext _parcoursPerformanceCommercialeContext;
+        public UserReadRepository(ParcoursPerformanceCommercialeContext parcoursPerformanceCommercialeContext)
         {
-            _ecoleDeLaPerformancePreprodContext = ecoleDeLaPerformancePreprodContext;
+            _parcoursPerformanceCommercialeContext = parcoursPerformanceCommercialeContext;
         }
-
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<User?> GetUserByEmailAsync(string userEmail)
         {
-            return await _ecoleDeLaPerformancePreprodContext.Users
-                .Include(x => x.Weeks.OrderBy(o => o.WeekNumber))
-                 .ThenInclude(o => o.HalfDayPlannings)
+            return await _parcoursPerformanceCommercialeContext.Users
+                .Include(u => u.Grade)
+                .Include(u => u.Supervisor)
+                .Include(u => u.Director)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Formation)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Status)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Evaluation)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Document)
+                .FirstOrDefaultAsync(u => u.Email == userEmail);
+        }
+        public async Task<User?> GetUserByIdAsync(int userId)
+        {
+            return await _parcoursPerformanceCommercialeContext.Users
+                .Include(u => u.Grade)
+                .Include(u => u.Supervisor)
+                .Include(u => u.Director)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Formation)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Status)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Evaluation)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Document)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+        public async Task<List<User>> GetUsersAsync()
+        {
+            return await _parcoursPerformanceCommercialeContext.Users
+                .Include(u => u.Grade)
+                .Include(u => u.Supervisor)
+                .Include(u => u.Director)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Formation)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Status)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Evaluation)
+                .Include(u => u.UsersFormations)
+                    .ThenInclude(uf => uf.Document)
                 .ToListAsync();
-        }
-
-        public async Task<User?> GetUserByIdAsync(int UserId)
-        {
-            var user = await _ecoleDeLaPerformancePreprodContext.Users
-                 .Include(x => x.Weeks.OrderBy(o => o.WeekNumber))
-                 .ThenInclude(o => o.HalfDayPlannings)
-                 .FirstOrDefaultAsync(u => u.Id == UserId);
-            user.Supervisor = _ecoleDeLaPerformancePreprodContext.Users.Where(x => x.Id == user.SupervisorId).FirstOrDefault();
-            return user;
-        }
-
-        public async Task<User?> GetUserByEmailAsync(string email)
-        {
-            var user = await _ecoleDeLaPerformancePreprodContext.Users
-                 .Include(x => x.Weeks.OrderBy(o => o.WeekNumber))
-                 .ThenInclude(o => o.HalfDayPlannings)
-                .FirstOrDefaultAsync(u => string.Equals(u.Email, email));
-            user.Supervisor = _ecoleDeLaPerformancePreprodContext.Users.Where(x => x.Id == user.SupervisorId).FirstOrDefault();
-            return user;
         }
     }
 }

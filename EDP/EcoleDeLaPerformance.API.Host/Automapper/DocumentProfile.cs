@@ -10,8 +10,7 @@ namespace EcoleDeLaPerformance.API.Host.Automapper
         public DocumentProfile()
         {
             CreateMap<Document, DocumentResponse>();
-            CreateMap<CreateDocumentRequest, Document>();
-            CreateMap<UpdateDocumentRequest, Document>();
+            CreateMap<DocumentRequest, Document>();
         }
     }
 }
