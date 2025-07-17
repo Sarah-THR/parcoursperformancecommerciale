@@ -8,11 +8,11 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.BriefUC.Commands
     {
         public Brief brief = default!;
 
-        public class CreateNotificationCommandHandler : IRequestHandler<InsertBriefCommand, Brief>
+        public class InsertBriefCommandHandler : IRequestHandler<InsertBriefCommand, Brief>
         {
             private readonly IBriefWriteRepository _briefWriteRepository;
 
-            public CreateNotificationCommandHandler(IBriefWriteRepository briefWriteRepository)
+            public InsertBriefCommandHandler(IBriefWriteRepository briefWriteRepository)
             {
                 _briefWriteRepository = briefWriteRepository;
             }
@@ -20,7 +20,7 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.BriefUC.Commands
             public async Task<Brief> Handle(InsertBriefCommand command, CancellationToken cancellationToken)
             {
                 if (command.brief == null)
-                    throw new ArgumentNullException("brief", "La brief à insérer est obligatoire.");
+                    throw new ArgumentNullException("brief", "Le brief à insérer est obligatoire.");
 
                 command.brief.CreatedAt = DateTime.Now;
                 return await _briefWriteRepository.InsertBriefAsync(command.brief);

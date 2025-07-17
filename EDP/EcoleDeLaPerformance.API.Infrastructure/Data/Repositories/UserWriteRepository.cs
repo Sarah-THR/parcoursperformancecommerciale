@@ -18,9 +18,9 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
             await _parcoursPerformanceCommercialeContext.SaveChangesAsync();
             return newUser;
         }
-        public async Task<User?> UpdateUserAsync(int userId, User updatedData)
+        public async Task<User?> UpdateUserAsync(User updatedData)
         {
-            var user = await _parcoursPerformanceCommercialeContext.Users.FindAsync(userId);
+            var user = await _parcoursPerformanceCommercialeContext.Users.FindAsync(updatedData.Id);
             if (user == null)
             {
                 return null;

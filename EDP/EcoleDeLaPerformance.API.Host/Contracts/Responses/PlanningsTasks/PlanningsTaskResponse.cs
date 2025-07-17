@@ -1,5 +1,5 @@
 ﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Plannings;
-using EcoleDeLaPerformance.API.Host.Contracts.Responses.TaskPlannings;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Tasks;
 
 namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.PlanningsTasks
 {

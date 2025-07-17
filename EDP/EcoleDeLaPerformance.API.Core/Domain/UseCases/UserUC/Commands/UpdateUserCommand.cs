@@ -27,14 +27,12 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.UserUC.Commands
             var user = await _userReadRepository.GetUserByIdAsync(command.user.Id)
                 ?? throw new ArgumentException($"Le profil avec l'id {command.user.Id} n'existe pas.");
 
-            user.FirstName = command.user.FirstName;
-            user.LastName = command.user.LastName;
+            user.Name = command.user.Name;
             user.Entity = command.user.Entity;
-            user.ProfilePicture = command.user.ProfilePicture;
+            user.ProfilePicturePath = command.user.ProfilePicturePath;
             user.Email = command.user.Email;
             user.Supervisor = command.user.Supervisor;
-            user.Role = command.user.Role;
-            user.IsActive = command.user.IsActive;
+            user.DeletedAt = command.user.DeletedAt;
             return await _userWriteRepository.UpdateUserAsync(user);
         }
     }

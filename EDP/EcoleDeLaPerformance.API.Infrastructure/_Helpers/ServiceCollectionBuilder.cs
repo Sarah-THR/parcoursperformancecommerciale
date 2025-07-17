@@ -29,18 +29,26 @@ namespace EcoleDeLaPerformance.API.Infrastructure._Helpers
         {
             services.AddScoped<IUserReadRepository, UserReadRepository>();
             services.AddScoped<IUserWriteRepository, UserWriteRepository>();
-            services.AddScoped<IWeekReadRepository, WeekReadRepository>();
-            services.AddScoped<IWeekWriteRepository, WeekWriteRepository>();
-            services.AddScoped<IHalfDayPlanningReadRepository, HalfDayPlanningReadRepository>();
-            services.AddScoped<IHalfDayPlanningWriteRepository, HalfDayPlanningWriteRepository>();
-            services.AddScoped<IClassReadRepository, ClassReadRepository>();
+            services.AddScoped<IUsersFormationWriteRepository, UsersFormationWriteRepository>();
             services.AddScoped<IBriefWriteRepository, BriefWriteRepository>();
             services.AddScoped<IBriefReadRepository, BriefReadRepository>();
+            services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
+            services.AddScoped<IDebriefReadRepository, DebriefReadRepository>();
+            services.AddScoped<IDebriefWriteRepository, DebriefWriteRepository>();
+            services.AddScoped<IEvaluationReadRepository, EvaluationReadRepository>();
+            services.AddScoped<IEvaluationWriteRepository, EvaluationWriteRepository>();
+            services.AddScoped<IFormationReadRepository, FormationReadRepository>();
+            services.AddScoped<IGradeReadRepository, GradeReadRepository>();
+            services.AddScoped<IGradeWriteRepository, GradeWriteRepository>();
+            services.AddScoped<IFormationWriteRepository, FormationWriteRepository>();
+            services.AddScoped<ITaskReadRepository, TaskReadRepository>();
+            services.AddScoped<IStatusReadRepository, StatusReadRepository>();
+            services.AddScoped<IPlanningReadRepository, PlanningReadRepository>();
+            services.AddScoped<IPlanningWriteRepository, PlanningWriteRepository>();
             services.AddScoped<ITurnoverReadRepository, TurnoverReadRepository>();
             services.AddScoped<IDocumentWriteRepository, DocumentWriteRepository>();
             services.AddScoped<IDocumentReadRepository, DocumentReadRepository>();
             services.AddScoped<IDebitAccountReadRepository, DebitAccountReadRepository>();
-            services.AddScoped<ITaskPlanningReadRepository, TaskPlanningReadRepository>();
             services.AddScoped<IContractReadRepository, ContractReadRepository>();
         }
     }

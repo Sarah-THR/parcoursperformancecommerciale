@@ -8,11 +8,11 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.BriefUC.Commands
         public int briefId { get; set; }
     }
 
-    public class DeleteCommentCommandHandler : IRequestHandler<DeleteBriefCommand>
+    public class DeleteBriefCommandHandler : IRequestHandler<DeleteBriefCommand>
     {
         private readonly IBriefWriteRepository _briefWriteRepository;
 
-        public DeleteCommentCommandHandler(IBriefWriteRepository briefWriteRepository)
+        public DeleteBriefCommandHandler(IBriefWriteRepository briefWriteRepository)
         {
             _briefWriteRepository = briefWriteRepository;
         }

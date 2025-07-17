@@ -18,7 +18,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Users
         {
             await _mediator.Send(new DeleteUserCommand
             {
-                userId = req.UserId
+                userId = req.Id
             }, ct);
 
             await SendOkAsync(ct);

@@ -16,7 +16,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Users
         {
             var result = mapper.Map<UserResponse>(await mediator.Send(new GetUserByIdRequest
             {
-                UserId = req.UserId,
+                UserId = req.Id,
             }, ct));
 
             if (result == null)

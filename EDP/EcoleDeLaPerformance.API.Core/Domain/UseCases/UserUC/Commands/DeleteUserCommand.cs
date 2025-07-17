@@ -24,7 +24,7 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.UserUC.Commands
 
         public async Task Handle(DeleteUserCommand command, CancellationToken cancellationToken)
         {
-            await _userWriteRepository.DeleteUserAsync(command.userId);
+            await _userWriteRepository.SoftDeleteUserAsync(command.userId);
         }
     }
 }

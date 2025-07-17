@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Documents
 {
-    [HttpDelete("documents/{documentId:int}"), AllowAnonymous]
+    [HttpDelete("documents/{Id:int}"), AllowAnonymous]
 
     public class DeleteDocumentEndpoint : Endpoint<DocumentRequest>
     {

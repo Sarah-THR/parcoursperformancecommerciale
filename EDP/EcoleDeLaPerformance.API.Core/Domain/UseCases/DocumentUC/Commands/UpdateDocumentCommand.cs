@@ -29,10 +29,9 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.DocumentUC.Commands
                 ?? throw new ArgumentException($"Le document avec l'id {command.document.Id} n'existe pas.");
 
             document.Title = command.document.Title;
-            document.ClassId = command.document.ClassId;
-            document.File = command.document.File;
+            document.CategoryId = command.document.CategoryId;
+            document.ContentPath = command.document.ContentPath;
             document.UpdatedAt = command.document.UpdatedAt;
-            document.UpdatedBy = command.document.UpdatedBy;
             return await _documentWriteRepository.UpdateDocumentAsync(document);
         }
     }

@@ -6,7 +6,7 @@ using System.Net;
 
 namespace EcoleDeLaPerformance.API.Host.Summaries.BriefNote
 {
-    public class GetWeekNoteByUserIdSummary : Summary<GetWeekNoteByUserIdByUserEndpoint>
+    public class GetWeekNoteByUserIdSummary : Summary<GetBriefByUserIdByUserEndpoint>
     {
         public GetWeekNoteByUserIdSummary()
         {

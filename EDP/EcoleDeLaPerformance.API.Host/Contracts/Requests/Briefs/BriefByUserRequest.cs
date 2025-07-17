@@ -4,9 +4,9 @@
     {
         public int UserId { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime StartDateWeek { get; set; }
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime EndDateWeek { get; set; }
 
     }
 }

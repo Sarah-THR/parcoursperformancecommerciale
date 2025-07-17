@@ -1,6 +1,4 @@
-﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Classes;
-
-namespace EcoleDeLaPerformance.API.Host.Contracts.Requests.Document
+﻿namespace EcoleDeLaPerformance.API.Host.Contracts.Requests.Document
 {
     public class DocumentRequest
     {

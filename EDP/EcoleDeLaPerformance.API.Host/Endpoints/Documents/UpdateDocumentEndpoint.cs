@@ -9,7 +9,7 @@ using IMapper = AutoMapper.IMapper;
 
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Documents
 {
-    [HttpPut("documents/"), AllowAnonymous]
+    [HttpPut("documents"), AllowAnonymous]
     public class UpdateDocumentEndpoint : Endpoint<UpdateDocumentRequest, DocumentResponse>
     {
         private readonly IMapper _mapper;

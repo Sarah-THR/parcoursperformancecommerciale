@@ -23,7 +23,7 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.UserUC.Commands
             if (command.user == null)
                 throw new ArgumentNullException("User", "L'utilisateur est obligatoire.");
 
-            return await _userWriteRepository.CreateUserAsync(command.user);
+            return await _userWriteRepository.InsertUserAsync(command.user);
         }
     }
 }
