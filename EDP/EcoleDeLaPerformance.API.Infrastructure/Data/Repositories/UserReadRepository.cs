@@ -25,6 +25,9 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
                     .ThenInclude(uf => uf.Evaluation)
                 .Include(u => u.UsersFormations)
                     .ThenInclude(uf => uf.Document)
+                .Include(u => u.Plannings)
+                    .ThenInclude(x => x.PlanningsTasks)
+                    .ThenInclude(x => x.Task)
                 .FirstOrDefaultAsync(u => u.Email == userEmail);
         }
         public async Task<User?> GetUserByIdAsync(int userId)
@@ -41,6 +44,9 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
                     .ThenInclude(uf => uf.Evaluation)
                 .Include(u => u.UsersFormations)
                     .ThenInclude(uf => uf.Document)
+                .Include(u => u.Plannings)
+                    .ThenInclude(x => x.PlanningsTasks)
+                    .ThenInclude(x => x.Task)
                 .FirstOrDefaultAsync(u => u.Id == userId);
         }
         public async Task<List<User>> GetUsersAsync()

@@ -22,7 +22,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
         }
         public async System.Threading.Tasks.Task DeleteEvaluationAsync(int evaluationId)
         {
-            await _parcoursPerformanceCommercialeContext.Briefs.Where(p => p.Id == evaluationId).ExecuteDeleteAsync();
+            await _parcoursPerformanceCommercialeContext.Evaluations.Where(p => p.Id == evaluationId).ExecuteDeleteAsync();
         }
         public async System.Threading.Tasks.Task UpdateEvaluationAsync(Evaluation evaluation)
         {

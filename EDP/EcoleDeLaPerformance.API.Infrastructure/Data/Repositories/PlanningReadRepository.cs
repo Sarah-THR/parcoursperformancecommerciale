@@ -16,6 +16,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
         {
             var result = await _parcoursPerformanceCommercialeContext.Plannings
                 .Include(x => x.PlanningsTasks)
+                .ThenInclude(x => x.Task)
                 .Where(x => x.UserId == userId &&
                     x.CreatedAt >= startDateWeek &&
                     x.CreatedAt <= endDateWeek)

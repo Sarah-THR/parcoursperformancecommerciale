@@ -5,11 +5,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using IMapper = AutoMapper.IMapper;
 
-namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
+namespace EcoleDeLaPerformance.API.Host.Endpoints.Briefs
 {
-    [HttpPut("briefs/"), AllowAnonymous]
+    [HttpPut("briefs"), AllowAnonymous]
 
-    public class UpdateBriefEndPoint : Endpoint<BriefRequest>
+    public class UpdateBriefEndPoint : Endpoint<UpdateBriefRequest>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -20,7 +20,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
             _mediator = mediator;
         }
 
-        public override async Task HandleAsync(BriefRequest req, CancellationToken ct)
+        public override async Task HandleAsync(UpdateBriefRequest req, CancellationToken ct)
         {
             try
             {

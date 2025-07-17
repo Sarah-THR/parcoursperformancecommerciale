@@ -45,6 +45,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure._Helpers
             services.AddScoped<IStatusReadRepository, StatusReadRepository>();
             services.AddScoped<IPlanningReadRepository, PlanningReadRepository>();
             services.AddScoped<IPlanningWriteRepository, PlanningWriteRepository>();
+            services.AddScoped<IPlanningsTaskWriteRepository, PlanningsTaskWriteRepository>();
             services.AddScoped<ITurnoverReadRepository, TurnoverReadRepository>();
             services.AddScoped<IDocumentWriteRepository, DocumentWriteRepository>();
             services.AddScoped<IDocumentReadRepository, DocumentReadRepository>();

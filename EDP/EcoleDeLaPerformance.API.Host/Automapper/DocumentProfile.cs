@@ -11,6 +11,8 @@ namespace EcoleDeLaPerformance.API.Host.Automapper
         {
             CreateMap<Document, DocumentResponse>();
             CreateMap<DocumentRequest, Document>();
+            CreateMap<CreateDocumentRequest, Document>();
+            CreateMap<UpdateDocumentRequest, Document>();
         }
     }
 }

@@ -8,7 +8,7 @@ using IMapper = AutoMapper.IMapper;
 
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Users
 {
-    [HttpGet("users/{UserId:int}"), AllowAnonymous]
+    [HttpGet("users/{Id:int}"), AllowAnonymous]
 
     public class GetUserByIdEndpoint(IMapper mapper, IMediator mediator) : Endpoint<UserByIdRequest, UserResponse>
     {

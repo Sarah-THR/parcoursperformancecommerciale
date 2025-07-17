@@ -15,8 +15,6 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.PlanningsTasks
 
         public DateTime UpdatedAt { get; set; }
 
-        public virtual PlanningResponse Planning { get; set; } = null!;
-
         public virtual TaskResponse Task { get; set; } = null!;
     }
 }

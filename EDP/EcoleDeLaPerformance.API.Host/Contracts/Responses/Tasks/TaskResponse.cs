@@ -12,7 +12,5 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Tasks
 
         public DateTime UpdatedAt { get; set; }
 
-        public virtual ICollection<PlanningsTaskResponse> PlanningsTasks { get; set; } = new List<PlanningsTaskResponse>();
-
     }
 }

@@ -11,6 +11,7 @@ namespace EcoleDeLaPerformance.API.Host.Automapper
         {
             CreateMap<Formation, FormationResponse>();
             CreateMap<FormationRequest, Formation>();
+            CreateMap<UpdateFormationRequest, Formation>();
         }
     }
 }

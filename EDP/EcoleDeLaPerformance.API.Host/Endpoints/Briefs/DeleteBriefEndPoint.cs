@@ -3,7 +3,7 @@ using EcoleDeLaPerformance.API.Host.Contracts.Requests.Briefs;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
+namespace EcoleDeLaPerformance.API.Host.Endpoints.Briefs
 {
     [HttpDelete("briefs/{Id:Int}"), AllowAnonymous]
 

@@ -12,7 +12,5 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Formations
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
-
-        public virtual ICollection<UsersFormationResponse> UsersFormations { get; set; } = new List<UsersFormationResponse>();
     }
 }

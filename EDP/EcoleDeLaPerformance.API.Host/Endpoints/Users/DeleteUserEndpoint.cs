@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Users
 {
-    [HttpDelete("users/{userId:int}"), AllowAnonymous]
+    [HttpDelete("users/{Id:int}"), AllowAnonymous]
     public class DeleteUserEndpoint : Endpoint<UserRequest>
     {
         private readonly IMediator _mediator;
@@ -18,7 +18,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Users
         {
             await _mediator.Send(new DeleteUserCommand
             {
-                userId = req.Id
+                Id = req.Id
             }, ct);
 
             await SendOkAsync(ct);

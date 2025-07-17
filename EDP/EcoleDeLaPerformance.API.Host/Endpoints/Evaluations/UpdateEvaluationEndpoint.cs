@@ -8,7 +8,7 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Evaluations
 {
     [HttpPut("evaluations"), AllowAnonymous]
-    public class UpdateEvaluationEndpoint : Endpoint<EvaluationRequest>
+    public class UpdateEvaluationEndpoint : Endpoint<UpdateEvaluationRequest>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -19,7 +19,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Evaluations
             _mediator = mediator;
         }
 
-        public override async Task HandleAsync(EvaluationRequest req, CancellationToken ct)
+        public override async Task HandleAsync(UpdateEvaluationRequest req, CancellationToken ct)
         {
             try
             {

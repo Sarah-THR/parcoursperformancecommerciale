@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Evaluations
 {
     [HttpDelete("evaluations/{Id:Int}"), AllowAnonymous]
-    public class DeleteFormationEndpoint : Endpoint<EvaluationRequest>
+    public class DeleteEvaluationEndpoint : Endpoint<EvaluationRequest>
     {
         private readonly IMediator _mediator;
-        public DeleteFormationEndpoint(IMediator mediator)
+        public DeleteEvaluationEndpoint(IMediator mediator)
         {
             _mediator = mediator;
         }

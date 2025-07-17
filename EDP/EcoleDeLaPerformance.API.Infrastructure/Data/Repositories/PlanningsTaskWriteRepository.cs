@@ -18,7 +18,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
             await _parcoursPerformanceCommercialeContext.SaveChangesAsync();
             return planningsTask;
         }
-        public async System.Threading.Tasks.Task UpdatePlanningAsync(PlanningsTask planningsTask)
+        public async System.Threading.Tasks.Task UpdatePlanningsTaskAsync(PlanningsTask planningsTask)
         {
             _parcoursPerformanceCommercialeContext.PlanningsTasks.Update(planningsTask);
             await _parcoursPerformanceCommercialeContext.SaveChangesAsync();

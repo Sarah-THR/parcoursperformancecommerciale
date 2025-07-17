@@ -11,6 +11,7 @@ namespace EcoleDeLaPerformance.API.Host.Automapper
         {
             CreateMap<Debrief, DebriefResponse>();
             CreateMap<DebriefRequest, Debrief>();
+            CreateMap<UpdateDebriefRequest, Debrief>();
         }
     }
 }

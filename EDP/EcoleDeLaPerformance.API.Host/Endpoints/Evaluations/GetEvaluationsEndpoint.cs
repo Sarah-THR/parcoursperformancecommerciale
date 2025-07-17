@@ -8,12 +8,12 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Evaluations
 {
     [HttpGet("evaluations"), AllowAnonymous]
-    public class GetFormationsEndpoint : EndpointWithoutRequest<IEnumerable<EvaluationResponse>>
+    public class GetEvaluationsEndpoint : EndpointWithoutRequest<IEnumerable<EvaluationResponse>>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public GetFormationsEndpoint(IMapper mapper, IMediator mediator)
+        public GetEvaluationsEndpoint(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
             _mediator = mediator;

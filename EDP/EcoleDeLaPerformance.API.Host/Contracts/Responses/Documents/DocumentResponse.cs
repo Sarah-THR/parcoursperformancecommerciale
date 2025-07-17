@@ -20,10 +20,5 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Documents
 
         public int? CategoryId { get; set; }
 
-        public virtual CategoryResponse? Category { get; set; }
-
-        public virtual UserResponse User { get; set; } = null!;
-
-        public virtual ICollection<UsersFormationResponse> UsersFormations { get; set; } = new List<UsersFormationResponse>();
     }
 }

@@ -34,7 +34,5 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.UsersFormations
         public virtual FormationResponse Formation { get; set; } = null!;
 
         public virtual StatusResponse? Status { get; set; }
-
-        public virtual UserResponse User { get; set; } = null!;
     }
 }

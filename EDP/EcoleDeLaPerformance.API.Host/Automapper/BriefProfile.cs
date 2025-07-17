@@ -11,6 +11,7 @@ namespace EcoleDeLaPerformance.API.Host.Automapper
         {
             CreateMap<Brief, BriefResponse>();
             CreateMap<BriefRequest, Brief>();
+            CreateMap<UpdateBriefRequest, Brief>();
         }
     }
 }

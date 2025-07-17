@@ -6,15 +6,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using IMapper = AutoMapper.IMapper;
 
-namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
+namespace EcoleDeLaPerformance.API.Host.Endpoints.Briefs
 {
     [HttpGet("briefs"), AllowAnonymous]
 
-    public class GetBriefByUserIdByUserEndpoint : Endpoint<BriefByUserRequest, IEnumerable<BriefResponse>>
+    public class GetBriefByUserIdEndpoint : Endpoint<BriefByUserRequest, IEnumerable<BriefResponse>>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-        public GetBriefByUserIdByUserEndpoint(IMapper mapper, IMediator mediator)
+        public GetBriefByUserIdEndpoint(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
             _mediator = mediator;

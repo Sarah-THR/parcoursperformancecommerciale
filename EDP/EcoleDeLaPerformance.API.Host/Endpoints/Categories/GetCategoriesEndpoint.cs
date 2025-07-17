@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using IMapper = AutoMapper.IMapper;
 
-namespace EcoleDeLaPerformance.API.Host.Endpoints.Classes
+namespace EcoleDeLaPerformance.API.Host.Endpoints.Categories
 {
     [HttpGet("categories"), AllowAnonymous]
     public class GetCategoriesEndpoint : EndpointWithoutRequest<IEnumerable<CategoryResponse>>

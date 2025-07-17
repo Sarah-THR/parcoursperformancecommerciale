@@ -8,7 +8,7 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Debriefs
 {
     [HttpPut("debriefs/"), AllowAnonymous]
-    public class UpdateDebriefEndpoint : Endpoint<DebriefRequest>
+    public class UpdateDebriefEndpoint : Endpoint<UpdateDebriefRequest>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -19,7 +19,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Debriefs
             _mediator = mediator;
         }
 
-        public override async Task HandleAsync(DebriefRequest req, CancellationToken ct)
+        public override async Task HandleAsync(UpdateDebriefRequest req, CancellationToken ct)
         {
             try
             {

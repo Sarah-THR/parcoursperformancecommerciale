@@ -8,7 +8,7 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Formations
 {
     [HttpPut("formations"), AllowAnonymous]
-    public class UpdateFormationEndpoint : Endpoint<FormationRequest>
+    public class UpdateFormationEndpoint : Endpoint<UpdateFormationRequest>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -19,7 +19,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Formations
             _mediator = mediator;
         }
 
-        public override async Task HandleAsync(FormationRequest req, CancellationToken ct)
+        public override async Task HandleAsync(UpdateFormationRequest req, CancellationToken ct)
         {
             try
             {

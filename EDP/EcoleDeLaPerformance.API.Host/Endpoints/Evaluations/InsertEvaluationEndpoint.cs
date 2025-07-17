@@ -9,12 +9,12 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Evaluations
 {
     [HttpPost("evaluations"), AllowAnonymous]
-    public class InsertFormationEndpoint : Endpoint<EvaluationRequest, EvaluationResponse>
+    public class InsertEvaluationEndpoint : Endpoint<EvaluationRequest, EvaluationResponse>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public InsertFormationEndpoint(IMapper mapper, IMediator mediator)
+        public InsertEvaluationEndpoint(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
             _mediator = mediator;

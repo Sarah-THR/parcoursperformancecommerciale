@@ -15,6 +15,5 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Plannings
 
         public virtual ICollection<PlanningsTaskResponse> PlanningsTasks { get; set; } = new List<PlanningsTaskResponse>();
 
-        public virtual UserResponse User { get; set; } = null!;
     }
 }

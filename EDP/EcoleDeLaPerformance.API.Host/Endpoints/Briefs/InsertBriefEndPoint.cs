@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using IMapper = AutoMapper.IMapper;
 
-namespace EcoleDeLaPerformance.API.Host.Endpoints.BriefNote
+namespace EcoleDeLaPerformance.API.Host.Endpoints.Briefs
 {
     [HttpPost("briefs"), AllowAnonymous]
 
