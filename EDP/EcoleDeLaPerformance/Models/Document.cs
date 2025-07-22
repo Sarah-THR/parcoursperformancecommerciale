@@ -1,27 +1,24 @@
-﻿namespace EcoleDeLaPerformance.Ui.Models
+﻿namespace EcoleDeLaPerformance.Ui.Models;
+
+public partial class Document
 {
-    public class Document
-    {
-        public int DocumentId { get; set; }
+    public int Id { get; set; }
 
-        public string Pdffile { get; set; } = null!;
+    public string Title { get; set; } = null!;
 
-        public string Title { get; set; } = null!;
+    public string ContentPath { get; set; } = null!;
 
-        public DateTime CreateDate { get; set; }
+    public int UserId { get; set; }
 
-        public DateTime? UpdateDate { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-        public int? CreateBy { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
-        public int? UpdateBy { get; set; }
+    public int? CategoryId { get; set; }
 
-        public int ClassId { get; set; }
+    public virtual Category? Category { get; set; }
 
-        public virtual Class Class { get; set; } = null!;
+    public virtual User User { get; set; } = null!;
 
-        public virtual User? CreateByNavigation { get; set; }
-
-        public virtual User UpdateByNavigation { get; set; } = null!;
-    }
+    public virtual ICollection<UsersFormation> UsersFormations { get; set; } = new List<UsersFormation>();
 }

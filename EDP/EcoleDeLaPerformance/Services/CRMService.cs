@@ -1,9 +1,9 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using EcoleDeLaPerformance.Ui.Models;
 using System.Text;
 using System.Net;
+using EcoleDeLaPerformance.Ui.Models.CRM;
 
 namespace EcoleDeLaPerformance.Ui.Services
 {
@@ -22,7 +22,7 @@ namespace EcoleDeLaPerformance.Ui.Services
             _token = new Token();
         }
 
-        public async Task GetCrmTokenAsync()
+        public async System.Threading.Tasks.Task GetCrmTokenAsync()
         {
             var crmSettings = _configuration.GetSection("CRMAPI");
 

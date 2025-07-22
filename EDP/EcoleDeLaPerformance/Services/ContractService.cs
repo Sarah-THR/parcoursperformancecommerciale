@@ -1,9 +1,6 @@
 ﻿using EcoleDeLaPerformance.Ui.Interfaces;
-using EcoleDeLaPerformance.Ui.Models;
-using Newtonsoft.Json;
+using EcoleDeLaPerformance.Ui.Models.BI;
 using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
 
 namespace EcoleDeLaPerformance.Ui.Services
 {
@@ -18,20 +15,20 @@ namespace EcoleDeLaPerformance.Ui.Services
             _configuration = configuration;
         }
 
-        public List<SignedContract?> GetContractsByUserName(string commercial)
+        public List<EcolePerformanceSm?> GetContractsByUserName(string commercial)
         {
             var response = _httpClient.GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/contracts/{commercial}").Result;
 
             return response.StatusCode switch
             {
-                HttpStatusCode.OK => response.Content.ReadFromJsonAsync<List<SignedContract?>>().Result,
+                HttpStatusCode.OK => response.Content.ReadFromJsonAsync<List<EcolePerformanceSm?>>().Result,
                 HttpStatusCode.NoContent => null,
                 HttpStatusCode.BadRequest => throw new Exception("Une erreur est survenue."),
                 _ => throw new Exception($"Une erreur est survenue lors de la récupération des contrats de l'utilisateur : {response.Content.ReadAsStringAsync().Result}"),
             };
         }
 
-        public List<SignedContract?> GetContractsByPeriod(string commercial, DateOnly firstDay, DateOnly lastDay)
+        public List<EcolePerformanceSm?> GetContractsByPeriod(string commercial, DateOnly firstDay, DateOnly lastDay)
         {
             var contracts = GetContractsByUserName(commercial);
             return contracts?.Where(x => x.DateSignature >= firstDay && x.DateSignature <= lastDay).ToList();
@@ -83,7 +80,7 @@ namespace EcoleDeLaPerformance.Ui.Services
 
             if (response.StatusCode == HttpStatusCode.OK)
             {
-                var contracts = response.Content.ReadFromJsonAsync<List<ContractNexlease>>().Result;
+                var contracts = response.Content.ReadFromJsonAsync<List<NexleaseContract>>().Result;
 
                 var filteredContracts = contracts.Where(c => c.do_date >= startDate && c.do_date <= endDate).ToList();
 

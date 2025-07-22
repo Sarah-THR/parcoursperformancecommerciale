@@ -1,39 +1,50 @@
-﻿namespace EcoleDeLaPerformance.Ui.Models
+﻿namespace EcoleDeLaPerformance.Ui.Models;
+
+public partial class User
 {
-    public class User
-    {
-        public int UserId { get; set; }
+    public int Id { get; set; }
 
-        public string EmailAdress { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
-        public string FirstName { get; set; } = null!;
+    public string Email { get; set; } = null!;
 
-        public string LastName { get; set; } = null!;
+    public string? ProfilePicturePath { get; set; }
 
-        public string Entity { get; set; } = null!;
+    public string? Entity { get; set; }
 
-        public DateTime? StartDate { get; set; }
+    public DateOnly? StartFollowUp { get; set; }
 
-        public DateTime? EndDate { get; set; }
+    public DateOnly? EndFollowUp { get; set; }
 
-        public byte[]? ProfilePicture { get; set; }
+    public int? SupervisorId { get; set; }
 
-        public string Role { get; set; } = null!;
+    public int? DirectorId { get; set; }
 
-        public int? Supervisor { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-        public bool? IsActive { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
-        public virtual ICollection<BriefNote>? BriefNotes { get; set; } = new List<BriefNote>();
+    public DateTime? DeletedAt { get; set; }
 
-        public virtual ICollection<Document>? DocumentCreateByNavigations { get; set; } = new List<Document>();
+    public int? GradeId { get; set; }
 
-        public virtual ICollection<Document>? DocumentUpdateByNavigations { get; set; } = new List<Document>();
+    public virtual ICollection<Brief> Briefs { get; set; } = new List<Brief>();
 
-        public virtual ICollection<User>? InverseSupervisorNavigation { get; set; } = new List<User>();
+    public virtual ICollection<Debrief> Debriefs { get; set; } = new List<Debrief>();
 
-        public virtual User? SupervisorNavigation { get; set; } = null!;
+    public virtual User? Director { get; set; }
 
-        public virtual ICollection<Week>? Weeks { get; set; } = new List<Week>();
-    }
+    public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
+
+    public virtual Grade? Grade { get; set; }
+
+    public virtual ICollection<User> InverseDirector { get; set; } = new List<User>();
+
+    public virtual ICollection<User> InverseSupervisor { get; set; } = new List<User>();
+
+    public virtual ICollection<Planning> Plannings { get; set; } = new List<Planning>();
+
+    public virtual User? Supervisor { get; set; }
+
+    public virtual ICollection<UsersFormation> UsersFormations { get; set; } = new List<UsersFormation>();
 }

@@ -43,7 +43,7 @@ builder.Services.AddMudServices();
 builder.Services.AddMudBlazorDialog();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISignedContractService, SignedContractService>();
-builder.Services.AddScoped<IBriefNoteService, BriefNoteService>();
+builder.Services.AddScoped<IBriefService, BriefService>();
 builder.Services.AddScoped<IWeekService, WeekService>();    
 builder.Services.AddScoped<IHalfDayPlanningService, HalfDayPlanningService>();    
 builder.Services.AddScoped<IClassService, ClassService>();
