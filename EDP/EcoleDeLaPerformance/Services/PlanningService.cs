@@ -39,10 +39,10 @@ namespace EcoleDeLaPerformance.Ui.Services
         }
         public async System.Threading.Tasks.Task DeletePlanningAsync(int Id)
         {
-            var response = await new HttpClient().DeleteAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/formations/{Id}");
+            var response = await new HttpClient().DeleteAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/plannings/{Id}");
 
             if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception($"Une erreur est survenue lors de la suppression de la formation : {await response.Content.ReadAsStringAsync()}");
+                throw new Exception($"Une erreur est survenue lors de la suppression du planning : {await response.Content.ReadAsStringAsync()}");
         }
         public async System.Threading.Tasks.Task UpdatePlanningAsync(Planning planning)
         {

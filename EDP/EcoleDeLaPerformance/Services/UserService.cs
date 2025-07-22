@@ -1,206 +1,103 @@
 ﻿using EcoleDeLaPerformance.Ui.Interfaces;
 using EcoleDeLaPerformance.Ui.Models;
+using Microsoft.Identity.Web;
+using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
-using Newtonsoft.Json;
-using Microsoft.Identity.Web;
-using Newtonsoft.Json.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using EcoleDeLaPerformance.Ui._Helper;
-using System.DirectoryServices;
-using EcoleDeLaPerformance.Ui.Helper;
 
 namespace EcoleDeLaPerformance.Ui.Services
 {
     public class UserService : IUserService
     {
         private readonly IConfiguration _configuration;
-        private readonly IWeekService _weekService;
         private readonly HttpClient _httpClient;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ITokenAcquisition _tokenAcquisitionService;
         private readonly CRMService _crmService;
 
-        public UserService(IConfiguration configuration, IWeekService weekService, IHttpClientFactory httpClientFactory, ITokenAcquisition tokenAcquisitionService, CRMService crmService)
+        public UserService(IConfiguration configuration, IHttpClientFactory httpClientFactory, ITokenAcquisition tokenAcquisitionService, CRMService crmService)
         {
             _configuration = configuration;
-            _weekService = weekService;
             _crmService = crmService;
             _tokenAcquisitionService = tokenAcquisitionService;
             _httpClientFactory = httpClientFactory;
             _httpClient = _httpClientFactory.CreateClient();
         }
-
-        public async Task<User> CreateUserAsync(User user)
-        {
-            using HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(user), new MediaTypeHeaderValue("application/json"));
-            var response = await new HttpClient().PostAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users", httpContent);
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var createdUser = await response.Content.ReadFromJsonAsync<User?>();
-                if (createdUser.Role == "Student")
-                {
-                    await CreateWeeksForUserAsync(createdUser);
-                }
-                return createdUser!;
-            }
-            else
-            {
-                throw new Exception(response.StatusCode == HttpStatusCode.BadRequest ?
-                    "L'utilisateur est obligatoire." :
-                    $"Une erreur est survenue lors de l'ajout de l'utilisateur : {await response.Content.ReadAsStringAsync()}");
-            }
-        }
-
-        public async Task<User?> GetUserByEmailAsync(string email)
-        {
-            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users/{email}");
-
-            return response.StatusCode switch
-            {
-                HttpStatusCode.OK => await response.Content.ReadFromJsonAsync<User?>(),
-                HttpStatusCode.NoContent => null,
-                HttpStatusCode.BadRequest => throw new Exception("L'email est obligatoire."),
-                _ => throw new Exception($"Une erreur est survenue lors de la récupération de l'utilisateur : {await response.Content.ReadAsStringAsync()}"),
-            };
-        }
-
         public async Task<List<User?>> GetUsersAsync()
         {
             var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users");
 
-            switch (response.StatusCode)
+            return response.StatusCode switch
             {
-                case HttpStatusCode.OK:
-                    var users = await response.Content.ReadFromJsonAsync<List<User>>();
-                    if (users != null)
-                    {
-                        return users.Where(x => x.IsActive == true).ToList();
-                    }
-                    else
-                    {
-                        throw new Exception("La réponse de l'API ne contient aucun utilisateur.");
-                    }
-                case HttpStatusCode.BadRequest:
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Une erreur est survenue lors de la récupération des utilisateurs : {errorMessage}");
-                default:
-                    throw new Exception($"La requête a retourné un code d'état HTTP inattendu : {response.StatusCode}");
-            }
+                HttpStatusCode.OK => await response.Content.ReadFromJsonAsync<List<User?>>(),
+                HttpStatusCode.NoContent => null,
+                _ => throw new Exception($"Une erreur est survenue lors de la récupération des Users : {await response.Content.ReadAsStringAsync()}"),
+            };
         }
-
-        public async Task<List<User?>> GetDeletedUsersAsync()
+        public async Task<User> GetUserByEmailAsync(string email)
         {
-            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users");
+            var response = _httpClient.GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users/{email}").Result;
 
-            switch (response.StatusCode)
+            return response.StatusCode switch
             {
-                case HttpStatusCode.OK:
-                    var users = await response.Content.ReadFromJsonAsync<List<User>>();
-                    if (users != null)
-                    {
-                        return users.Where(x => x.IsActive == false).ToList();
-                    }
-                    else
-                    {
-                        throw new Exception("La réponse de l'API ne contient aucun utilisateur.");
-                    }
-                case HttpStatusCode.BadRequest:
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Une erreur est survenue lors de la récupération des utilisateurs : {errorMessage}");
-                default:
-                    throw new Exception($"La requête a retourné un code d'état HTTP inattendu : {response.StatusCode}");
-            }
+                HttpStatusCode.OK => response.Content.ReadFromJsonAsync<User>().Result,
+                HttpStatusCode.BadRequest => throw new Exception("Une erreur est survenue."),
+                _ => throw new Exception($"Une erreur est survenue : {response.Content.ReadAsStringAsync().Result}"),
+            };
         }
-
-        public async Task<List<User?>> GetStudentsAsync()
+        public async Task<User> GetUserByIdAsync(int id)
         {
-            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users");
+            var response = _httpClient.GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users/{id}").Result;
 
-            switch (response.StatusCode)
+            return response.StatusCode switch
             {
-                case HttpStatusCode.OK:
-                    var users = await response.Content.ReadFromJsonAsync<List<User>>();
-                    if (users != null)
-                    {
-                        return users.Where(x => x.Role == "Student" && x.IsActive == true).ToList();
-                    }
-                    else
-                    {
-                        throw new Exception("La réponse de l'API ne contient aucun utilisateur.");
-                    }
-                case HttpStatusCode.BadRequest:
-                    var errorMessage = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"Une erreur est survenue lors de la récupération des utilisateurs : {errorMessage}");
-                default:
-                    throw new Exception($"La requête a retourné un code d'état HTTP inattendu : {response.StatusCode}");
-            }
+                HttpStatusCode.OK => response.Content.ReadFromJsonAsync<User>().Result,
+                HttpStatusCode.BadRequest => throw new Exception("Une erreur est survenue."),
+                _ => throw new Exception($"Une erreur est survenue : {response.Content.ReadAsStringAsync().Result}"),
+            };
         }
-
-        public async Task CreateWeeksForUserAsync(User user)
+        public async Task<User?> InsertUserAsync(User user)
         {
-            var weeks = await _weekService.GetWeeksByUserIdAsync(user.UserId);
+            using HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(user), new MediaTypeHeaderValue("application/json"));
+            var response = await new HttpClient().PostAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users", httpContent);
 
-            var startDate = user.StartDate.Value;
-            int daysUntilPreviousMonday = ((int)startDate.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
-            var adjustedStartDate = startDate.AddDays(-daysUntilPreviousMonday);
 
-            if (weeks == null)
-            {
-                for (int i = 0; i < 24; i++)
-                {
-                    var weekStartDate = adjustedStartDate.AddDays(i * 7);
-                    var weekEndDate = weekStartDate.AddDays(7);
-
-                    var weekToCreate = new Week
-                    {
-                        WeekNumber = i + 1,
-                        StartDateWeek = DateOnly.FromDateTime(weekStartDate),
-                        EndDateWeek = DateOnly.FromDateTime(weekEndDate),
-                        UserId = user.UserId,
-                        PeriodNumber = (i / 8) + 1
-                    };
-                    await _weekService.CreateWeekAsync(weekToCreate);
-                }
-            }
+            return (response.StatusCode == HttpStatusCode.OK) ? (await response.Content.ReadFromJsonAsync<User?>())! :
+                throw new Exception(response.StatusCode == HttpStatusCode.BadRequest ?
+                "L'user a crée est obligatoire." :
+                $"Une erreur est survenue lors de l'ajout du user : {await response.Content.ReadAsStringAsync()}");
         }
+        public async System.Threading.Tasks.Task DeleteUserAsync(int Id)
+        {
+            var response = await new HttpClient().DeleteAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users/{Id}");
 
-        public async Task<User> UpdateUserAsync(User user)
+            if (response.StatusCode != HttpStatusCode.OK)
+                throw new Exception($"Une erreur est survenue lors de la suppression du user : {await response.Content.ReadAsStringAsync()}");
+        }
+        public async System.Threading.Tasks.Task UpdateUserAsync(User user)
         {
             using HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(user), new MediaTypeHeaderValue("application/json"));
             var response = await new HttpClient().PutAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users", httpContent);
-            if (response.StatusCode == HttpStatusCode.OK)
+
+            switch (response.StatusCode)
             {
-                var updatedUser = await response.Content.ReadFromJsonAsync<User?>();
-                return updatedUser!;
-            }
-            else
-            {
-                throw new Exception(response.StatusCode == HttpStatusCode.BadRequest ?
-                    "L'utilisateur est obligatoire." :
-                    $"Une erreur est survenue lors de l'update de l'utilisateur : {await response.Content.ReadAsStringAsync()}");
+                case HttpStatusCode.OK:
+                    break;
+
+                case HttpStatusCode.BadRequest:
+                    throw new Exception("Le user à modifier est obligatoire.");
+
+                case HttpStatusCode.NotFound:
+                    throw new Exception($"Le user avec l'id {user.Id} n'existe pas.");
+
+                default:
+                    throw new Exception($"Une erreur est survenue lors de modification du user : {await response.Content.ReadAsStringAsync()} avec le status code : {response.StatusCode}.");
             }
         }
 
-        public async Task<List<User?>> GetAllApprenticesBySupervisorId(int supervisorId)
-        {
-            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users");
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var users = await response.Content.ReadFromJsonAsync<List<User?>>();
-                return users.Where(x => x.Supervisor == supervisorId && x.IsActive == true).ToList();
-            }
-            else
-            {
-                throw new Exception(response.StatusCode == HttpStatusCode.BadRequest ?
-                    "L'Id du superviseur est obligatoire." :
-                    $"Une erreur est survenue lors de la récupération des utilisateurs : {await response.Content.ReadAsStringAsync()}");
-            }
-        }
-
+        #region APICRM
         public async Task<decimal> GetStudentBonusAsync(string name, DateOnly startDate, DateOnly endDate)
         {
             try
@@ -289,39 +186,6 @@ namespace EcoleDeLaPerformance.Ui.Services
             }
         }
 
-
-        public async Task DeleteUserAsync(int userId)
-        {
-            var response = await new HttpClient().DeleteAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users/{userId}");
-
-            if (response.StatusCode != HttpStatusCode.OK)
-                throw new Exception($"Une erreur est survenue lors de la suppression de l'utilisateur : {await response.Content.ReadAsStringAsync()}");
-        }
-
-        public User? GetUserAD(string email)
-        {
-            using DirectorySearcher dirsearcher = new(Domain.GetDirectoryEntry(),
-                                                          $"(&(objectClass=user)(mail=*{email}*))",
-                                                          new string[] { "sn", "givenName", "mail", "company" });
-
-            var user = dirsearcher.FindOne();
-            if (user != null)
-            {
-                return new User()
-                {
-                    LastName = user.GetPropertyValue("sn"),
-                    FirstName = user.GetPropertyValue("givenName"),
-                    EmailAdress = user.GetPropertyValue("mail"),
-                    Entity = user.GetPropertyValue("company"),
-                };
-            }
-            else
-            {
-                return new User();
-            }
-        }
-
-        #region APICRM
         public async Task<decimal> GetUserTurnover(string email, DateOnly beginningDate, DateOnly endingDate)
         {
             await _crmService.GetCrmTokenAsync();

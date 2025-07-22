@@ -4,17 +4,13 @@ namespace EcoleDeLaPerformance.Ui.Interfaces
 {
     public interface IUserService
     {
-        Task<User> CreateUserAsync(User user);
-        Task<User?> GetUserByEmailAsync(string email);
         Task<List<User?>> GetUsersAsync();
-        Task<List<User?>> GetDeletedUsersAsync();
-        Task<List<User?>> GetStudentsAsync();
-        Task CreateWeeksForUserAsync(User user);
-        Task<User> UpdateUserAsync(User user);
-        Task<List<User?>> GetAllApprenticesBySupervisorId(int supervisorId);
+        Task<User> GetUserByEmailAsync(string email);
+        Task<User> GetUserByIdAsync(int id);
+        Task<User?> InsertUserAsync(User user);
+        System.Threading.Tasks.Task DeleteUserAsync(int Id);
+        System.Threading.Tasks.Task UpdateUserAsync(User user);
         Task<decimal> GetStudentBonusAsync(string name, DateOnly startDate, DateOnly endDate);
-        Task DeleteUserAsync(int userId);
-        User? GetUserAD(string email);
         Task<decimal> GetUserTurnover(string email, DateOnly beginningDate, DateOnly endingDate);
 
         Task<int> GetNbOpenAccountsAsync(string name);
