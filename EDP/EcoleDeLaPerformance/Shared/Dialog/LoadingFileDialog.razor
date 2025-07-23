@@ -2,79 +2,77 @@
 @using EcoleDeLaPerformance.Ui.Models
 @using EcoleDeLaPerformance.Ui.Services
 @inject StateContainerService stateContainerService
-@inject PdfService PdfService
-@inject IClassService classService
 @inject ISnackbar Snackbar
 
-<MudDialog>
+@* <MudDialog>
     <DialogContent>
         <h6>Chargement du fichier en cours...</h6>
         <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
     </DialogContent>
-</MudDialog>
+</MudDialog> *@
 @code {
-    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+    // [CascadingParameter] MudDialogInstance mudDialog { get; set; }
 
-    [Parameter]
-    public IBrowserFile file { get; set; }
+    // [Parameter]
+    // public IBrowserFile file { get; set; }
 
-    [Parameter]
-    public string title { get; set; }
+    // [Parameter]
+    // public string title { get; set; }
 
-    [Parameter]
-    public Document newDocument { get; set; }
+    // [Parameter]
+    // public Document newDocument { get; set; }
 
-    [Parameter]
-    public string selectedClassId { get; set; }
+    // [Parameter]
+    // public string selectedClassId { get; set; }
 
-    [Parameter]
-    public User userInfo { get; set; }
+    // [Parameter]
+    // public User userInfo { get; set; }
 
-    [Parameter]
-    public bool isUpdate { get; set; }
+    // [Parameter]
+    // public bool isUpdate { get; set; }
 
-    byte[] compressedPdfBytes;
+    // byte[] compressedPdfBytes;
 
-    protected override async Task OnInitializedAsync()
-    {
-        bool isSuccess = false;
-        using (var stream = new MemoryStream())
-        {
-            await file.OpenReadStream(10L * 1024 * 1024).CopyToAsync(stream);
-            byte[] fileBytes = stream.ToArray();
-            long fileSizeInBytes = fileBytes.Length;
-            double fileSizeInMB = fileSizeInBytes / (1024.0 * 1024.0);
-            if (fileSizeInMB >= 2.0)
-            {
-                compressedPdfBytes = await PdfService.CompressPdf(fileBytes);
-            }
-            else
-            {
-                compressedPdfBytes = fileBytes;
-            }
-            if(compressedPdfBytes != null)
-            {
-                newDocument.Pdffile = Convert.ToBase64String(compressedPdfBytes);
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     bool isSuccess = false;
+    //     using (var stream = new MemoryStream())
+    //     {
+    //         await file.OpenReadStream(10L * 1024 * 1024).CopyToAsync(stream);
+    //         byte[] fileBytes = stream.ToArray();
+    //         long fileSizeInBytes = fileBytes.Length;
+    //         double fileSizeInMB = fileSizeInBytes / (1024.0 * 1024.0);
+    //         if (fileSizeInMB >= 2.0)
+    //         {
+    //             compressedPdfBytes = await PdfService.CompressPdf(fileBytes);
+    //         }
+    //         else
+    //         {
+    //             compressedPdfBytes = fileBytes;
+    //         }
+    //         if(compressedPdfBytes != null)
+    //         {
+    //             newDocument.Pdffile = Convert.ToBase64String(compressedPdfBytes);
 
-                if (!isUpdate)
-                {
-                    await classService.CreateDocumentAsync(newDocument);
-                    Snackbar.Add("Le document a bien été ajouté", Severity.Success);
-                }
-                else
-                {
-                    await classService.UpdateDocumentAsync(newDocument);
-                    Snackbar.Add("Le document a bien été mis à jour", Severity.Success);
-                }
-                isSuccess = true;
-            }
-            else
-            {
-                Snackbar.Add("Une erreur est survenue lors de la compression du fichier PDF.", Severity.Error);
-            }
-        }
+    //             if (!isUpdate)
+    //             {
+    //                 await classService.CreateDocumentAsync(newDocument);
+    //                 Snackbar.Add("Le document a bien été ajouté", Severity.Success);
+    //             }
+    //             else
+    //             {
+    //                 await classService.UpdateDocumentAsync(newDocument);
+    //                 Snackbar.Add("Le document a bien été mis à jour", Severity.Success);
+    //             }
+    //             isSuccess = true;
+    //         }
+    //         else
+    //         {
+    //             Snackbar.Add("Une erreur est survenue lors de la compression du fichier PDF.", Severity.Error);
+    //         }
+    //     }
 
 
-        mudDialog.Close(DialogResult.Ok(isSuccess));
-    }
+    //     mudDialog.Close(DialogResult.Ok(isSuccess));
+    // }
 }

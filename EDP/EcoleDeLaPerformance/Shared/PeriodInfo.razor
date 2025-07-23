@@ -5,13 +5,11 @@
 @inject StateContainerService stateContainerService
 @inject IConfiguration configuration
 @inject IBriefService briefNoteService;
-@inject IWeekService weekService;
-@inject IHalfDayPlanningService halfDayPlanningService
 @inject IUserService userService
 @inject IContractService contractService
 
 <div class="d-flex justify-content-center mt-8">
-    @if (isInitialized)
+   @*  @if (isInitialized)
     {
         <MudGrid Justify="Justify.Center">
             <MudItem sm="12" md="12" lg="6" Class="w-100">
@@ -51,15 +49,12 @@
                     </MudGrid>
                 </MudPaper>
             </MudItem>
-            @if (userInfo.Role == "Commercial junior")
-            {
                 <MudItem sm="12" md="12" lg="12" Class="mt-5 w-100">
                     <MudPaper Class="py-8 px-4" Elevation="3">
-                        <h3><img src="/images/Calendar.png" class="ms-2" width="30px" /> Semaine @currentWeek.PeriodNumber du @currentWeek.StartDateWeek au @currentWeek.EndDateWeek.AddDays(-3)</h3>
+                        <h3><img src="/images/Calendar.png" class="ms-2" width="30px" /> Semaine</h3>
                         <Planning halfDayPlanningsList="halfDayPlanningsList" />
                     </MudPaper>
                 </MudItem>
-            }
             @if (!summary)
             {
                 <MudItem sm="12" md="12" lg="12" Class="mt-4 w-100">
@@ -80,7 +75,7 @@
                             <MudItem sm="12" md="12" lg="3" Class="w-100">
                                 @if (meetingsList.First().Amount != 0)
                                 {
-                                    @* <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="@meetingsBriefNote" /> *@
+                                    <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="@meetingsBriefNote" />
                                     <h4 class="fw-bold">Rendez-vous à venir</h4>
                                     <h4 class="pt-5" style="font-size:40px">@meetingsList.First().Amount</h4>
                                 }
@@ -134,7 +129,7 @@
                         <MudItem sm="12" md="12" lg="3" Class="w-100">
                             @if (meetingsList.First().Amount != 0)
                             {
-                                @* <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="@meetingsBriefNote" /> *@
+                                <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="@meetingsBriefNote" />
                                 <h4 class="fw-bold">Rendez-vous à venir</h4>
                                 <h4 class="pt-5" style="font-size:40px">@meetingsList.First().Amount</h4>
                             }
@@ -191,106 +186,106 @@
     else
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-    }
+    } *@
 </div>
 
 @code {
-    [Parameter]
-    public int period { get; set; }
+    // [Parameter]
+    // public int period { get; set; }
 
-    [Parameter]
-    public Week currentWeek { get; set; }
+    // [Parameter]
+    // public Week currentWeek { get; set; }
 
-    [Parameter]
-    public User userInfo { get; set; }
+    // [Parameter]
+    // public User userInfo { get; set; }
 
-    [Parameter]
-    public bool summary { get; set; } = false;
+    // [Parameter]
+    // public bool summary { get; set; } = false;
 
-    HttpClient httpClient = new HttpClient();
-    SalesUpService salesUpService;
+    // HttpClient httpClient = new HttpClient();
+    // SalesUpService salesUpService;
 
-    private bool isInitialized { get; set; }
-    string goal;
-    int contractsList = 0;
-    List<CRMData> contractsListForDonutChart = new List<CRMData>();
-    List<CRMData> meetingsList = new List<CRMData>();
-    CRMData openAccounts = new CRMData();
-    // string meetingsBriefNote;
-    public decimal turnover;
-    List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
-    public List<string> commitmentList = new List<string>();
-    public List<string> fileToCheckList = new List<string>();
-    int saleContractList = 0;
-    int nexleaseContractList = 0;
-    public decimal bonus;
-    string salesUpToken;
+    // private bool isInitialized { get; set; }
+    // string goal;
+    // int contractsList = 0;
+    // List<CRMData> contractsListForDonutChart = new List<CRMData>();
+    // List<CRMData> meetingsList = new List<CRMData>();
+    // CRMData openAccounts = new CRMData();
+    // // string meetingsBriefNote;
+    // public decimal turnover;
+    // List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
+    // public List<string> commitmentList = new List<string>();
+    // public List<string> fileToCheckList = new List<string>();
+    // int saleContractList = 0;
+    // int nexleaseContractList = 0;
+    // public decimal bonus;
+    // string salesUpToken;
 
-    protected override async Task OnInitializedAsync()
-    {
-        #region Period
-        if (period == 1)
-        {
-            goal = "5 contrats SAUVEGARDE + 4 ouvertures de compte PRVLT";
-        }
-        else if (period == 2)
-        {
-            goal = "5 contrats MAINTENANCE + 2 contrats sauvegarde + 2 ouvertures de compte PRVLT";
-        }
-        else if (period == 3)
-        {
-            goal = "5 contrats SÉCURITÉ + 1 contrat MAINTENANCE + 1 contrat SAUVEGARDE";
-        };
-        #endregion
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     #region Period
+    //     if (period == 1)
+    //     {
+    //         goal = "5 contrats SAUVEGARDE + 4 ouvertures de compte PRVLT";
+    //     }
+    //     else if (period == 2)
+    //     {
+    //         goal = "5 contrats MAINTENANCE + 2 contrats sauvegarde + 2 ouvertures de compte PRVLT";
+    //     }
+    //     else if (period == 3)
+    //     {
+    //         goal = "5 contrats SÉCURITÉ + 1 contrat MAINTENANCE + 1 contrat SAUVEGARDE";
+    //     };
+    //     #endregion
 
-        var periodFirstDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
-        var periodLastDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
+    //     var periodFirstDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
+    //     var periodLastDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
 
-        var studentName = (userInfo.FirstName + " " + userInfo.LastName);
-        contractsList = contractService.GetNbContractsByUser(studentName, periodFirstDay, periodLastDay);
-        saleContractList = contractService.GetNbContractsSaleByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
-        nexleaseContractList = contractService.GetNbContractsNexleaseByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+    //     var studentName = (userInfo.FirstName + " " + userInfo.LastName);
+    //     contractsList = contractService.GetNbContractsByUser(studentName, periodFirstDay, periodLastDay);
+    //     saleContractList = contractService.GetNbContractsSaleByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+    //     nexleaseContractList = contractService.GetNbContractsNexleaseByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
 
-        var briefNoteList = await briefNoteService.GetWeekNoteByUserId(currentWeek.StartDateWeek.ToDateTime(new TimeOnly()), currentWeek.EndDateWeek.ToDateTime(new TimeOnly()), userInfo.UserId);
-        if (briefNoteList.Count != 0)
-        {
-            // meetingsBriefNote = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 2).Select(x => x.TextNote).FirstOrDefault();
-            commitmentList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 0).Select(x => x.TextNote).ToList();
-            fileToCheckList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 1).Select(x => x.TextNote).ToList();
-        }
+    //     var briefNoteList = await briefNoteService.GetWeekNoteByUserId(currentWeek.StartDateWeek.ToDateTime(new TimeOnly()), currentWeek.EndDateWeek.ToDateTime(new TimeOnly()), userInfo.UserId);
+    //     if (briefNoteList.Count != 0)
+    //     {
+    //         // meetingsBriefNote = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 2).Select(x => x.TextNote).FirstOrDefault();
+    //         commitmentList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 0).Select(x => x.TextNote).ToList();
+    //         fileToCheckList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 1).Select(x => x.TextNote).ToList();
+    //     }
 
-        halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
+    //     halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
 
-        var nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, periodFirstDay, periodLastDay);
+    //     var nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, periodFirstDay, periodLastDay);
 
-        turnover = await userService.GetUserTurnover(userInfo.EmailAdress, periodFirstDay, periodLastDay);
+    //     turnover = await userService.GetUserTurnover(userInfo.EmailAdress, periodFirstDay, periodLastDay);
 
-        await SalesUpInitialization();
+    //     await SalesUpInitialization();
 
-        meetingsList.Add(new CRMData { Label = "Rendez-vous à venir", Amount = nbAppointments });
+    //     meetingsList.Add(new CRMData { Label = "Rendez-vous à venir", Amount = nbAppointments });
 
-        var nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(userInfo.FirstName + " " + userInfo.LastName.ToUpper(), periodFirstDay, periodLastDay);
-        openAccounts = new CRMData { Label = "", Amount = nbOpenAccounts };
+    //     var nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(userInfo.FirstName + " " + userInfo.LastName.ToUpper(), periodFirstDay, periodLastDay);
+    //     openAccounts = new CRMData { Label = "", Amount = nbOpenAccounts };
 
-        isInitialized = true;
-    }
+    //     isInitialized = true;
+    // }
 
-    public async Task SalesUpInitialization()
-    {
-        httpClient.BaseAddress = new Uri(configuration["SalesUp:ApiUrl"]);
-        salesUpService = new SalesUpService(httpClient);
+    // public async Task SalesUpInitialization()
+    // {
+    //     httpClient.BaseAddress = new Uri(configuration["SalesUp:ApiUrl"]);
+    //     salesUpService = new SalesUpService(httpClient);
 
-        salesUpToken = await salesUpService.GetToken(configuration["SalesUp:AuthApiUrl"], configuration["SalesUp:ApiAccount:Email"], configuration["SalesUp:ApiAccount:Password"]);
+    //     salesUpToken = await salesUpService.GetToken(configuration["SalesUp:AuthApiUrl"], configuration["SalesUp:ApiAccount:Email"], configuration["SalesUp:ApiAccount:Password"]);
 
-        int currentUserSalesUpId = await salesUpService.GetUserIdByEmail(salesUpToken, userInfo.EmailAdress);
+    //     int currentUserSalesUpId = await salesUpService.GetUserIdByEmail(salesUpToken, userInfo.EmailAdress);
 
-        bonus = await salesUpService.GetUserBonusById(salesUpToken, currentUserSalesUpId);
-    }
+    //     bonus = await salesUpService.GetUserBonusById(salesUpToken, currentUserSalesUpId);
+    // }
 
-    public void ConvertSignedContractInCrmDataList(List<SignedContract> signedContractList)
-    {
-        contractsListForDonutChart.Add(new CRMData { Label = "Sauvegarde", Amount = signedContractList.Count(x => x.Sauvegarde == "OUI") });
-        contractsListForDonutChart.Add(new CRMData { Label = "Maintenance", Amount = signedContractList.Count(x => x.Maintenance == "OUI") });
-        contractsListForDonutChart.Add(new CRMData { Label = "Sécurité", Amount = signedContractList.Count(x => x.Sécurité == "OUI") });
-    }
+    // public void ConvertSignedContractInCrmDataList(List<SignedContract> signedContractList)
+    // {
+    //     contractsListForDonutChart.Add(new CRMData { Label = "Sauvegarde", Amount = signedContractList.Count(x => x.Sauvegarde == "OUI") });
+    //     contractsListForDonutChart.Add(new CRMData { Label = "Maintenance", Amount = signedContractList.Count(x => x.Maintenance == "OUI") });
+    //     contractsListForDonutChart.Add(new CRMData { Label = "Sécurité", Amount = signedContractList.Count(x => x.Sécurité == "OUI") });
+    // }
 }

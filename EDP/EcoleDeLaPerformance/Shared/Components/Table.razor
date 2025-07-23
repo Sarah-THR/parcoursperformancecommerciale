@@ -4,7 +4,7 @@
 @inject IContractService contractService
 
 <div class="mt-8">
-    @if (usersList != null || usersList.Count != 0)
+   @*  @if (usersList != null || usersList.Count != 0)
     {
         <MudTable T="User" Items="@usersList" Hover="true" Breakpoint="Breakpoint.Sm" @ref="mudTable"
                   RowClass="cursor-pointer" OnRowClick="RowClickEvent" FixedHeader="true" Height="400px">
@@ -92,153 +92,153 @@
                 </MudTd>
             </RowTemplate>
         </MudTable>
-    }
+    } *@
 </div>
 
 @code {
-    [Parameter]
-    public User? userInfo { get; set; }
+    // [Parameter]
+    // public User? userInfo { get; set; }
 
-    [Parameter]
-    public List<User>? usersList { get; set; }
+    // [Parameter]
+    // public List<User>? usersList { get; set; }
 
-    [Parameter]
-    public EventCallback<User> onTableRowClick { get; set; }
+    // [Parameter]
+    // public EventCallback<User> onTableRowClick { get; set; }
 
-    private MudTable<User> mudTable;
-    private DateOnly currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-    private User? selectedItem;
-    int? period;
-    DateOnly periodFirstDay;
-    DateOnly periodLastDay;
+    // private MudTable<User> mudTable;
+    // private DateOnly currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+    // private User? selectedItem;
+    // int? period;
+    // DateOnly periodFirstDay;
+    // DateOnly periodLastDay;
 
-    private async Task RowClickEvent(TableRowClickEventArgs<User> tableRowClickEventArgs)
-    {
-        if (tableRowClickEventArgs != null)
-        {
-            selectedItem = tableRowClickEventArgs.Item;
-            await onTableRowClick.InvokeAsync(selectedItem);
-        }
-    }
-    private List<Goal> GetGoals(int? period)
-    {
-        List<Goal> goalsList = new List<Goal>();
-        if (period == 1)
-        {
-            goalsList.Add(new Goal { title = "Sécurité", goal = 0 });
-            goalsList.Add(new Goal { title = "Maintenance", goal = 0 });
-            goalsList.Add(new Goal { title = "Sauvegarde", goal = 5 });
-            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 4 });
-        }
-        else if (period == 2)
-        {
-            goalsList.Add(new Goal { title = "Sécurité", goal = 0 });
-            goalsList.Add(new Goal { title = "Maintenance", goal = 5 });
-            goalsList.Add(new Goal { title = "Sauvegarde", goal = 2 });
-            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 2 });
-        }
-        else if (period == 3)
-        {
-            goalsList.Add(new Goal { title = "Sécurité", goal = 5 });
-            goalsList.Add(new Goal { title = "Maintenance", goal = 1 });
-            goalsList.Add(new Goal { title = "Sauvegarde", goal = 1 });
-            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 0 });
-        };
-        return goalsList;
-    }
+    // private async Task RowClickEvent(TableRowClickEventArgs<User> tableRowClickEventArgs)
+    // {
+    //     if (tableRowClickEventArgs != null)
+    //     {
+    //         selectedItem = tableRowClickEventArgs.Item;
+    //         await onTableRowClick.InvokeAsync(selectedItem);
+    //     }
+    // }
+    // private List<Goal> GetGoals(int? period)
+    // {
+    //     List<Goal> goalsList = new List<Goal>();
+    //     if (period == 1)
+    //     {
+    //         goalsList.Add(new Goal { title = "Sécurité", goal = 0 });
+    //         goalsList.Add(new Goal { title = "Maintenance", goal = 0 });
+    //         goalsList.Add(new Goal { title = "Sauvegarde", goal = 5 });
+    //         goalsList.Add(new Goal { title = "Ouverture de compte", goal = 4 });
+    //     }
+    //     else if (period == 2)
+    //     {
+    //         goalsList.Add(new Goal { title = "Sécurité", goal = 0 });
+    //         goalsList.Add(new Goal { title = "Maintenance", goal = 5 });
+    //         goalsList.Add(new Goal { title = "Sauvegarde", goal = 2 });
+    //         goalsList.Add(new Goal { title = "Ouverture de compte", goal = 2 });
+    //     }
+    //     else if (period == 3)
+    //     {
+    //         goalsList.Add(new Goal { title = "Sécurité", goal = 5 });
+    //         goalsList.Add(new Goal { title = "Maintenance", goal = 1 });
+    //         goalsList.Add(new Goal { title = "Sauvegarde", goal = 1 });
+    //         goalsList.Add(new Goal { title = "Ouverture de compte", goal = 0 });
+    //     };
+    //     return goalsList;
+    // }
 
-    private int? GetPeriodNumber(User user)
-    {
-        var currentWeek = user.Weeks?.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-        return currentWeek?.PeriodNumber;
-    }
+    // private int? GetPeriodNumber(User user)
+    // {
+    //     var currentWeek = user.Weeks?.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    //     return currentWeek?.PeriodNumber;
+    // }
 
-    public string GoalsImageValue(int goal, string type, User user)
-    {
-        if (type == "OpenAccount")
-        {
-            int nbOpenAccounts = GetNbOpenAccount(user);
+    // public string GoalsImageValue(int goal, string type, User user)
+    // {
+    //     if (type == "OpenAccount")
+    //     {
+    //         int nbOpenAccounts = GetNbOpenAccount(user);
 
-            return goal == nbOpenAccounts ? "FullBattery.png" :
-           goal / 2 == nbOpenAccounts && nbOpenAccounts != 0 ? "MediumBattery.png" :
-           goal < nbOpenAccounts ? "trophee.png" : "LowBattery.png";
+    //         return goal == nbOpenAccounts ? "FullBattery.png" :
+    //        goal / 2 == nbOpenAccounts && nbOpenAccounts != 0 ? "MediumBattery.png" :
+    //        goal < nbOpenAccounts ? "trophee.png" : "LowBattery.png";
 
-        }
-        else
-        {
-            int nbContracts = GetContracts(user, type);
+    //     }
+    //     else
+    //     {
+    //         int nbContracts = GetContracts(user, type);
 
-            return goal == nbContracts ? "FullBattery.png" :
-          (goal / 2 == nbContracts || goal / 2 <= nbContracts) && nbContracts != 0 ? "MediumBattery.png" :
-          goal < nbContracts ? "trophee.png" : "LowBattery.png";
+    //         return goal == nbContracts ? "FullBattery.png" :
+    //       (goal / 2 == nbContracts || goal / 2 <= nbContracts) && nbContracts != 0 ? "MediumBattery.png" :
+    //       goal < nbContracts ? "trophee.png" : "LowBattery.png";
 
-        }
-    }
+    //     }
+    // }
 
-    public int GetNbOpenAccount(User user)
-    {
-        int nbOpenAccounts;
-        var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-        periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
-        periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
-        nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(user.FirstName + " " + user.LastName.ToUpper(), periodFirstDay, periodLastDay);
-        return nbOpenAccounts;
-    }
+    // public int GetNbOpenAccount(User user)
+    // {
+    //     int nbOpenAccounts;
+    //     var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    //     periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
+    //     periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
+    //     nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(user.FirstName + " " + user.LastName.ToUpper(), periodFirstDay, periodLastDay);
+    //     return nbOpenAccounts;
+    // }
 
-    public decimal GetTurnover(User user)
-    {
-        decimal turnover = 0;
-        var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    // public decimal GetTurnover(User user)
+    // {
+    //     decimal turnover = 0;
+    //     var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
 
-        if (currentWeek != null)
-        {
-            periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
-            periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
+    //     if (currentWeek != null)
+    //     {
+    //         periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
+    //         periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
 
-            turnover = Task.Run(async () => await userService.GetUserTurnover(user.EmailAdress, periodFirstDay, periodLastDay)).Result;
-        }
+    //         turnover = Task.Run(async () => await userService.GetUserTurnover(user.EmailAdress, periodFirstDay, periodLastDay)).Result;
+    //     }
 
-        return turnover;
-    }
+    //     return turnover;
+    // }
 
-    public decimal GetBonus(User user)
-    {
-        decimal bonus = 0;
-        var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    // public decimal GetBonus(User user)
+    // {
+    //     decimal bonus = 0;
+    //     var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
 
-        if (currentWeek != null)
-        {
-            periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
-            periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
+    //     if (currentWeek != null)
+    //     {
+    //         periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
+    //         periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
 
-            var turnover = Task.Run(async () => await userService.GetUserTurnover(user.EmailAdress, periodFirstDay, periodLastDay)).Result;
-            bonus = Math.Round(turnover / 12, 2);
-        }
+    //         var turnover = Task.Run(async () => await userService.GetUserTurnover(user.EmailAdress, periodFirstDay, periodLastDay)).Result;
+    //         bonus = Math.Round(turnover / 12, 2);
+    //     }
 
-        return bonus;
-    }
+    //     return bonus;
+    // }
 
-    public int GetContracts(User user, string type)
-    {
-        int nbContracts;
-        var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-        periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
-        periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
-        var contracts = contractService.GetContractsByPeriod(user.FirstName + " " + user.LastName.ToUpper(), periodFirstDay, periodLastDay);
+    // public int GetContracts(User user, string type)
+    // {
+    //     int nbContracts;
+    //     var currentWeek = user.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    //     periodFirstDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).First().StartDateWeek;
+    //     periodLastDay = user.Weeks.Where(x => x.PeriodNumber == currentWeek.PeriodNumber).Last().EndDateWeek;
+    //     var contracts = contractService.GetContractsByPeriod(user.FirstName + " " + user.LastName.ToUpper(), periodFirstDay, periodLastDay);
 
-        if (type == "Sécurité")
-        {
-            nbContracts = contracts.Where(x => x.Sécurité == "OUI").Count();
-        }
-        else if (type == "Maintenance")
-        {
-            nbContracts = contracts.Where(x => x.Maintenance == "OUI").Count();
-        }
-        else
-        {
-            nbContracts = contracts.Where(x => x.Sauvegarde == "OUI").Count();
-        }
+    //     if (type == "Sécurité")
+    //     {
+    //         nbContracts = contracts.Where(x => x.Sécurité == "OUI").Count();
+    //     }
+    //     else if (type == "Maintenance")
+    //     {
+    //         nbContracts = contracts.Where(x => x.Maintenance == "OUI").Count();
+    //     }
+    //     else
+    //     {
+    //         nbContracts = contracts.Where(x => x.Sauvegarde == "OUI").Count();
+    //     }
 
-        return nbContracts;
-    }
+    //     return nbContracts;
+    // }
 }

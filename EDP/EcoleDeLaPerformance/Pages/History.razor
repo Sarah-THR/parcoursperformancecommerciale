@@ -11,7 +11,7 @@
 @page "/History"
 
 <div>
-    <MudGrid>
+    @* <MudGrid>
         <MudItem xs=12 Class="pb-12">
             <ProgressBar activeIndex="@period"></ProgressBar>
         </MudItem>
@@ -49,63 +49,63 @@
                 </MudItem>
             </MudGrid>
         </MudItem>
-    </MudGrid>
+    </MudGrid> *@
 </div>
 
 @code {
-    List<TempClass> allWeek = new List<TempClass>();
-    public User userInfo => stateContainerService.UserInfo;
-    int period = 0;
+    // List<TempClass> allWeek = new List<TempClass>();
+    // public User userInfo => stateContainerService.UserInfo;
+    // int period = 0;
 
-    protected override async Task OnInitializedAsync()
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        if (!userInfo.Role.Contains("Commercial"))
-        {
-            navigationManager.NavigateTo("/");
-        }
-        else
-        {
-            try
-            {
-                var weekListFromTheStart = userInfo.Weeks.Where(x => x.EndDateWeek <= DateOnly.FromDateTime(DateTime.Now)).ToList();
-                foreach (var oneWeek in weekListFromTheStart)
-                {
-                    TempClass temp = new TempClass();
-                    temp.week = oneWeek;
+        // if (!userInfo.Role.Contains("Commercial"))
+        // {
+        //     navigationManager.NavigateTo("/");
+        // }
+        // else
+        // {
+        //     try
+        //     {
+        //         var weekListFromTheStart = userInfo.Weeks.Where(x => x.EndDateWeek <= DateOnly.FromDateTime(DateTime.Now)).ToList();
+        //         foreach (var oneWeek in weekListFromTheStart)
+        //         {
+        //             TempClass temp = new TempClass();
+        //             temp.week = oneWeek;
 
-                    var studentName = (userInfo.FirstName + " " + userInfo.LastName);
+        //             var studentName = (userInfo.FirstName + " " + userInfo.LastName);
 
-                    temp.signedContractList = contractService.GetContractsByPeriod(studentName, oneWeek.StartDateWeek, oneWeek.EndDateWeek);
+        //             temp.signedContractList = contractService.GetContractsByPeriod(studentName, oneWeek.StartDateWeek, oneWeek.EndDateWeek);
 
-                    var nbOpenAccounts = await userService.GetNbOpenAccountsAsync(userInfo.FirstName + " " + userInfo.LastName.ToUpper());
-                    temp.openAccounts = new CRMData { Label = "", Amount = nbOpenAccounts };
-                    allWeek.Add(temp);
-                }
-                var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-                var currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && week.EndDateWeek >= currentDate);
-                if (currentWeek != null)
-                {
-                    period = currentWeek.PeriodNumber;
-                }
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-            }
-        }
+        //             var nbOpenAccounts = await userService.GetNbOpenAccountsAsync(userInfo.FirstName + " " + userInfo.LastName.ToUpper());
+        //             temp.openAccounts = new CRMData { Label = "", Amount = nbOpenAccounts };
+        //             allWeek.Add(temp);
+        //         }
+        //         var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        //         var currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && week.EndDateWeek >= currentDate);
+        //         if (currentWeek != null)
+        //         {
+        //             period = currentWeek.PeriodNumber;
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         SentrySdk.CaptureException(ex);
+        //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+        //     }
+        // }
 
     }
 
-    public class TempClass
-    {
-        public Week week { get; set; } = new Week();
-        public List<SignedContract?> signedContractList { get; set; } = new List<SignedContract?>();
-        public CRMData openAccounts { get; set; }
-    }
+    // public class TempClass
+    // {
+    //     public Week week { get; set; } = new Week();
+    //     public List<SignedContract?> signedContractList { get; set; } = new List<SignedContract?>();
+    //     public CRMData openAccounts { get; set; }
+    // }
 
-    public void RowClicked(TableRowClickEventArgs<TempClass> week)
-    {
-        navigationManager.NavigateTo($"/summary/{week.Item.week.WeekId}");
-    }
+    // public void RowClicked(TableRowClickEventArgs<TempClass> week)
+    // {
+    //     navigationManager.NavigateTo($"/summary/{week.Item.week.WeekId}");
+    // }
 }

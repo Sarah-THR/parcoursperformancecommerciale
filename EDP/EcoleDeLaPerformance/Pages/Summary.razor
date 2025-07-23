@@ -3,33 +3,32 @@
 @using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @inject StateContainerService stateContainerService
-@inject IWeekService WeekService
 
 @page "/Summary/{weekId}"
 
-@if (isInit)
+@* @if (isInit)
 {
     <ProgressBar activeIndex="@period" />
 
     <PeriodInfo period="@period" currentWeek="@currentWeek" userInfo="userInfo" summary="true" />
-}
+} *@
 
 @code {
-    [Parameter]
-    public string weekId { get; set; }
-    public User userInfo => stateContainerService.UserInfo;
-    int period = 0;
-    Week currentWeek;
-    bool isInit;
+    // [Parameter]
+    // public string weekId { get; set; }
+    // public User userInfo => stateContainerService.UserInfo;
+    // int period = 0;
+    // Week currentWeek;
+    // bool isInit;
 
-    protected override async Task OnInitializedAsync()
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        var weekChoose = await WeekService.GetWeeksByIdAsync(int.Parse(weekId));
-        currentWeek = weekChoose.FirstOrDefault();
-        if (currentWeek != null)
-        {
-            period = currentWeek.PeriodNumber;
-        }
-        isInit = true;
+        // var weekChoose = await WeekService.GetWeeksByIdAsync(int.Parse(weekId));
+        // currentWeek = weekChoose.FirstOrDefault();
+        // if (currentWeek != null)
+        // {
+        //     period = currentWeek.PeriodNumber;
+        // }
+        // isInit = true;
     }
 }

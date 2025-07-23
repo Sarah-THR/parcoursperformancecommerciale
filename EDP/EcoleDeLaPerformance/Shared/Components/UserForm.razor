@@ -7,7 +7,7 @@
 @inject ISnackbar Snackbar
 
 <div class="mt-14">
-    <MudForm @ref="form" Model="model">
+    @* <MudForm @ref="form" Model="model">
         <MudCard Class="p-5">
             <MudCardContent>
                 <MudGrid>
@@ -43,39 +43,39 @@
         <MudCardActions>
             <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto mt-5" OnClick="@(async () => await SubmitForm())">Enregistrer les modifications</MudButton>
         </MudCardActions>
-    </MudForm>
+    </MudForm> *@
 </div>
 
 @code {
-    [Parameter]
-    public User userInfo { get; set; }
-    private MudForm form;
-    User model = new User();
-    string supervisorName;
+    // [Parameter]
+    // public User userInfo { get; set; }
+    // private MudForm form;
+    // User model = new User();
+    // string supervisorName;
 
-    protected override void OnInitialized()
-    {
-        model = userInfo;
-        if (userInfo.SupervisorNavigation != null)
-        {
-            supervisorName = userInfo.SupervisorNavigation.FirstName + " " + userInfo.SupervisorNavigation.LastName;
-        }
-    }
+    // protected override void OnInitialized()
+    // {
+    //     model = userInfo;
+    //     if (userInfo.SupervisorNavigation != null)
+    //     {
+    //         supervisorName = userInfo.SupervisorNavigation.FirstName + " " + userInfo.SupervisorNavigation.LastName;
+    //     }
+    // }
 
-    private async Task SubmitForm()
-    {
-        await form.Validate();
-        if (form.IsValid)
-        {
-            model.ProfilePicture = userInfo.ProfilePicture;
-            stateContainerService.UserInfo = await userService.UpdateUserAsync(model);
-            Snackbar.Add("Vos informations ont bien été enregistrées !", Severity.Success);
+    // private async Task SubmitForm()
+    // {
+    //     await form.Validate();
+    //     if (form.IsValid)
+    //     {
+    //         model.ProfilePicture = userInfo.ProfilePicture;
+    //         stateContainerService.UserInfo = await userService.UpdateUserAsync(model);
+    //         Snackbar.Add("Vos informations ont bien été enregistrées !", Severity.Success);
 
-        }
-        else
-        {
-            Snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
-        }
-    }
+    //     }
+    //     else
+    //     {
+    //         Snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
+    //     }
+    // }
 
 }

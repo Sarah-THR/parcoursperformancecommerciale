@@ -2,7 +2,7 @@
 
 <div>
 
-    <MudPaper Class="pa-4">
+    @* <MudPaper Class="pa-4">
         @if (_expanded)
         {
             <MudButton OnClick="OnExpandCollapseClick" StartIcon="@Icons.Material.Filled.Remove" IconColor="Color.Primary">Infos semaine</MudButton>
@@ -42,19 +42,19 @@
                                 </MudList>
                             </MudPaper>
                         </MudItem>
-                        @* <MudItem sm="12" md="4" lg="4" Class="w-100">
+                        <MudItem sm="12" md="4" lg="4" Class="w-100">
                             @if (meetingsList != null && meetingsList.First().Amount != 0)
                             {
-                                @* <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="meetingsBriefNote" /> *@
-                               @*  <h4 class="fw-bold">Rendez-vous à venir</h4>
+                                <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="meetingsBriefNote" />
+                               <h4 class="fw-bold">Rendez-vous à venir</h4>
                                 <h4 class="fw-bold">@meetingsList.First().Amount</h4>
                             }
                             else
                             {
                                 <h4 class="fw-bold">Rendez-vous à venir</h4>
                                 <h4 class="fw-bold">0</h4>
-                            } *@
-                        @*</MudItem> *@
+                            } 
+                        </MudItem> 
                     </MudGrid>
                 </MudTabPanel>
                 <MudTabPanel Text="Debriefing">
@@ -77,19 +77,19 @@
                                 }
                             </MudPaper>
                         </MudItem>
-                       @*  <MudItem sm="12" md="4" lg="4" Class="w-100">
+                        <MudItem sm="12" md="4" lg="4" Class="w-100">
                             @if (meetingsList != null && meetingsList.First().Amount != 0)
                             {
-                                @* <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="meetingsBriefNote" /> *@
-                               @*  <h4 class="fw-bold">Rendez-vous à venir</h4>
+                                <DonutChart title="Rendez-vous à venir" crmDataList="meetingsList" legend="false" briefNote="meetingsBriefNote" /> 
+                               <h4 class="fw-bold">Rendez-vous à venir</h4>
                                 <h4 class="fw-bold">@meetingsList.First().Amount</h4>
                             }
                             else
                             {
                                 <h4 class="fw-bold">Rendez-vous à venir</h4>
                                 <h4 class="fw-bold">0</h4>
-                            } *@
-                        @*</MudItem> *@
+                            }
+                        </MudItem>
                         <MudItem sm="12" md="12" lg="12" Class="w-100">
                             <MudPaper Class="d-flex flex-column py-8 px-4" Elevation="3" MinHeight="160px">
                                 <h5 class="d-flex align-items-start text-uppercase"><img src="/images/folder.png" width="30px" class="me-2" /> Dossiers et contrats signés</h5>
@@ -110,52 +110,52 @@
                 </MudTabPanel>
             </MudTabs>
         </MudCollapse>
-    </MudPaper>
+    </MudPaper> *@
 
 </div>
 
 @code {
-    [Parameter]
-    public Week currentWeek { get; set; }
+    // [Parameter]
+    // public Week currentWeek { get; set; }
 
-    [Parameter]
-    public List<string> commitmentList { get; set; }
+    // [Parameter]
+    // public List<string> commitmentList { get; set; }
 
-    [Parameter]
-    public List<HalfDayPlanning>? halfDayPlanningsList { get; set; }
+    // [Parameter]
+    // public List<HalfDayPlanning>? halfDayPlanningsList { get; set; }
 
-    [Parameter]
-    public List<string> fileToCheckList { get; set; }
+    // [Parameter]
+    // public List<string> fileToCheckList { get; set; }
 
-    [Parameter]
-    public List<string> currentAffairsList { get; set; }
+    // [Parameter]
+    // public List<string> currentAffairsList { get; set; }
 
-    [Parameter]
-    public List<string> casesLiftedList { get; set; }
+    // [Parameter]
+    // public List<string> casesLiftedList { get; set; }
 
-    [Parameter]
-    public string meetingsBriefNote { get; set; }
+    // [Parameter]
+    // public string meetingsBriefNote { get; set; }
 
-    [Parameter]
-    public List<CRMData> meetingsList { get; set; }
+    // [Parameter]
+    // public List<CRMData> meetingsList { get; set; }
 
-    [Parameter]
-    public List<SignedContract> signedContractList { get; set; }
+    // [Parameter]
+    // public List<SignedContract> signedContractList { get; set; }
 
-    [Parameter]
-    public EventCallback<bool> onCollapse { get; set; }
+    // [Parameter]
+    // public EventCallback<bool> onCollapse { get; set; }
 
-    [Parameter]
-    public int saleContractList { get; set; }
+    // [Parameter]
+    // public int saleContractList { get; set; }
 
-    [Parameter]
-    public int nexleaseContractList { get; set; }
+    // [Parameter]
+    // public int nexleaseContractList { get; set; }
 
-    bool _expanded = false;
+    // bool _expanded = false;
 
-    private async void OnExpandCollapseClick()
-    {
-        _expanded = !_expanded;
-        await onCollapse.InvokeAsync(_expanded);
-    }
+    // private async void OnExpandCollapseClick()
+    // {
+    //     _expanded = !_expanded;
+    //     await onCollapse.InvokeAsync(_expanded);
+    // }
 }

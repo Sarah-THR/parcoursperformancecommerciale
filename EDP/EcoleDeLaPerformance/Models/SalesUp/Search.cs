@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using EcoleDeLaPerformance.Ui.Shared.Components;
+using System.Text.Json.Serialization;
 
 namespace EcoleDeLaPerformance.Ui.Models.SalesUp
 {
@@ -7,7 +8,7 @@ namespace EcoleDeLaPerformance.Ui.Models.SalesUp
         [JsonPropertyName("selects")]
         public List<Select> Selects { get; set; }
 
-        [JsonPropertyName("filters")]
-        public List<Filter> Filters { get; set; }
+        //[JsonPropertyName("filters")]
+        //public List<Filter> Filters { get; set; }
     }
 }

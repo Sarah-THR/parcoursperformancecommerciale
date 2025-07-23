@@ -5,7 +5,7 @@
 @inject ISnackbar snackbar
 @inject IUserService userService
 
-<MudDialog>
+@* <MudDialog>
     <DialogContent>
         <MudForm @ref="form" Model="model">
             <MudGrid>
@@ -67,73 +67,73 @@
     <DialogActions>
         <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Confirm">Valider</MudButton>
     </DialogActions>
-</MudDialog>
+</MudDialog> *@
 
 @code {
-    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+    // [CascadingParameter] MudDialogInstance mudDialog { get; set; }
 
-    [Parameter]
-    public User studentInfo { get; set; }
+    // [Parameter]
+    // public User studentInfo { get; set; }
 
-    [Parameter]
-    public User userInfo { get; set; }
+    // [Parameter]
+    // public User userInfo { get; set; }
 
-    User model = new User();
-    private MudForm form;
-    public string? selectedRole { get; set; }
-    public string? selectedSupervisor;
-    public List<string> roleList { get; } = new List<string> { "Commercial junior", "Commercial senior", "Manager", "Superviseur" };
-    public List<string> supervisorList = new List<string>();
-    public List<User> usersList = new List<User>();
+    // User model = new User();
+    // private MudForm form;
+    // public string? selectedRole { get; set; }
+    // public string? selectedSupervisor;
+    // public List<string> roleList { get; } = new List<string> { "Commercial junior", "Commercial senior", "Manager", "Superviseur" };
+    // public List<string> supervisorList = new List<string>();
+    // public List<User> usersList = new List<User>();
 
-    protected override async Task OnInitializedAsync()
-    {
-        model = studentInfo;
-        if (studentInfo.SupervisorNavigation != null)
-        {
-            selectedSupervisor = studentInfo.SupervisorNavigation.FirstName + " " + studentInfo.SupervisorNavigation.LastName;
-        }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     model = studentInfo;
+    //     if (studentInfo.SupervisorNavigation != null)
+    //     {
+    //         selectedSupervisor = studentInfo.SupervisorNavigation.FirstName + " " + studentInfo.SupervisorNavigation.LastName;
+    //     }
 
-        selectedRole = studentInfo.Role;
-        usersList = await userService.GetUsersAsync();
-        supervisorList = usersList.Where(x => x.Role == "Manager").Select(x => x.FirstName + " " + x.LastName).ToList();
-    }
+    //     selectedRole = studentInfo.Role;
+    //     usersList = await userService.GetUsersAsync();
+    //     supervisorList = usersList.Where(x => x.Role == "Manager").Select(x => x.FirstName + " " + x.LastName).ToList();
+    // }
 
-    private async Task SelectSupervisor(string value)
-    {
-        selectedSupervisor = value;
-        StateHasChanged();
-    }
+    // private async Task SelectSupervisor(string value)
+    // {
+    //     selectedSupervisor = value;
+    //     StateHasChanged();
+    // }
 
-    public async void Confirm()
-    {
-        try
-        {
-            await form.Validate();
-            if (form.IsValid)
-            {
-                model.Role = selectedRole;
+    // public async void Confirm()
+    // {
+    //     try
+    //     {
+    //         await form.Validate();
+    //         if (form.IsValid)
+    //         {
+    //             model.Role = selectedRole;
 
-                if (selectedRole.Contains("Commercial"))
-                {
-                    User? supervisor = usersList.Where(x => (x.FirstName.ToUpper() + " " + x.LastName.ToUpper()) == selectedSupervisor.ToUpper()).First();
-                    model.Supervisor = supervisor.UserId;
-                }
+    //             if (selectedRole.Contains("Commercial"))
+    //             {
+    //                 User? supervisor = usersList.Where(x => (x.FirstName.ToUpper() + " " + x.LastName.ToUpper()) == selectedSupervisor.ToUpper()).First();
+    //                 model.Supervisor = supervisor.UserId;
+    //             }
 
-                studentInfo = await userService.UpdateUserAsync(model);
-                snackbar.Add("Les informations de l'utilisateur ont bien été modifiées !", Severity.Success);
-                mudDialog.Close(DialogResult.Ok(true));
-            }
-            else
-            {
-                snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            snackbar.Add($"Erreur lors de l'enregistrement des modifications : {ex.Message}", Severity.Error);
-            SentrySdk.CaptureException(ex);
-        }
-        StateHasChanged();
-    }
+    //             studentInfo = await userService.UpdateUserAsync(model);
+    //             snackbar.Add("Les informations de l'utilisateur ont bien été modifiées !", Severity.Success);
+    //             mudDialog.Close(DialogResult.Ok(true));
+    //         }
+    //         else
+    //         {
+    //             snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         snackbar.Add($"Erreur lors de l'enregistrement des modifications : {ex.Message}", Severity.Error);
+    //         SentrySdk.CaptureException(ex);
+    //     }
+    //     StateHasChanged();
+    // }
 }

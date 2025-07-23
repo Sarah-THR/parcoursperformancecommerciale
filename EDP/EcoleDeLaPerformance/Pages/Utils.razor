@@ -3,12 +3,11 @@
 @using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @inject StateContainerService stateContainerService
-@inject IClassService classService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 @page "/utils"
 
-@if (isBack)
+@* @if (isBack)
 {
     <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" OnClick="BackToHomePage" Class="mt-5">Retour</MudButton>
 }
@@ -35,37 +34,37 @@ else
 {
     <ClassComponent classes="classesList" />
 }
-
+ *@
 @code {
-    public List<Class> classesList = new List<Class>();
-    public bool isBack = false;
-    public User userInfo => stateContainerService.UserInfo;
+    // public List<Class> classesList = new List<Class>();
+    // public bool isBack = false;
+    // public User userInfo => stateContainerService.UserInfo;
 
-    protected override async Task OnInitializedAsync()
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        if (!userInfo.Role.Contains("Commercial"))
-        {
-            NavigationManager.NavigateTo("/");
-        }
+        // if (!userInfo.Role.Contains("Commercial"))
+        // {
+        //     NavigationManager.NavigateTo("/");
+        // }
     }
 
-    async void OnItemClick(string itemName)
-    {
-        var allClassesList = await classService.GetClassesAsync();
-        classesList = allClassesList.Where(x => x.ClassName == itemName).ToList();
-        isBack = true;
-        InvokeAsync(() => StateHasChanged());
-    }
+    // async void OnItemClick(string itemName)
+    // {
+    //     var allClassesList = await classService.GetClassesAsync();
+    //     classesList = allClassesList.Where(x => x.ClassName == itemName).ToList();
+    //     isBack = true;
+    //     InvokeAsync(() => StateHasChanged());
+    // }
 
-    void OnELearningClick()
-    {
-        JSRuntime.InvokeVoidAsync("openInNewTab", "https://lms.omnysis.com/");
-    }
+    // void OnELearningClick()
+    // {
+    //     JSRuntime.InvokeVoidAsync("openInNewTab", "https://lms.omnysis.com/");
+    // }
 
-    void BackToHomePage()
-    {
-        isBack = false;
-        classesList = null;
-        StateHasChanged();
-    }
+    // void BackToHomePage()
+    // {
+    //     isBack = false;
+    //     classesList = null;
+    //     StateHasChanged();
+    // }
 }

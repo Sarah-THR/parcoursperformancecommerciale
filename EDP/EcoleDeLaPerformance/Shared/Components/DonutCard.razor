@@ -1,0 +1,21 @@
+﻿<MudPaper Class="p-4" MinHeight="305px">
+    <MudStack Spacing="1">
+        <MudStack AlignItems="AlignItems.Center" Spacing="1">
+            <MudIcon Icon="@Icon" Color="@IconColor" />
+            <MudText Typo="Typo.subtitle1" Class="font-bold">@Title</MudText>
+        </MudStack>
+        <MudChart ChartType="ChartType.Donut"
+                  Height="150px"
+                  Width="150px"
+                  InputData="@Data"
+                  InputLabels="@Labels">
+        </MudChart>
+    </MudStack>
+</MudPaper>
+@code {
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public double[] Data { get; set; }
+    [Parameter] public string[] Labels { get; set; }
+    [Parameter] public Color IconColor { get; set; } = Color.Primary;
+}

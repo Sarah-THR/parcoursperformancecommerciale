@@ -4,13 +4,11 @@
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @using EcoleDeLaPerformance.Ui.Models
 @inject StateContainerService stateContainerService
-@inject IHalfDayPlanningService halfDayPlanningService
-@inject ITaskPlanningService taskPlanningService
 @inject ISnackbar snackbar
 @inject NavigationManager NavigationManager
 
 <div>
-    <MudGrid>
+    @* <MudGrid>
         <MudItem xs="12">
             <MudGrid Justify="Justify.Center">
                 <MudItem xs=12 Class="pa-8">
@@ -218,186 +216,186 @@
                 </MudItem>
             </MudGrid>
         </MudItem>
-    </MudGrid>
+    </MudGrid> *@
 </div>
 @code {
-    public User userInfo => stateContainerService.UserInfo;
-    Week? currentWeek = new Week();
-    List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
-    List<TaskPlanning> defaultTask = new List<TaskPlanning>();
-    List<TaskPlanning> taskList = new List<TaskPlanning>();
-    List<HalfDayPlanning> halfDayPlanningsCloneForWitness = new List<HalfDayPlanning>();
-    private MudDropContainer<TaskPlanning> _container;
+    // public User userInfo => stateContainerService.UserInfo;
+    // Week? currentWeek = new Week();
+    // List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
+    // List<TaskPlanning> defaultTask = new List<TaskPlanning>();
+    // List<TaskPlanning> taskList = new List<TaskPlanning>();
+    // List<HalfDayPlanning> halfDayPlanningsCloneForWitness = new List<HalfDayPlanning>();
+    // private MudDropContainer<TaskPlanning> _container;
 
 
 
-    protected override async Task OnInitializedAsync()
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        if (userInfo.Role != "Commercial junior")
-        {
-            NavigationManager.NavigateTo("/");
-        }
-        else
-        {
-            try
-            {
-                var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-                currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-                halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
-                defaultTask = taskList = await taskPlanningService.GetAllTaskPlanning();
-                halfDayPlanningsCloneForWitness = halfDayPlanningsList.ToList();
-                ConvertIntoDropItem();
-                StateHasChanged();
-                _container.Refresh();
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-            }
-        }
+        // if (userInfo.Role != "Commercial junior")
+        // {
+        //     NavigationManager.NavigateTo("/");
+        // }
+        // else
+        // {
+        //     try
+        //     {
+        //         var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        //         currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+        //         halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
+        //         defaultTask = taskList = await taskPlanningService.GetAllTaskPlanning();
+        //         halfDayPlanningsCloneForWitness = halfDayPlanningsList.ToList();
+        //         ConvertIntoDropItem();
+        //         StateHasChanged();
+        //         _container.Refresh();
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         SentrySdk.CaptureException(ex);
+        //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+        //     }
+        // }
     }
 
-    private void ItemUpdated(MudItemDropInfo<TaskPlanning> dropItem)
-    {
-        if (dropItem.Item.Identifier.Contains("Origin"))
-        {
-            TaskPlanning taskCloned = new TaskPlanning
-                {
-                    TaskId = dropItem.Item.TaskId,
-                    Identifier = dropItem.DropzoneIdentifier,
-                    Titled = dropItem.Item.Titled
-                };
-            defaultTask.Add(taskCloned);
-        }
-        else
-        {
-            dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
-        }
+    // private void ItemUpdated(MudItemDropInfo<TaskPlanning> dropItem)
+    // {
+    //     if (dropItem.Item.Identifier.Contains("Origin"))
+    //     {
+    //         TaskPlanning taskCloned = new TaskPlanning
+    //             {
+    //                 TaskId = dropItem.Item.TaskId,
+    //                 Identifier = dropItem.DropzoneIdentifier,
+    //                 Titled = dropItem.Item.Titled
+    //             };
+    //         defaultTask.Add(taskCloned);
+    //     }
+    //     else
+    //     {
+    //         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+    //     }
 
 
-        List<HalfDayPlanning> halfDayPlanningList = halfDayPlanningsList.Where(x => x.Task.TaskId == dropItem.Item.TaskId).ToList();
-        if (halfDayPlanningList.Count > 0)
-            halfDayPlanningsList.Where(x => x.Task.TaskId == dropItem.Item.TaskId).First().Task.Identifier = dropItem.Item.Identifier;
-    }
+    //     List<HalfDayPlanning> halfDayPlanningList = halfDayPlanningsList.Where(x => x.Task.TaskId == dropItem.Item.TaskId).ToList();
+    //     if (halfDayPlanningList.Count > 0)
+    //         halfDayPlanningsList.Where(x => x.Task.TaskId == dropItem.Item.TaskId).First().Task.Identifier = dropItem.Item.Identifier;
+    // }
 
-    public void ConvertIntoDropItem()
-    {
-        foreach (HalfDayPlanning item in halfDayPlanningsList)
-        {
-            var identifier = item.HalfDayDate.DayOfWeek.ToString() + item.HalfDayTime.ToString();
-            if (!defaultTask.Any(x => x.Identifier == identifier))
-            {
-                item.Task.Identifier = identifier;
-                defaultTask.Add(new TaskPlanning() { TaskId = item.HalfDayId, Titled = item.Task.Titled, Identifier = identifier });
-            }
-        }
-    }
+    // public void ConvertIntoDropItem()
+    // {
+    //     foreach (HalfDayPlanning item in halfDayPlanningsList)
+    //     {
+    //         var identifier = item.HalfDayDate.DayOfWeek.ToString() + item.HalfDayTime.ToString();
+    //         if (!defaultTask.Any(x => x.Identifier == identifier))
+    //         {
+    //             item.Task.Identifier = identifier;
+    //             defaultTask.Add(new TaskPlanning() { TaskId = item.HalfDayId, Titled = item.Task.Titled, Identifier = identifier });
+    //         }
+    //     }
+    // }
 
-    public async void SaveButton()
-    {
-        #region Insert Part
-        List<TaskPlanning> selectedInsertElement = defaultTask.Where(x => !halfDayPlanningsList.Any(y => y.HalfDayId == x.TaskId) && !x.Identifier.Contains("Origin") && !x.Identifier.Contains("Delete")).ToList();
-        List<HalfDayPlanning> insertList = new List<HalfDayPlanning>();
-        foreach (TaskPlanning OneTaskPlanning in selectedInsertElement)
-        {
+    // public async void SaveButton()
+    // {
+    //     #region Insert Part
+    //     List<TaskPlanning> selectedInsertElement = defaultTask.Where(x => !halfDayPlanningsList.Any(y => y.HalfDayId == x.TaskId) && !x.Identifier.Contains("Origin") && !x.Identifier.Contains("Delete")).ToList();
+    //     List<HalfDayPlanning> insertList = new List<HalfDayPlanning>();
+    //     foreach (TaskPlanning OneTaskPlanning in selectedInsertElement)
+    //     {
 
-            //Trouver le jour en string
-            string jourAnglais = OneTaskPlanning.Identifier.Replace("True", "").Replace("False", "");
-            DayOfWeek jourSemaine = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), jourAnglais);
+    //         //Trouver le jour en string
+    //         string jourAnglais = OneTaskPlanning.Identifier.Replace("True", "").Replace("False", "");
+    //         DayOfWeek jourSemaine = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), jourAnglais);
 
-            // Trouver la date du jour de la semaine spécifié
-            DateTime dateJourSemaine = currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000"));
-            while (dateJourSemaine.DayOfWeek != jourSemaine)
-            {
-                dateJourSemaine = dateJourSemaine.AddDays(1);
-            }
+    //         // Trouver la date du jour de la semaine spécifié
+    //         DateTime dateJourSemaine = currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000"));
+    //         while (dateJourSemaine.DayOfWeek != jourSemaine)
+    //         {
+    //             dateJourSemaine = dateJourSemaine.AddDays(1);
+    //         }
 
-            bool isHalfDayTime = OneTaskPlanning.Identifier.Contains("True");
-            insertList.Add(new HalfDayPlanning
-                {
-                    HalfDayDate = dateJourSemaine,
-                    WeekId = currentWeek.WeekId,
-                    TaskId = OneTaskPlanning.TaskId,
-                    HalfDayTime = isHalfDayTime
-                });
-        }
+    //         bool isHalfDayTime = OneTaskPlanning.Identifier.Contains("True");
+    //         insertList.Add(new HalfDayPlanning
+    //             {
+    //                 HalfDayDate = dateJourSemaine,
+    //                 WeekId = currentWeek.WeekId,
+    //                 TaskId = OneTaskPlanning.TaskId,
+    //                 HalfDayTime = isHalfDayTime
+    //             });
+    //     }
 
-        try
-        {
-            foreach (HalfDayPlanning OneHalfDayPlanning in insertList)
-            {
-                await halfDayPlanningService.InsertHalfDayPlanningAsync(OneHalfDayPlanning);
-            }
-        }
-        catch (Exception ex)
-        {
-            SentrySdk.CaptureException(ex);
-            snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-        }
-        #endregion
+    //     try
+    //     {
+    //         foreach (HalfDayPlanning OneHalfDayPlanning in insertList)
+    //         {
+    //             await halfDayPlanningService.InsertHalfDayPlanningAsync(OneHalfDayPlanning);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         SentrySdk.CaptureException(ex);
+    //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+    //     }
+    //     #endregion
 
-        #region Update Part
-        List<TaskPlanning> selectedUpdateElement = defaultTask.Where(x => halfDayPlanningsList.Any(y => y.HalfDayId == x.TaskId) && !x.Identifier.Contains("Origin") && !x.Identifier.Contains("Delete")).ToList();
-        List<HalfDayPlanning> updateList = new List<HalfDayPlanning>();
-        foreach (TaskPlanning OneTaskPlanning in selectedUpdateElement)
-        {
-            //Trouver le jour en string
-            string jourAnglais = OneTaskPlanning.Identifier.Replace("True", "").Replace("False", "");
-            DayOfWeek jourSemaine = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), jourAnglais);
+    //     #region Update Part
+    //     List<TaskPlanning> selectedUpdateElement = defaultTask.Where(x => halfDayPlanningsList.Any(y => y.HalfDayId == x.TaskId) && !x.Identifier.Contains("Origin") && !x.Identifier.Contains("Delete")).ToList();
+    //     List<HalfDayPlanning> updateList = new List<HalfDayPlanning>();
+    //     foreach (TaskPlanning OneTaskPlanning in selectedUpdateElement)
+    //     {
+    //         //Trouver le jour en string
+    //         string jourAnglais = OneTaskPlanning.Identifier.Replace("True", "").Replace("False", "");
+    //         DayOfWeek jourSemaine = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), jourAnglais);
 
-            // Trouver la date du jour de la semaine spécifié
-            DateTime dateJourSemaine = currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000"));
-            while (dateJourSemaine.DayOfWeek != jourSemaine)
-            {
-                dateJourSemaine = dateJourSemaine.AddDays(1);
-            }
+    //         // Trouver la date du jour de la semaine spécifié
+    //         DateTime dateJourSemaine = currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000"));
+    //         while (dateJourSemaine.DayOfWeek != jourSemaine)
+    //         {
+    //             dateJourSemaine = dateJourSemaine.AddDays(1);
+    //         }
 
-            bool isHalfDayTime = OneTaskPlanning.Identifier.Contains("True");
-            updateList.Add(new HalfDayPlanning
-                {
-                    HalfDayId = halfDayPlanningsList.Where(x => x.HalfDayId == OneTaskPlanning.TaskId).First().HalfDayId,
-                    HalfDayDate = dateJourSemaine,
-                    WeekId = currentWeek.WeekId,
-                    TaskId = taskList.FirstOrDefault(x => x.Titled == OneTaskPlanning.Titled).TaskId,
-                    HalfDayTime = isHalfDayTime
-                });
-        }
-        try
-        {
-            foreach (HalfDayPlanning OneHalfDayPlanning in updateList)
-            {
-                await halfDayPlanningService.UpdateHalfDayPlanningAsync(OneHalfDayPlanning);
-            }
-        }
-        catch (Exception ex)
-        {
-            SentrySdk.CaptureException(ex);
-            snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-        }
-        #endregion
+    //         bool isHalfDayTime = OneTaskPlanning.Identifier.Contains("True");
+    //         updateList.Add(new HalfDayPlanning
+    //             {
+    //                 HalfDayId = halfDayPlanningsList.Where(x => x.HalfDayId == OneTaskPlanning.TaskId).First().HalfDayId,
+    //                 HalfDayDate = dateJourSemaine,
+    //                 WeekId = currentWeek.WeekId,
+    //                 TaskId = taskList.FirstOrDefault(x => x.Titled == OneTaskPlanning.Titled).TaskId,
+    //                 HalfDayTime = isHalfDayTime
+    //             });
+    //     }
+    //     try
+    //     {
+    //         foreach (HalfDayPlanning OneHalfDayPlanning in updateList)
+    //         {
+    //             await halfDayPlanningService.UpdateHalfDayPlanningAsync(OneHalfDayPlanning);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         SentrySdk.CaptureException(ex);
+    //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+    //     }
+    //     #endregion
 
-        #region Delete Part
-        List<TaskPlanning> tasksToRemove = defaultTask.Where(x => x.Identifier.Contains("Delete")).ToList();
-        List<HalfDayPlanning> halfPlanningToRemove = halfDayPlanningsList.Where(x => tasksToRemove.Any(y => x.HalfDayId == y.TaskId)).ToList();
+    //     #region Delete Part
+    //     List<TaskPlanning> tasksToRemove = defaultTask.Where(x => x.Identifier.Contains("Delete")).ToList();
+    //     List<HalfDayPlanning> halfPlanningToRemove = halfDayPlanningsList.Where(x => tasksToRemove.Any(y => x.HalfDayId == y.TaskId)).ToList();
 
-        try
-        {
-            foreach (HalfDayPlanning halfPlanning in halfPlanningToRemove)
-            {
-                await halfDayPlanningService.DeleteHalfDayPlanningAsync(halfPlanning.HalfDayId);
-            }
-        }
-        catch (Exception ex)
-        {
-            SentrySdk.CaptureException(ex);
-            snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-        }
-        #endregion
+    //     try
+    //     {
+    //         foreach (HalfDayPlanning halfPlanning in halfPlanningToRemove)
+    //         {
+    //             await halfDayPlanningService.DeleteHalfDayPlanningAsync(halfPlanning.HalfDayId);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         SentrySdk.CaptureException(ex);
+    //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+    //     }
+    //     #endregion
 
-        snackbar.Add("Le planning a bien été enregistré.", Severity.Success);
+    //     snackbar.Add("Le planning a bien été enregistré.", Severity.Success);
 
 
-    }
+    // }
 
 }

@@ -42,17 +42,11 @@ builder.Services.AddMudServices(config =>
 builder.Services.AddMudServices();
 builder.Services.AddMudBlazorDialog();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ISignedContractService, SignedContractService>();
 builder.Services.AddScoped<IBriefService, BriefService>();
-builder.Services.AddScoped<IWeekService, WeekService>();    
-builder.Services.AddScoped<IHalfDayPlanningService, HalfDayPlanningService>();    
-builder.Services.AddScoped<IClassService, ClassService>();
-builder.Services.AddScoped<ITaskPlanningService, TaskPlanningService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<StateContainerService>();
 builder.Services.AddScoped<CRMService>();
 builder.Services.AddScoped<MailHelper>();
-builder.Services.AddSingleton<PdfService>();
 builder.Services.AddBlazorDownloadFile();
 
 builder.WebHost.UseSentry(options =>

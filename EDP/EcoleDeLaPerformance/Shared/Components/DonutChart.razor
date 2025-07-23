@@ -2,7 +2,7 @@
 @using EcoleDeLaPerformance.Ui.Models
 
 <div>
-    <ApexChart TItem="CRMData" Title="@title" Options="crmDataOptions" Width="350" Height="230">
+   @*  <ApexChart TItem="CRMData" Title="@title" Options="crmDataOptions" Width="350" Height="230">
         <ApexPointSeries TItem="CRMData"
                          Items="crmDataList"
                          SeriesType="SeriesType.Donut"
@@ -10,90 +10,90 @@
                          YAggregate="@(e => e.Sum(e => e.Amount))"
                          OrderByDescending="e=>e.Y"
                          ShowDataLabels />
-    </ApexChart>
+    </ApexChart> *@
 </div>
 
 @code {
-    [Parameter]
-    public List<CRMData> crmDataList { get; set; }
+    // [Parameter]
+    // public List<CRMData> crmDataList { get; set; }
 
-    [Parameter]
-    public string title { get; set; }
+    // [Parameter]
+    // public string title { get; set; }
 
-    [Parameter]
-    public string briefNote { get; set; }
+    // [Parameter]
+    // public string briefNote { get; set; }
 
-    [Parameter]
-    public bool legend { get; set; } = true;
+    // [Parameter]
+    // public bool legend { get; set; } = true;
 
-    private ApexChartOptions<CRMData> crmDataOptions { get; set; } = new();
+    // private ApexChartOptions<CRMData> crmDataOptions { get; set; } = new();
 
     protected override void OnInitialized()
     {
-        crmDataOptions.Title = new Title
-            {
-                Style = new TitleStyle
-                {
-                    FontFamily = "Roboto Flex",
-                    FontSize = "24px",
-                    Color = "#424242"
-                }
-            };
+        // crmDataOptions.Title = new Title
+        //     {
+        //         Style = new TitleStyle
+        //         {
+        //             FontFamily = "Roboto Flex",
+        //             FontSize = "24px",
+        //             Color = "#424242"
+        //         }
+        //     };
 
-        crmDataOptions.Legend = new Legend
-            {
-                FontSize = "13px",
-                Position = LegendPosition.Right,
-                Show = legend
-            };
+        // crmDataOptions.Legend = new Legend
+        //     {
+        //         FontSize = "13px",
+        //         Position = LegendPosition.Right,
+        //         Show = legend
+        //     };
 
 
-        crmDataOptions.Colors = new List<string> { "#E10600", "#FD969C", "#E45E66" };
+        // crmDataOptions.Colors = new List<string> { "#E10600", "#FD969C", "#E45E66" };
 
-        crmDataOptions.DataLabels = new DataLabels
-            {
-                Formatter = @"function (val, opts) { return opts.w.globals.series[opts.seriesIndex]; }",
-                Style = new DataLabelsStyle
-                {
-                    FontSize = "20px"
-                }
-            };
+        // crmDataOptions.DataLabels = new DataLabels
+        //     {
+        //         Formatter = @"function (val, opts) { return opts.w.globals.series[opts.seriesIndex]; }",
+        //         Style = new DataLabelsStyle
+        //         {
+        //             FontSize = "20px"
+        //         }
+        //     };
 
-        crmDataOptions.PlotOptions = new PlotOptions
-            {
-                Pie = new PlotOptionsPie
-                {
-                    Donut = new PlotOptionsDonut
-                    {
-                        Labels = new DonutLabels
-                        {
-                            Total = new DonutLabelTotal
-                            {
-                                Show = true,
-                                ShowAlways = true,
-                                Label = " ",
-                                FontSize = "0px",
-                                Formatter = @"function (w) { return w.globals.seriesTotals.reduce((a, b) => a + b, 0); }"
-                            }
-                        }
-                    }
-                }
-            };
+        // crmDataOptions.PlotOptions = new PlotOptions
+        //     {
+        //         Pie = new PlotOptionsPie
+        //         {
+        //             Donut = new PlotOptionsDonut
+        //             {
+        //                 Labels = new DonutLabels
+        //                 {
+        //                     Total = new DonutLabelTotal
+        //                     {
+        //                         Show = true,
+        //                         ShowAlways = true,
+        //                         Label = " ",
+        //                         FontSize = "0px",
+        //                         Formatter = @"function (w) { return w.globals.seriesTotals.reduce((a, b) => a + b, 0); }"
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     };
 
-        if (briefNote != null)
-        {
-            crmDataOptions.Tooltip = new Tooltip
-                {
-                    Enabled = true,
-                    Y = new TooltipY
-                    {
-                        Formatter = $"function(val) {{ return '{briefNote}'; }}",
-                        Title = new TooltipYTitle
-                        {
-                            Formatter = @"function (seriesName) { return '' }"
-                        }
-                    }
-                };
-        }
+        // if (briefNote != null)
+        // {
+        //     crmDataOptions.Tooltip = new Tooltip
+        //         {
+        //             Enabled = true,
+        //             Y = new TooltipY
+        //             {
+        //                 Formatter = $"function(val) {{ return '{briefNote}'; }}",
+        //                 Title = new TooltipYTitle
+        //                 {
+        //                     Formatter = @"function (seriesName) { return '' }"
+        //                 }
+        //             }
+        //         };
+        // }
     }
 }

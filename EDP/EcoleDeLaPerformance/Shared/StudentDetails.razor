@@ -2,12 +2,11 @@
 @using EcoleDeLaPerformance.Ui.Models
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @inject IUserService userService
-@inject IHalfDayPlanningService halfDayPlanningService
 @inject IBriefService briefNoteService
 @inject IContractService contractService
 
 <div class="mt-8">
-    <MudGrid Justify="Justify.Center">
+   @*  <MudGrid Justify="Justify.Center">
         <MudItem sm="12" md="2" lg="2">
             @if (!string.IsNullOrEmpty(imageDataUrl))
             {
@@ -143,197 +142,197 @@
                 </MudGrid>
             </MudItem>
         }
-    </MudGrid>
+    </MudGrid> *@
 </div>
 
 @code {
-    [Parameter]
-    public User student { get; set; }
+    // [Parameter]
+    // public User student { get; set; }
 
-    [Parameter]
-    public User userInfo { get; set; }
+    // [Parameter]
+    // public User userInfo { get; set; }
 
-    public Week studentWeek;
-    public Week currentWeek;
-    private string imageDataUrl;
-    public decimal turnover;
-    public decimal bonus;
-    private List<Goal> goalsList = new List<Goal>();
-    List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
-    public int? period;
-    List<string> commitmentList = new List<string>();
-    public List<string> fileToCheckList = new List<string>();
-    List<string> currentAffairsList = new List<string>();
-    List<string> casesLiftedList = new List<string>();
-    List<CRMData> meetingsList = new List<CRMData>();
-    string meetingsBriefNote;
-    List<SignedContract?> signedContractList = new List<SignedContract?>();
-    bool _collapseOn;
-    int nbOpenAccounts;
-    int saleContractList = 0;
-    int nexleaseContractList = 0;
-    DateOnly periodFirstDay;
-    DateOnly periodLastDay;
+    // public Week studentWeek;
+    // public Week currentWeek;
+    // private string imageDataUrl;
+    // public decimal turnover;
+    // public decimal bonus;
+    // private List<Goal> goalsList = new List<Goal>();
+    // List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
+    // public int? period;
+    // List<string> commitmentList = new List<string>();
+    // public List<string> fileToCheckList = new List<string>();
+    // List<string> currentAffairsList = new List<string>();
+    // List<string> casesLiftedList = new List<string>();
+    // List<CRMData> meetingsList = new List<CRMData>();
+    // string meetingsBriefNote;
+    // List<SignedContract?> signedContractList = new List<SignedContract?>();
+    // bool _collapseOn;
+    // int nbOpenAccounts;
+    // int saleContractList = 0;
+    // int nexleaseContractList = 0;
+    // DateOnly periodFirstDay;
+    // DateOnly periodLastDay;
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            if (student.ProfilePicture.Length != 0)
-            {
-                imageDataUrl = $"data:/images/jpg;base64,{Convert.ToBase64String(student.ProfilePicture)}";
-            }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     try
+    //     {
+    //         if (student.ProfilePicture.Length != 0)
+    //         {
+    //             imageDataUrl = $"data:/images/jpg;base64,{Convert.ToBase64String(student.ProfilePicture)}";
+    //         }
 
-            var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            period = GetPeriodNumber(student, currentDate);
-            if (student.Weeks.Count != 0)
-            {
-                studentWeek = student.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-                currentWeek = studentWeek;
-                await GetWeekData(currentWeek);
-                periodFirstDay = student.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
-                periodLastDay = student.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
-                nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(student.FirstName + " " + student.LastName.ToUpper(), periodFirstDay, periodLastDay);
-                signedContractList = contractService.GetContractsByPeriod(student.FirstName + " " + student.LastName.ToUpper(), periodFirstDay, periodLastDay);
-            }
-            turnover = await userService.GetUserTurnover(student.EmailAdress, periodFirstDay, periodLastDay);
-            bonus = Math.Round(turnover / 12, 2);
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
+    //         var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+    //         period = GetPeriodNumber(student, currentDate);
+    //         if (student.Weeks.Count != 0)
+    //         {
+    //             studentWeek = student.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    //             currentWeek = studentWeek;
+    //             await GetWeekData(currentWeek);
+    //             periodFirstDay = student.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
+    //             periodLastDay = student.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
+    //             nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(student.FirstName + " " + student.LastName.ToUpper(), periodFirstDay, periodLastDay);
+    //             signedContractList = contractService.GetContractsByPeriod(student.FirstName + " " + student.LastName.ToUpper(), periodFirstDay, periodLastDay);
+    //         }
+    //         turnover = await userService.GetUserTurnover(student.EmailAdress, periodFirstDay, periodLastDay);
+    //         bonus = Math.Round(turnover / 12, 2);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         throw ex;
+    //     }
 
-        var security = signedContractList.Where(x => x.Sécurité == "OUI").Count();
-        var maintenance = signedContractList.Where(x => x.Maintenance == "OUI").Count();
-        var save = signedContractList.Where(x => x.Sauvegarde == "OUI").Count();
+    //     var security = signedContractList.Where(x => x.Sécurité == "OUI").Count();
+    //     var maintenance = signedContractList.Where(x => x.Maintenance == "OUI").Count();
+    //     var save = signedContractList.Where(x => x.Sauvegarde == "OUI").Count();
 
-        if (period == 1)
-        {
-            goalsList.Add(new Goal { title = "Sauvegarde", goal = 5, perform = save, image = GoalsImageValue(5, save) });
-            goalsList.Add(new Goal { title = "Maintenance", goal = 0, perform = maintenance, image = GoalsImageValue(0, maintenance) });
-            goalsList.Add(new Goal { title = "Sécurité", goal = 0, perform = security, image = GoalsImageValue(0, security) });
-            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 4, perform = nbOpenAccounts, image = GoalsImageValue(4, nbOpenAccounts) });
-        }
-        else if (period == 2)
-        {
-            goalsList.Add(new Goal { title = "Sauvegarde", goal = 2, perform = save, image = GoalsImageValue(2, save) });
-            goalsList.Add(new Goal { title = "Maintenance", goal = 5, perform = maintenance, image = GoalsImageValue(5, maintenance) });
-            goalsList.Add(new Goal { title = "Sécurité", goal = 0, perform = security, image = GoalsImageValue(0, security) });
-            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 2, perform = nbOpenAccounts, image = GoalsImageValue(2, nbOpenAccounts) });
-        }
-        else if (period == 3)
-        {
-            goalsList.Add(new Goal { title = "Sauvegarde", goal = 1, perform = save, image = GoalsImageValue(1, save) });
-            goalsList.Add(new Goal { title = "Maintenance", goal = 1, perform = maintenance, image = GoalsImageValue(1, maintenance) });
-            goalsList.Add(new Goal { title = "Sécurité", goal = 5, perform = security, image = GoalsImageValue(5, security) });
-            goalsList.Add(new Goal { title = "Ouverture de compte", goal = 0, perform = nbOpenAccounts, image = GoalsImageValue(0, nbOpenAccounts) });
-        };
-    }
+    //     if (period == 1)
+    //     {
+    //         goalsList.Add(new Goal { title = "Sauvegarde", goal = 5, perform = save, image = GoalsImageValue(5, save) });
+    //         goalsList.Add(new Goal { title = "Maintenance", goal = 0, perform = maintenance, image = GoalsImageValue(0, maintenance) });
+    //         goalsList.Add(new Goal { title = "Sécurité", goal = 0, perform = security, image = GoalsImageValue(0, security) });
+    //         goalsList.Add(new Goal { title = "Ouverture de compte", goal = 4, perform = nbOpenAccounts, image = GoalsImageValue(4, nbOpenAccounts) });
+    //     }
+    //     else if (period == 2)
+    //     {
+    //         goalsList.Add(new Goal { title = "Sauvegarde", goal = 2, perform = save, image = GoalsImageValue(2, save) });
+    //         goalsList.Add(new Goal { title = "Maintenance", goal = 5, perform = maintenance, image = GoalsImageValue(5, maintenance) });
+    //         goalsList.Add(new Goal { title = "Sécurité", goal = 0, perform = security, image = GoalsImageValue(0, security) });
+    //         goalsList.Add(new Goal { title = "Ouverture de compte", goal = 2, perform = nbOpenAccounts, image = GoalsImageValue(2, nbOpenAccounts) });
+    //     }
+    //     else if (period == 3)
+    //     {
+    //         goalsList.Add(new Goal { title = "Sauvegarde", goal = 1, perform = save, image = GoalsImageValue(1, save) });
+    //         goalsList.Add(new Goal { title = "Maintenance", goal = 1, perform = maintenance, image = GoalsImageValue(1, maintenance) });
+    //         goalsList.Add(new Goal { title = "Sécurité", goal = 5, perform = security, image = GoalsImageValue(5, security) });
+    //         goalsList.Add(new Goal { title = "Ouverture de compte", goal = 0, perform = nbOpenAccounts, image = GoalsImageValue(0, nbOpenAccounts) });
+    //     };
+    // }
 
-    private int? GetPeriodNumber(User user, DateOnly currentDate)
-    {
-        var currentWeek = user.Weeks?.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-        return currentWeek?.PeriodNumber;
-    }
+    // private int? GetPeriodNumber(User user, DateOnly currentDate)
+    // {
+    //     var currentWeek = user.Weeks?.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    //     return currentWeek?.PeriodNumber;
+    // }
 
-    public string GoalsImageValue(int goal, int perform)
-    {
-        if (perform != 0)
-        {
-            if (goal == perform)
-            {
-                return "FullBattery.png";
-            }
-            else if (goal / 2 == perform)
-            {
-                return "MediumBattery.png";
-            }
-            else if (goal < perform)
-            {
-                return "trophee.png";
-            }
-            else
-            {
-                return "LowBattery.png";
-            }
-        }
-        else if (goal == 0)
-        {
-            return "-";
-        }
-        else
-        {
-            return "LowBattery.png";
-        }
-    }
+    // public string GoalsImageValue(int goal, int perform)
+    // {
+    //     if (perform != 0)
+    //     {
+    //         if (goal == perform)
+    //         {
+    //             return "FullBattery.png";
+    //         }
+    //         else if (goal / 2 == perform)
+    //         {
+    //             return "MediumBattery.png";
+    //         }
+    //         else if (goal < perform)
+    //         {
+    //             return "trophee.png";
+    //         }
+    //         else
+    //         {
+    //             return "LowBattery.png";
+    //         }
+    //     }
+    //     else if (goal == 0)
+    //     {
+    //         return "-";
+    //     }
+    //     else
+    //     {
+    //         return "LowBattery.png";
+    //     }
+    // }
 
-    async void collapseOn(bool value)
-    {
-        _collapseOn = value;
-    }
+    // async void collapseOn(bool value)
+    // {
+    //     _collapseOn = value;
+    // }
 
-    private async Task GetWeekData(Week currentWeek)
-    {
-        if (currentWeek != null)
-        {
-            halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
+    // private async Task GetWeekData(Week currentWeek)
+    // {
+    //     if (currentWeek != null)
+    //     {
+    //         halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
 
-            var briefNoteList = await briefNoteService.GetWeekNoteByUserId(currentWeek.StartDateWeek.ToDateTime(new TimeOnly()), currentWeek.EndDateWeek.ToDateTime(new TimeOnly()), student.UserId);
-            if (briefNoteList.Count != 0)
-            {
-                meetingsBriefNote = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 2).Select(x => x.TextNote).FirstOrDefault();
-                commitmentList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 0).Select(x => x.TextNote).ToList();
-                fileToCheckList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 1).Select(x => x.TextNote).ToList();
-                casesLiftedList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 3).Select(x => x.TextNote).ToList();
-                currentAffairsList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 4).Select(x => x.TextNote).ToList();
-            }
-            else
-            {
-                meetingsBriefNote = "";
-                commitmentList = new List<string>();
-                fileToCheckList = new List<string>();
-            }
-            var periodFirstDay = student.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
-            var periodLastDay = student.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
-            var nbAppointments = await userService.GetNbAppointmentsAsync(student.EmailAdress, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
-            meetingsList.Add(new CRMData { Label = "Rendez-vous à venir", Amount = nbAppointments });
-            var studentName = (student.FirstName + " " + student.LastName);
-            signedContractList = contractService.GetContractsByPeriod(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
-            saleContractList = contractService.GetNbContractsSaleByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
-            nexleaseContractList = contractService.GetNbContractsNexleaseByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+    //         var briefNoteList = await briefNoteService.GetWeekNoteByUserId(currentWeek.StartDateWeek.ToDateTime(new TimeOnly()), currentWeek.EndDateWeek.ToDateTime(new TimeOnly()), student.UserId);
+    //         if (briefNoteList.Count != 0)
+    //         {
+    //             meetingsBriefNote = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 2).Select(x => x.TextNote).FirstOrDefault();
+    //             commitmentList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 0).Select(x => x.TextNote).ToList();
+    //             fileToCheckList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 1).Select(x => x.TextNote).ToList();
+    //             casesLiftedList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 3).Select(x => x.TextNote).ToList();
+    //             currentAffairsList = briefNoteList.OrderBy(x => x.CreateDate).Where(x => x.TypeNote == 4).Select(x => x.TextNote).ToList();
+    //         }
+    //         else
+    //         {
+    //             meetingsBriefNote = "";
+    //             commitmentList = new List<string>();
+    //             fileToCheckList = new List<string>();
+    //         }
+    //         var periodFirstDay = student.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
+    //         var periodLastDay = student.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
+    //         var nbAppointments = await userService.GetNbAppointmentsAsync(student.EmailAdress, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+    //         meetingsList.Add(new CRMData { Label = "Rendez-vous à venir", Amount = nbAppointments });
+    //         var studentName = (student.FirstName + " " + student.LastName);
+    //         signedContractList = contractService.GetContractsByPeriod(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+    //         saleContractList = contractService.GetNbContractsSaleByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+    //         nexleaseContractList = contractService.GetNbContractsNexleaseByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
 
-            StateHasChanged();
-        }
-    }
+    //         StateHasChanged();
+    //     }
+    // }
 
-    private async void PreviousWeek()
-    {
-        if (currentWeek != null)
-        {
-            var previousWeek = student.Weeks.FirstOrDefault(week => week.WeekNumber == currentWeek.WeekNumber - 1);
+    // private async void PreviousWeek()
+    // {
+    //     if (currentWeek != null)
+    //     {
+    //         var previousWeek = student.Weeks.FirstOrDefault(week => week.WeekNumber == currentWeek.WeekNumber - 1);
 
-            if (previousWeek != null)
-            {
-                currentWeek = previousWeek;
+    //         if (previousWeek != null)
+    //         {
+    //             currentWeek = previousWeek;
 
-                await GetWeekData(currentWeek);
-            }
-        }
-    }
+    //             await GetWeekData(currentWeek);
+    //         }
+    //     }
+    // }
 
-    private async void NextWeek()
-    {
-        if (currentWeek != null)
-        {
-            var nextWeek = student.Weeks.FirstOrDefault(week => week.WeekNumber == currentWeek.WeekNumber + 1);
+    // private async void NextWeek()
+    // {
+    //     if (currentWeek != null)
+    //     {
+    //         var nextWeek = student.Weeks.FirstOrDefault(week => week.WeekNumber == currentWeek.WeekNumber + 1);
 
-            if (nextWeek != null)
-            {
-                currentWeek = nextWeek;
+    //         if (nextWeek != null)
+    //         {
+    //             currentWeek = nextWeek;
 
-                await GetWeekData(currentWeek);
-            }
-        }
-    }
+    //             await GetWeekData(currentWeek);
+    //         }
+    //     }
+    // }
 }

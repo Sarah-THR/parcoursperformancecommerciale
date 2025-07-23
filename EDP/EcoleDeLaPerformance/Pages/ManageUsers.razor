@@ -11,7 +11,7 @@
 @page "/manageusers"
 
 <div>
-    <MudGrid Class="mt-8 d-flex align-items-center">
+   @*  <MudGrid Class="mt-8 d-flex align-items-center">
         <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
             <MudText Typo="Typo.h4" Color="Color.Primary" Class="fw-bold text-uppercase">Gérer les utilisateurs <img src="/images/TeamManage.png" width="30px" class="ms-2" /></MudText>
             <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto mt-5" OnClick="@(async () => await CreateUser())">Ajouter</MudButton>
@@ -31,81 +31,81 @@
         <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
             <ManageUserTable userInfo="userInfo" usersList="deletedUserList" OnUserDeleted="HandleUserDeleted" />
         </MudItem>
-    </MudGrid>
+    </MudGrid> *@
 </div>
 
 @code {
-    public User userInfo => stateContainerService.UserInfo;
-    List<User?> usersList = new List<User?>();
-    List<User?> filteredUserList = new List<User?>();
-    List<User?> deletedUserList = new List<User?>();
-    private string searchString = "";
+    // public User userInfo => stateContainerService.UserInfo;
+    // List<User?> usersList = new List<User?>();
+    // List<User?> filteredUserList = new List<User?>();
+    // List<User?> deletedUserList = new List<User?>();
+    // private string searchString = "";
 
-    protected override async Task OnInitializedAsync()
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        if (userInfo.Role != "Superviseur")
-        {
-            NavigationManager.NavigateTo("/");
-        }
-        else
-        {
-            usersList = await userService.GetUsersAsync();
-            filteredUserList = usersList;
-            deletedUserList = await userService.GetDeletedUsersAsync();
-        }
+        // if (userInfo.Role != "Superviseur")
+        // {
+        //     NavigationManager.NavigateTo("/");
+        // }
+        // else
+        // {
+        //     usersList = await userService.GetUsersAsync();
+        //     filteredUserList = usersList;
+        //     deletedUserList = await userService.GetDeletedUsersAsync();
+        // }
     }
 
-    private async void HandleUserDeleted(bool wasDeleted)
-    {
-        if (wasDeleted)
-        {
-            usersList = await userService.GetUsersAsync();
-            filteredUserList = usersList;
-            deletedUserList = await userService.GetDeletedUsersAsync();
-        }
-        else
-        {
-            usersList = await userService.GetUsersAsync();
-            filteredUserList = usersList;
-            deletedUserList = await userService.GetDeletedUsersAsync();
-        }
+    // private async void HandleUserDeleted(bool wasDeleted)
+    // {
+    //     if (wasDeleted)
+    //     {
+    //         usersList = await userService.GetUsersAsync();
+    //         filteredUserList = usersList;
+    //         deletedUserList = await userService.GetDeletedUsersAsync();
+    //     }
+    //     else
+    //     {
+    //         usersList = await userService.GetUsersAsync();
+    //         filteredUserList = usersList;
+    //         deletedUserList = await userService.GetDeletedUsersAsync();
+    //     }
 
-        StateHasChanged();
-    }
+    //     StateHasChanged();
+    // }
 
-    async void Search(string value)
-    {
-        try
-        {
-            searchString = value.ToLower();
+    // async void Search(string value)
+    // {
+    //     try
+    //     {
+    //         searchString = value.ToLower();
 
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                filteredUserList = usersList.Where(x => x.FirstName.ToLower().Contains(searchString) || x.LastName.ToLower().Contains(searchString)).ToList();
-            }
-            else
-            {
-                filteredUserList = await userService.GetUsersAsync();
-            }
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            SentrySdk.CaptureException(ex);
-        }
-    }
+    //         if (!string.IsNullOrEmpty(searchString))
+    //         {
+    //             filteredUserList = usersList.Where(x => x.FirstName.ToLower().Contains(searchString) || x.LastName.ToLower().Contains(searchString)).ToList();
+    //         }
+    //         else
+    //         {
+    //             filteredUserList = await userService.GetUsersAsync();
+    //         }
+    //         StateHasChanged();
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         SentrySdk.CaptureException(ex);
+    //     }
+    // }
 
-    private async Task CreateUser()
-    {
-        var parameters = new DialogParameters<AddUserDialog>();
+    // private async Task CreateUser()
+    // {
+    //     var parameters = new DialogParameters<AddUserDialog>();
 
-        parameters.Add("userInfo", userInfo);
-        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect", FullWidth = true };
-        var dialogresponse = await (await dialog.ShowAsync<AddUserDialog>("Ajouter un utilisateur", parameters, options)).Result;
-        if (!dialogresponse.Canceled)
-        {
-            await OnInitializedAsync();
-            StateHasChanged();
-        }
-    }
+    //     parameters.Add("userInfo", userInfo);
+    //     var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect", FullWidth = true };
+    //     var dialogresponse = await (await dialog.ShowAsync<AddUserDialog>("Ajouter un utilisateur", parameters, options)).Result;
+    //     if (!dialogresponse.Canceled)
+    //     {
+    //         await OnInitializedAsync();
+    //         StateHasChanged();
+    //     }
+    // }
 }

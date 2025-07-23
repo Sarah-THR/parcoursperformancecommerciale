@@ -10,15 +10,14 @@
 @inject ISnackbar snackbar
 @inject IBriefService briefNoteService
 @inject IContractService contractService
-@inject IWeekService weekService
 @inject IUserService userService
 @inject StateContainerService stateContainerService
 @inject NavigationManager navigationManager
 
-<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+@*<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 
 <div class="d-flex justify-content-center mt-8">
-    @if (isInitialized)
+  @if (isInitialized)
     {
         <MudTabs Rounded="true" PanelClass="pa-6" @bind-ActivePanelIndex="activeIndex">
             <ChildContent>
@@ -45,7 +44,7 @@
                                             <MudItem Class="ps-5 pt-5 pl-5 pb-0 w-100 h-100" lg="3" xs="12">
                                                 @if (meetingsBriefList.Count() != 0 && meetingsBriefList.First().Amount != 0)
                                                 {
-                                                    @* <DonutChart title="" crmDataList="meetingsBriefList" legend=false /> *@
+                                                    @* <DonutChart title="" crmDataList="meetingsBriefList" legend=false />
                                                     <MudText Typo="Typo.h6" class="fw-bold">Rendez-vous planifiés</MudText>
                                                     <MudText Typo="Typo.h6" class="fw-bold">meetingsBriefList.First().Amount</MudText>
                                                 }
@@ -55,7 +54,7 @@
                                                     <MudText Typo="Typo.h6" class="fw-bold">0</MudText>
                                                 }
                                             </MudItem>
-                                            @*  <MudItem lg="9" xs="12" Class="w-100">
+                                            <MudItem lg="9" xs="12" Class="w-100">
                                         <MudGrid Justify="Justify.FlexStart">
                                         <MudItem xs="12" lg="4" Class="pb-0 w-100">
                                         <MudText Color="Color.Primary"><strong>Ajouter une note</strong></MudText>
@@ -64,7 +63,7 @@
                                         <MudTextField AdornmentColor="Color.Primary" @bind-Value="noteMeeting.TextNote" T="string" Variant="Variant.Outlined" Lines="6" />
                                         </MudItem>
                                         </MudGrid>
-                                        </MudItem> *@
+                                        </MudItem>
                                         </MudGrid>
                                     </MudItem>
                                 </MudPaper>
@@ -185,271 +184,271 @@
     {
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     }
-</div>
+</div> *@
 
 
 @code {
-    int activeIndex = 0;
-    List<BriefNote> noteCommitmentList = new List<BriefNote>();
-    List<BriefNote> noteFolderList = new List<BriefNote>();
-    List<BriefNote> noteCaseClosedList = new List<BriefNote>();
-    List<BriefNote> noteOngoingCaseList = new List<BriefNote>();
-    List<BriefNote> briefNoteList = new List<BriefNote>();
-    BriefNote noteMeeting = new BriefNote();
-    List<CRMData> meetingsBriefList = new List<CRMData>();
-    List<CRMData> meetingsDeBriefList = new List<CRMData>();
-    CRMData openAccountsList = new CRMData();
-    int signedContractList = 0;
-    int saleContractList = 0;
-    int nexleaseContractList = 0;
-    public User userInfo => stateContainerService.UserInfo;
-    Week? currentWeek = new Week();
-    MailHelper mailHelper = new MailHelper();
-    private bool isInitialized { get; set; }
-    private DateOnly currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-    bool onChange;
+    // int activeIndex = 0;
+    // List<BriefNote> noteCommitmentList = new List<BriefNote>();
+    // List<BriefNote> noteFolderList = new List<BriefNote>();
+    // List<BriefNote> noteCaseClosedList = new List<BriefNote>();
+    // List<BriefNote> noteOngoingCaseList = new List<BriefNote>();
+    // List<BriefNote> briefNoteList = new List<BriefNote>();
+    // BriefNote noteMeeting = new BriefNote();
+    // List<CRMData> meetingsBriefList = new List<CRMData>();
+    // List<CRMData> meetingsDeBriefList = new List<CRMData>();
+    // CRMData openAccountsList = new CRMData();
+    // int signedContractList = 0;
+    // int saleContractList = 0;
+    // int nexleaseContractList = 0;
+    // public User userInfo => stateContainerService.UserInfo;
+    // Week? currentWeek = new Week();
+    // MailHelper mailHelper = new MailHelper();
+    // private bool isInitialized { get; set; }
+    // private DateOnly currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+    // bool onChange;
 
-    protected override async Task OnInitializedAsync()
-    {
-        currentWeek = userInfo.Weeks?.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     // currentWeek = userInfo.Weeks?.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
 
-        if (!userInfo.Role.Contains("Commercial"))
-        {
-            navigationManager.NavigateTo("/");
-        }
-        else
-        {
-            int period = currentWeek.PeriodNumber;
-            DateOnly periodLastDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
-            DateOnly periodFirstDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
+        // if (!userInfo.Role.Contains("Commercial"))
+        // {
+        //     navigationManager.NavigateTo("/");
+        // }
+        // else
+        // {
+        //     int period = currentWeek.PeriodNumber;
+        //     DateOnly periodLastDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).Last().EndDateWeek;
+        //     DateOnly periodFirstDay = userInfo.Weeks.Where(x => x.PeriodNumber == period).First().StartDateWeek;
 
-            var nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(userInfo.FirstName + " " + userInfo.LastName.ToUpper(), periodFirstDay, periodLastDay);
-            openAccountsList = new CRMData { Label = "", Amount = nbOpenAccounts };
+        //     var nbOpenAccounts = userService.GetNbOpenAccountsByPeriod(userInfo.FirstName + " " + userInfo.LastName.ToUpper(), periodFirstDay, periodLastDay);
+        //     openAccountsList = new CRMData { Label = "", Amount = nbOpenAccounts };
 
-            var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
+        //     var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        //     currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
 
-            #region appointments
-            int nbAppointmentsUpcoming = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, currentDate, periodLastDay);
-            int nbAppointmentsMade = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, periodFirstDay, currentDate);
-            meetingsDeBriefList.Add(new CRMData { Label = "Rendez-vous à venir", Amount = nbAppointmentsUpcoming });
-            meetingsDeBriefList.Add(new CRMData { Label = "Rendez-vous réalisé", Amount = nbAppointmentsMade });
+        //     #region appointments
+        //     int nbAppointmentsUpcoming = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, currentDate, periodLastDay);
+        //     int nbAppointmentsMade = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, periodFirstDay, currentDate);
+        //     meetingsDeBriefList.Add(new CRMData { Label = "Rendez-vous à venir", Amount = nbAppointmentsUpcoming });
+        //     meetingsDeBriefList.Add(new CRMData { Label = "Rendez-vous réalisé", Amount = nbAppointmentsMade });
 
-            var nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, periodFirstDay, periodLastDay);
-            meetingsBriefList.Add(new CRMData { Label = "Rendez-vous", Amount = nbAppointments });
-            #endregion
+        //     var nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.EmailAdress, periodFirstDay, periodLastDay);
+        //     meetingsBriefList.Add(new CRMData { Label = "Rendez-vous", Amount = nbAppointments });
+        //     #endregion
 
-            var studentName = (userInfo.FirstName + " " + userInfo.LastName);
-            signedContractList = contractService.GetNbContractsByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
-            saleContractList = contractService.GetNbContractsSaleByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
-            nexleaseContractList = contractService.GetNbContractsNexleaseByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+        //     var studentName = (userInfo.FirstName + " " + userInfo.LastName);
+        //     signedContractList = contractService.GetNbContractsByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+        //     saleContractList = contractService.GetNbContractsSaleByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+        //     nexleaseContractList = contractService.GetNbContractsNexleaseByUser(studentName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
 
-            briefNoteList = await briefNoteService.GetWeekNoteByUserId(
-                currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000")),
-                currentWeek.EndDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000")),
-                userInfo.UserId);
+        //     briefNoteList = await briefNoteService.GetWeekNoteByUserId(
+        //         currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000")),
+        //         currentWeek.EndDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000")),
+        //         userInfo.UserId);
 
-            SortingBriefnotes();
+        //     SortingBriefnotes();
 
-            CheckEmptyList();
-            isInitialized = true;
-        }
-    }
+        //     CheckEmptyList();
+        //     isInitialized = true;
+        // }
+    // }
 
-    public async void DeleteBriefNote(int briefNoteId)
-    {
-        try
-        {
-            await briefNoteService.DeleteBriefNoteAsync(briefNoteId);
-        }
-        catch (Exception ex)
-        {
-            SentrySdk.CaptureException(ex);
-            snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-        }
-    }
-    public void SortingBriefnotes()
-    {
-        noteCommitmentList = briefNoteList.Where(x => x.TypeNote == 0).OrderBy(x => x.CreateDate).ToList();
-        noteFolderList = briefNoteList.Where(x => x.TypeNote == 1).OrderBy(x => x.CreateDate).ToList();
-        noteMeeting = briefNoteList.Where(x => x.TypeNote == 2).FirstOrDefault();
-        noteCaseClosedList = briefNoteList.Where(x => x.TypeNote == 3).OrderBy(x => x.CreateDate).ToList();
-        noteOngoingCaseList = briefNoteList.Where(x => x.TypeNote == 4).OrderBy(x => x.CreateDate).ToList();
-    }
-    public void CheckEmptyList()
-    {
-        if (noteCommitmentList.Count == 0)
-        {
-            BriefNote tempBriefNote = new BriefNote();
-            tempBriefNote.TypeNote = 0;
-            tempBriefNote.UserId = userInfo.UserId;
-            noteCommitmentList.Add(tempBriefNote);
-        }
-        if (noteFolderList.Count == 0)
-        {
-            BriefNote tempBriefNote = new BriefNote();
-            tempBriefNote.TypeNote = 1;
-            tempBriefNote.UserId = userInfo.UserId;
-            noteFolderList.Add(tempBriefNote);
-        }
-        if (noteMeeting == null)
-        {
-            noteMeeting = new BriefNote();
-            noteMeeting.TypeNote = 2;
-            noteMeeting.UserId = userInfo.UserId;
-        }
-        if (noteCaseClosedList.Count == 0)
-        {
-            BriefNote tempBriefNote = new BriefNote();
-            tempBriefNote.TypeNote = 3;
-            tempBriefNote.UserId = userInfo.UserId;
-            noteCaseClosedList.Add(tempBriefNote);
-        }
-        if (noteOngoingCaseList.Count == 0)
-        {
-            BriefNote tempBriefNote = new BriefNote();
-            tempBriefNote.TypeNote = 4;
-            tempBriefNote.UserId = userInfo.UserId;
-            noteOngoingCaseList.Add(tempBriefNote);
-        }
-    }
+    // public async void DeleteBriefNote(int briefNoteId)
+    // {
+    //     try
+    //     {
+    //         await briefNoteService.DeleteBriefNoteAsync(briefNoteId);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         SentrySdk.CaptureException(ex);
+    //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+    //     }
+    // }
+    // public void SortingBriefnotes()
+    // {
+    //     noteCommitmentList = briefNoteList.Where(x => x.TypeNote == 0).OrderBy(x => x.CreateDate).ToList();
+    //     noteFolderList = briefNoteList.Where(x => x.TypeNote == 1).OrderBy(x => x.CreateDate).ToList();
+    //     noteMeeting = briefNoteList.Where(x => x.TypeNote == 2).FirstOrDefault();
+    //     noteCaseClosedList = briefNoteList.Where(x => x.TypeNote == 3).OrderBy(x => x.CreateDate).ToList();
+    //     noteOngoingCaseList = briefNoteList.Where(x => x.TypeNote == 4).OrderBy(x => x.CreateDate).ToList();
+    // }
+    // public void CheckEmptyList()
+    // {
+    //     if (noteCommitmentList.Count == 0)
+    //     {
+    //         BriefNote tempBriefNote = new BriefNote();
+    //         tempBriefNote.TypeNote = 0;
+    //         tempBriefNote.UserId = userInfo.UserId;
+    //         noteCommitmentList.Add(tempBriefNote);
+    //     }
+    //     if (noteFolderList.Count == 0)
+    //     {
+    //         BriefNote tempBriefNote = new BriefNote();
+    //         tempBriefNote.TypeNote = 1;
+    //         tempBriefNote.UserId = userInfo.UserId;
+    //         noteFolderList.Add(tempBriefNote);
+    //     }
+    //     if (noteMeeting == null)
+    //     {
+    //         noteMeeting = new BriefNote();
+    //         noteMeeting.TypeNote = 2;
+    //         noteMeeting.UserId = userInfo.UserId;
+    //     }
+    //     if (noteCaseClosedList.Count == 0)
+    //     {
+    //         BriefNote tempBriefNote = new BriefNote();
+    //         tempBriefNote.TypeNote = 3;
+    //         tempBriefNote.UserId = userInfo.UserId;
+    //         noteCaseClosedList.Add(tempBriefNote);
+    //     }
+    //     if (noteOngoingCaseList.Count == 0)
+    //     {
+    //         BriefNote tempBriefNote = new BriefNote();
+    //         tempBriefNote.TypeNote = 4;
+    //         tempBriefNote.UserId = userInfo.UserId;
+    //         noteOngoingCaseList.Add(tempBriefNote);
+    //     }
+    // }
 
-    private async Task ConfirmBrief(string value, bool Draft = false)
-    {
-        var parameters = new DialogParameters<ConfirmDialog>();
-        string title;
-        if (value == "Brief")
-        {
-            if (Draft)
-            {
-                if (currentWeek.Draft == false)
-                    parameters.Add("MainMessage", $"Voulez vous vraiment envoyé ce {value} ? Votre superviseur sera prévenu .");
-                else
-                    parameters.Add("MainMessage", $"Voulez vous vraiment envoyé ce {value} ? (Votre superviseur a déjà été prévenu.)");
-                title = "Envoyer mon briefing";
-            }
-            else
-            {
-                parameters.Add("MainMessage", $"Voulez vous vraiment enregistrer ce {value} en brouillon ? Votre superviseur ne sera pas prévenu.");
-                title = "Enregistrer le briefing en brouillon";
+    // private async Task ConfirmBrief(string value, bool Draft = false)
+    // {
+    //     var parameters = new DialogParameters<ConfirmDialog>();
+    //     string title;
+    //     if (value == "Brief")
+    //     {
+    //         if (Draft)
+    //         {
+    //             if (currentWeek.Draft == false)
+    //                 parameters.Add("MainMessage", $"Voulez vous vraiment envoyé ce {value} ? Votre superviseur sera prévenu .");
+    //             else
+    //                 parameters.Add("MainMessage", $"Voulez vous vraiment envoyé ce {value} ? (Votre superviseur a déjà été prévenu.)");
+    //             title = "Envoyer mon briefing";
+    //         }
+    //         else
+    //         {
+    //             parameters.Add("MainMessage", $"Voulez vous vraiment enregistrer ce {value} en brouillon ? Votre superviseur ne sera pas prévenu.");
+    //             title = "Enregistrer le briefing en brouillon";
 
-            }
-        }
-        else
-        {
-            parameters.Add("MainMessage", $"Voulez vous vraiment enregistrer ce {value} ?");
-            title = "Envoyer mon debrief";
-        }
+    //         }
+    //     }
+    //     else
+    //     {
+    //         parameters.Add("MainMessage", $"Voulez vous vraiment enregistrer ce {value} ?");
+    //         title = "Envoyer mon debrief";
+    //     }
 
-        parameters.Add("ButtonConfirm", "Envoyer");
-        parameters.Add("ButtonCancel", "Annuler");
-        var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
-        var dialogrespons = await (await dialog.ShowAsync<ConfirmDialog>(title, parameters, options)).Result;
-        if (!dialogrespons.Canceled)
-        {
-            try
-            {
-                List<BriefNote>[] concernedList = new List<BriefNote>[2];
-                if (value == "Brief")
-                    concernedList = new List<BriefNote>[] { noteCommitmentList, noteFolderList };
-                else
-                    concernedList = new List<BriefNote>[] { noteCaseClosedList, noteOngoingCaseList };
+    //     parameters.Add("ButtonConfirm", "Envoyer");
+    //     parameters.Add("ButtonCancel", "Annuler");
+    //     var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
+    //     var dialogrespons = await (await dialog.ShowAsync<ConfirmDialog>(title, parameters, options)).Result;
+    //     if (!dialogrespons.Canceled)
+    //     {
+    //         try
+    //         {
+    //             List<BriefNote>[] concernedList = new List<BriefNote>[2];
+    //             if (value == "Brief")
+    //                 concernedList = new List<BriefNote>[] { noteCommitmentList, noteFolderList };
+    //             else
+    //                 concernedList = new List<BriefNote>[] { noteCaseClosedList, noteOngoingCaseList };
 
-                foreach (var noteList in concernedList)
-                {
-                    foreach (var note in noteList)
-                    {
-                        if (!String.IsNullOrEmpty(note.TextNote) && note.BriefNoteId.Equals(Guid.Empty))
-                        {
-                            await briefNoteService.InsertBriefNoteAsync(note);
-                        }
-                        else if (!String.IsNullOrEmpty(note.TextNote) && !note.BriefNoteId.Equals(Guid.Empty))
-                        {
-                            await briefNoteService.UpdateBriefNoteAsync(note);
-                        }
-                    }
-                }
+    //             foreach (var noteList in concernedList)
+    //             {
+    //                 foreach (var note in noteList)
+    //                 {
+    //                     if (!String.IsNullOrEmpty(note.TextNote) && note.BriefNoteId.Equals(Guid.Empty))
+    //                     {
+    //                         await briefNoteService.InsertBriefNoteAsync(note);
+    //                     }
+    //                     else if (!String.IsNullOrEmpty(note.TextNote) && !note.BriefNoteId.Equals(Guid.Empty))
+    //                     {
+    //                         await briefNoteService.UpdateBriefNoteAsync(note);
+    //                     }
+    //                 }
+    //             }
 
-                if (value == "Brief")
-                {
-                    if (!String.IsNullOrEmpty(noteMeeting.TextNote) && noteMeeting.BriefNoteId.Equals(Guid.Empty))
-                        await briefNoteService.InsertBriefNoteAsync(noteMeeting);
-                    else if (!String.IsNullOrEmpty(noteMeeting.TextNote) && !noteMeeting.BriefNoteId.Equals(Guid.Empty))
-                        await briefNoteService.UpdateBriefNoteAsync(noteMeeting);
-                }
+    //             if (value == "Brief")
+    //             {
+    //                 if (!String.IsNullOrEmpty(noteMeeting.TextNote) && noteMeeting.BriefNoteId.Equals(Guid.Empty))
+    //                     await briefNoteService.InsertBriefNoteAsync(noteMeeting);
+    //                 else if (!String.IsNullOrEmpty(noteMeeting.TextNote) && !noteMeeting.BriefNoteId.Equals(Guid.Empty))
+    //                     await briefNoteService.UpdateBriefNoteAsync(noteMeeting);
+    //             }
 
-                if (Draft && !currentWeek.Draft)
-                {
-                    currentWeek.Draft = true;
-                    await weekService.UpdateWeekAsync(currentWeek);
-                    mailHelper.EnvoiMail(userInfo.SupervisorNavigation.EmailAdress, $"{userInfo.FirstName} " + userInfo.LastName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
-                    StateHasChanged();
-                }
-                else if (!Draft && !currentWeek.Draft)
-                {
-                    currentWeek.Draft = false;
-                    await weekService.UpdateWeekAsync(currentWeek);
-                    StateHasChanged();
-                }
+    //             if (Draft && !currentWeek.Draft)
+    //             {
+    //                 currentWeek.Draft = true;
+    //                 await weekService.UpdateWeekAsync(currentWeek);
+    //                 mailHelper.EnvoiMail(userInfo.SupervisorNavigation.EmailAdress, $"{userInfo.FirstName} " + userInfo.LastName, currentWeek.StartDateWeek, currentWeek.EndDateWeek);
+    //                 StateHasChanged();
+    //             }
+    //             else if (!Draft && !currentWeek.Draft)
+    //             {
+    //                 currentWeek.Draft = false;
+    //                 await weekService.UpdateWeekAsync(currentWeek);
+    //                 StateHasChanged();
+    //             }
 
-                snackbar.Add($"Le {value} a été enregistré avec succès.", Severity.Success);
-                await Task.Delay(2000); // Délai de 2 secondes
-                navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true); // Recharge la page
-            }
-            catch (Exception ex)
-            {
-                SentrySdk.CaptureException(ex);
-                snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-            }
+    //             snackbar.Add($"Le {value} a été enregistré avec succès.", Severity.Success);
+    //             await Task.Delay(2000); // Délai de 2 secondes
+    //             navigationManager.NavigateTo(navigationManager.Uri, forceLoad: true); // Recharge la page
+    //         }
+    //         catch (Exception ex)
+    //         {
+    //             SentrySdk.CaptureException(ex);
+    //             snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
+    //         }
 
 
-        }
-    }
+    //     }
+    // }
 
-    async void ChangeOn(bool value)
-    {
-        onChange = value;
-    }
+    // async void ChangeOn(bool value)
+    // {
+    //     onChange = value;
+    // }
 
-    private bool _isNavigating;
-    private async Task OnBeforeInternalNavigation(LocationChangingContext context)
-    {
-        if (onChange == true)
-        {
-            if (_isNavigating) return; // Évitez les boucles infinies
+    // private bool _isNavigating;
+    // private async Task OnBeforeInternalNavigation(LocationChangingContext context)
+    // {
+    //     if (onChange == true)
+    //     {
+    //         if (_isNavigating) return; // Évitez les boucles infinies
 
-            _isNavigating = true;
+    //         _isNavigating = true;
 
-            var parameters = new DialogParameters
-            {
-                { "mainMessage", "Les modifications que vous avez apportées seront perdues. Êtes-vous sûr de vouloir quitter la page ?" },
-                { "buttonConfirm", "Oui" },
-                { "buttonCancel", "Non" }
-            };
+    //         var parameters = new DialogParameters
+    //         {
+    //             { "mainMessage", "Les modifications que vous avez apportées seront perdues. Êtes-vous sûr de vouloir quitter la page ?" },
+    //             { "buttonConfirm", "Oui" },
+    //             { "buttonCancel", "Non" }
+    //         };
 
-            var options = new DialogOptions
-                {
-                    MaxWidth = MaxWidth.Medium,
-                    CloseButton = true,
-                    ClassBackground = "DialogBackgroundBlurEffect",
-                    FullWidth = true
-                };
+    //         var options = new DialogOptions
+    //             {
+    //                 MaxWidth = MaxWidth.Medium,
+    //                 CloseButton = true,
+    //                 ClassBackground = "DialogBackgroundBlurEffect",
+    //                 FullWidth = true
+    //             };
 
-            var dialogResult = await dialog.Show<ConfirmDialog>("", parameters, options).Result;
+    //         var dialogResult = await dialog.Show<ConfirmDialog>("", parameters, options).Result;
 
-            if (!dialogResult.Canceled)
-            {
-                // Autoriser la navigation
-                navigationManager.NavigateTo(context.TargetLocation, forceLoad: true);
-            }
-            else
-            {
-                // Bloquer la navigation
-                context.PreventNavigation();
-            }
-            _isNavigating = false;
-            onChange = false;
-        }
+    //         if (!dialogResult.Canceled)
+    //         {
+    //             // Autoriser la navigation
+    //             navigationManager.NavigateTo(context.TargetLocation, forceLoad: true);
+    //         }
+    //         else
+    //         {
+    //             // Bloquer la navigation
+    //             context.PreventNavigation();
+    //         }
+    //         _isNavigating = false;
+    //         onChange = false;
+    //     }
 
-    }
+    // }
 }

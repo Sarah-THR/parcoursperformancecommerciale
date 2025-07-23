@@ -1,14 +1,14 @@
 ﻿@using EcoleDeLaPerformance.Ui.Models
 
-@foreach (Class oneClass in classes)
+@* @foreach (Class oneClass in classes)
 {
 
     <h1 class="m-5 text-uppercase">@oneClass.ClassName</h1>
     <PDFViewer filesList="@oneClass.Documents.ToList()" />
-}
+} *@
 
 @code {
-    [Parameter]
-    public List<Class> classes { get; set; }
+    // [Parameter]
+    // public List<Class> classes { get; set; }
 
 }

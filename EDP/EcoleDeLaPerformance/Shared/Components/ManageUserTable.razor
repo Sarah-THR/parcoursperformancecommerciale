@@ -6,7 +6,7 @@
 @inject IUserService userService
 
 <div class="mt-8 w-100">
-    <MudTable T="User" Items="@usersList" Hover="true" @ref="mudTable" FixedHeader="true" Breakpoint="Breakpoint.Xs" Height="400px" RowClass="cursor-pointer" OnRowClick="RowClickEvent">
+   @*  <MudTable T="User" Items="@usersList" Hover="true" @ref="mudTable" FixedHeader="true" Breakpoint="Breakpoint.Xs" Height="400px" RowClass="cursor-pointer" OnRowClick="RowClickEvent">
         <HeaderContent>
             <MudTh>Nom</MudTh>
             <MudTh>Prénom</MudTh>
@@ -38,85 +38,85 @@
                 <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Autorenew" aria-label="delete" Color="Color.Success" OnClick="() => RenewUser(context.UserId)"></MudIconButton></MudTd>
             }
         </RowTemplate>
-    </MudTable>
+    </MudTable> *@
 </div>
 
 @code {
-    [Parameter]
-    public User? userInfo { get; set; }
+    // [Parameter]
+    // public User? userInfo { get; set; }
 
-    [Parameter]
-    public List<User>? usersList { get; set; }
+    // [Parameter]
+    // public List<User>? usersList { get; set; }
 
-    [Parameter]
-    public EventCallback<bool> OnUserDeleted { get; set; }
+    // [Parameter]
+    // public EventCallback<bool> OnUserDeleted { get; set; }
 
-    private MudTable<User> mudTable;
-    private User? selectedItem;
+    // private MudTable<User> mudTable;
+    // private User? selectedItem;
 
-    async void DeleteUser(int userId)
-    {
-        var parameters = new DialogParameters<ConfirmDialog>();
+    // async void DeleteUser(int userId)
+    // {
+    //     var parameters = new DialogParameters<ConfirmDialog>();
 
-        parameters.Add("MainMessage", $"Voulez-vous suspendre le suivi de cet utilisateur ?");
-        parameters.Add("warningMessage", $"ATTENTION, cette action suspend définitivement le suivi du commercial junior.");
+    //     parameters.Add("MainMessage", $"Voulez-vous suspendre le suivi de cet utilisateur ?");
+    //     parameters.Add("warningMessage", $"ATTENTION, cette action suspend définitivement le suivi du commercial junior.");
 
-        parameters.Add("ButtonConfirm", "Oui");
-        parameters.Add("ButtonCancel", "Non");
-        var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
-        var dialogrespons = await (await dialog.ShowAsync<ConfirmDialog>("Supprimer", parameters, options)).Result;
-        if (!dialogrespons.Canceled)
-        {
-            await userService.DeleteUserAsync(userId);
-            usersList.RemoveAll(x => x.UserId == userId);
-            await OnInitializedAsync();
-            Snackbar.Add("L'utilisateur a bien été suspendu", Severity.Warning);
+    //     parameters.Add("ButtonConfirm", "Oui");
+    //     parameters.Add("ButtonCancel", "Non");
+    //     var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
+    //     var dialogrespons = await (await dialog.ShowAsync<ConfirmDialog>("Supprimer", parameters, options)).Result;
+    //     if (!dialogrespons.Canceled)
+    //     {
+    //         await userService.DeleteUserAsync(userId);
+    //         usersList.RemoveAll(x => x.UserId == userId);
+    //         await OnInitializedAsync();
+    //         Snackbar.Add("L'utilisateur a bien été suspendu", Severity.Warning);
 
-            await OnUserDeleted.InvokeAsync(true);
+    //         await OnUserDeleted.InvokeAsync(true);
 
-            StateHasChanged();
-        }
-    }
+    //         StateHasChanged();
+    //     }
+    // }
 
-    async void RenewUser(int userId)
-    {
-        var parameters = new DialogParameters<ConfirmDialog>();
+    // async void RenewUser(int userId)
+    // {
+    //     var parameters = new DialogParameters<ConfirmDialog>();
 
-        parameters.Add("MainMessage", $"Voulez vous vraiment récupérer cet utilisateur ?");
+    //     parameters.Add("MainMessage", $"Voulez vous vraiment récupérer cet utilisateur ?");
 
-        parameters.Add("ButtonConfirm", "Oui");
-        parameters.Add("ButtonCancel", "Non");
-        var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
-        var dialogrespons = await (await dialog.ShowAsync<ConfirmDialog>("Récupérer", parameters, options)).Result;
-        if (!dialogrespons.Canceled)
-        {
-            await userService.DeleteUserAsync(userId);
-            usersList.RemoveAll(x => x.UserId == userId);
-            await OnInitializedAsync();
-            Snackbar.Add("L'utilisateur a bien été récupéré", Severity.Success);
+    //     parameters.Add("ButtonConfirm", "Oui");
+    //     parameters.Add("ButtonCancel", "Non");
+    //     var options = new DialogOptions() { MaxWidth = MaxWidth.ExtraSmall, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect" };
+    //     var dialogrespons = await (await dialog.ShowAsync<ConfirmDialog>("Récupérer", parameters, options)).Result;
+    //     if (!dialogrespons.Canceled)
+    //     {
+    //         await userService.DeleteUserAsync(userId);
+    //         usersList.RemoveAll(x => x.UserId == userId);
+    //         await OnInitializedAsync();
+    //         Snackbar.Add("L'utilisateur a bien été récupéré", Severity.Success);
 
-            await OnUserDeleted.InvokeAsync(true);
+    //         await OnUserDeleted.InvokeAsync(true);
 
-            StateHasChanged();
-        }
-    }
+    //         StateHasChanged();
+    //     }
+    // }
 
-    private async void RowClickEvent(TableRowClickEventArgs<User> tableRowClickEventArgs)
-    {
-        if (tableRowClickEventArgs != null)
-        {
-            selectedItem = tableRowClickEventArgs.Item;
-            var parameters = new DialogParameters<UpdateUserDialog>();
+    // private async void RowClickEvent(TableRowClickEventArgs<User> tableRowClickEventArgs)
+    // {
+    //     if (tableRowClickEventArgs != null)
+    //     {
+    //         selectedItem = tableRowClickEventArgs.Item;
+    //         var parameters = new DialogParameters<UpdateUserDialog>();
 
-            parameters.Add("userInfo", userInfo);
-            parameters.Add("studentInfo", selectedItem);
-            var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect", FullWidth = true };
-            var dialogresponse = await (await dialog.ShowAsync<UpdateUserDialog>("Modifier un utilisateur", parameters, options)).Result;
-            if (!dialogresponse.Canceled)
-            {
-                await OnInitializedAsync();
-                StateHasChanged();
-            }
-        }
-    }
+    //         parameters.Add("userInfo", userInfo);
+    //         parameters.Add("studentInfo", selectedItem);
+    //         var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect", FullWidth = true };
+    //         var dialogresponse = await (await dialog.ShowAsync<UpdateUserDialog>("Modifier un utilisateur", parameters, options)).Result;
+    //         if (!dialogresponse.Canceled)
+    //         {
+    //             await OnInitializedAsync();
+    //             StateHasChanged();
+    //         }
+    //     }
+    // }
 }

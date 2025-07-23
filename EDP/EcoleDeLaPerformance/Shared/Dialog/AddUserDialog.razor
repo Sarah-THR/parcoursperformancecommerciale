@@ -7,7 +7,7 @@
 @inject IUserService userService
 @inject MailHelper mailHelper
 
-<MudDialog>
+@* <MudDialog>
     <DialogContent>
         <MudForm @ref="form" Model="model">
             <MudGrid>
@@ -70,124 +70,124 @@
         <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Confirm">Valider</MudButton>
     </DialogActions>
 </MudDialog>
-
+ *@
 @code {
-    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+    // [CascadingParameter] MudDialogInstance mudDialog { get; set; }
 
-    [Parameter]
-    public User userInfo { get; set; }
+    // [Parameter]
+    // public User userInfo { get; set; }
 
-    User model = new User();
-    private MudForm form;
-    public string? selectedRole { get; set; }
-    public string? selectedSupervisor;
-    DateTime? startDate = null;
-    public DateTime? endDate;
-    public List<string> roleList { get; } = new List<string> { "Commercial junior", "Commercial senior", "Manager", "Superviseur" };
-    public List<string> supervisorList = new List<string>();
-    public List<User> usersList = new List<User>();
+    // User model = new User();
+    // private MudForm form;
+    // public string? selectedRole { get; set; }
+    // public string? selectedSupervisor;
+    // DateTime? startDate = null;
+    // public DateTime? endDate;
+    // public List<string> roleList { get; } = new List<string> { "Commercial junior", "Commercial senior", "Manager", "Superviseur" };
+    // public List<string> supervisorList = new List<string>();
+    // public List<User> usersList = new List<User>();
 
-    protected override async Task OnInitializedAsync()
-    {
-        usersList = await userService.GetUsersAsync();
-        supervisorList = usersList.Where(x => x.Role == "Manager").Select(x => x.FirstName + " " + x.LastName).ToList();
-    }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     usersList = await userService.GetUsersAsync();
+    //     supervisorList = usersList.Where(x => x.Role == "Manager").Select(x => x.FirstName + " " + x.LastName).ToList();
+    // }
 
-    private async Task SelectSupervisor(string value)
-    {
-        selectedSupervisor = value;
-        StateHasChanged();
-    }
+    // private async Task SelectSupervisor(string value)
+    // {
+    //     selectedSupervisor = value;
+    //     StateHasChanged();
+    // }
 
-    private void DatePickerTextChanged(string value)
-    {
-        if (value == null || value.Length < 6)
-        {
-            endDate = null;
-        }
-        else
-        {
-            startDate = Convert.ToDateTime(value);
-            endDate = startDate?.AddMonths(6);
-        }
-    }
+    // private void DatePickerTextChanged(string value)
+    // {
+    //     if (value == null || value.Length < 6)
+    //     {
+    //         endDate = null;
+    //     }
+    //     else
+    //     {
+    //         startDate = Convert.ToDateTime(value);
+    //         endDate = startDate?.AddMonths(6);
+    //     }
+    // }
 
-    async Task HandleSearchChange(string value)
-    {
-        try
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                var user = userService.GetUserAD(model.EmailAdress);
-                if (user != null)
-                {
-                    model.FirstName = user.FirstName;
-                    model.LastName = user.LastName;
-                    model.Entity = user.Entity;
-                }
-            }
-            else
-            {
-                model.FirstName = null;
-                model.LastName = null;
-                model.Entity = null;
-            }
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            snackbar.Add($"Erreur lors de la recherche d'un utilisateur: {ex.Message}", Severity.Error);
-            SentrySdk.CaptureException(ex);
-        }
-    }
+    // async Task HandleSearchChange(string value)
+    // {
+    //     try
+    //     {
+    //         if (!string.IsNullOrEmpty(value))
+    //         {
+    //             var user = userService.GetUserAD(model.EmailAdress);
+    //             if (user != null)
+    //             {
+    //                 model.FirstName = user.FirstName;
+    //                 model.LastName = user.LastName;
+    //                 model.Entity = user.Entity;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             model.FirstName = null;
+    //             model.LastName = null;
+    //             model.Entity = null;
+    //         }
+    //         StateHasChanged();
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         snackbar.Add($"Erreur lors de la recherche d'un utilisateur: {ex.Message}", Severity.Error);
+    //         SentrySdk.CaptureException(ex);
+    //     }
+    // }
 
-    public async void Confirm()
-    {
-        try
-        {
-            await form.Validate();
-            if (form.IsValid)
-            {
-                User newUser = new User()
-                    {
-                        EmailAdress = model.EmailAdress,
-                        FirstName = model.FirstName,
-                        LastName = model.LastName,
-                        Entity = model.Entity,
-                        StartDate = startDate,
-                        EndDate = endDate,
-                        IsActive = true,
-                        Role = selectedRole
-                    };
+    // public async void Confirm()
+    // {
+    //     try
+    //     {
+    //         await form.Validate();
+    //         if (form.IsValid)
+    //         {
+    //             User newUser = new User()
+    //                 {
+    //                     EmailAdress = model.EmailAdress,
+    //                     FirstName = model.FirstName,
+    //                     LastName = model.LastName,
+    //                     Entity = model.Entity,
+    //                     StartDate = startDate,
+    //                     EndDate = endDate,
+    //                     IsActive = true,
+    //                     Role = selectedRole
+    //                 };
 
-                if (userInfo.Role == "Manager")
-                {
-                    newUser.Supervisor = userInfo.UserId;
-                }
-                else
-                {
-                    if (selectedRole.Contains("Commercial"))
-                    {
-                        User? supervisor = usersList.Where(x => (x.FirstName.ToUpper() + " " + x.LastName.ToUpper()) == selectedSupervisor).First();
-                        newUser.Supervisor = supervisor.UserId;
-                    }
-                }
+    //             if (userInfo.Role == "Manager")
+    //             {
+    //                 newUser.Supervisor = userInfo.UserId;
+    //             }
+    //             else
+    //             {
+    //                 if (selectedRole.Contains("Commercial"))
+    //                 {
+    //                     User? supervisor = usersList.Where(x => (x.FirstName.ToUpper() + " " + x.LastName.ToUpper()) == selectedSupervisor).First();
+    //                     newUser.Supervisor = supervisor.UserId;
+    //                 }
+    //             }
 
-                await userService.CreateUserAsync(newUser);
-                mailHelper.SendMailNewAccount(newUser.EmailAdress, (newUser.FirstName + " " + newUser.LastName), (userInfo.FirstName + " " + userInfo.LastName), userInfo.EmailAdress);
-                snackbar.Add("L'utilisateur a bien été créé !", Severity.Success);
-                mudDialog.Close(DialogResult.Ok(true));
-            }
-            else
-            {
-                snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
-            }
-        }
-        catch (Exception ex)
-        {
-            snackbar.Add($"Erreur lors de l'enregistrement de l'utilisateur : {ex.Message}", Severity.Error);
-            SentrySdk.CaptureException(ex);
-        }
-        StateHasChanged();
-    }
+    //             await userService.CreateUserAsync(newUser);
+    //             mailHelper.SendMailNewAccount(newUser.EmailAdress, (newUser.FirstName + " " + newUser.LastName), (userInfo.FirstName + " " + userInfo.LastName), userInfo.EmailAdress);
+    //             snackbar.Add("L'utilisateur a bien été créé !", Severity.Success);
+    //             mudDialog.Close(DialogResult.Ok(true));
+    //         }
+    //         else
+    //         {
+    //             snackbar.Add("Veuillez remplir les champs obligatoires !", Severity.Error);
+    //         }
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         snackbar.Add($"Erreur lors de l'enregistrement de l'utilisateur : {ex.Message}", Severity.Error);
+    //         SentrySdk.CaptureException(ex);
+    //     }
+    //     StateHasChanged();
+    // }
 }

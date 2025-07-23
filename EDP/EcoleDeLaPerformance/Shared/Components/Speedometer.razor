@@ -2,7 +2,7 @@
 @using Radzen.Blazor
 
 <div class="d-flex flex-column justify-content-center">
-    <h4 class="fw-bold text-center">@title</h4>
+@*     <h4 class="fw-bold text-center">@title</h4>
     <RadzenArcGauge Style="width: 100%; height: 170px;">
         <RadzenArcGaugeScale Step="1" Min="0" Max="@maxValue" MinorStep="1" Radius="1.5" TickPosition="GaugeTickPosition.Outside" Y="0.9" Margin="0">
             <RadzenArcGaugeScaleValue Value=@Convert.ToDouble(crmData.Amount) ShowValue=true>
@@ -13,16 +13,16 @@
                 </Template>
             </RadzenArcGaugeScaleValue>
         </RadzenArcGaugeScale>
-    </RadzenArcGauge>
+    </RadzenArcGauge> *@
 </div>
 
 @code {
-    [Parameter]
-    public CRMData? crmData { get; set; }
+    // [Parameter]
+    // public CRMData? crmData { get; set; }
 
-    [Parameter]
-    public string title { get; set; }
+    // [Parameter]
+    // public string title { get; set; }
 
-    [Parameter]
-    public int maxValue { get; set; }
+    // [Parameter]
+    // public int maxValue { get; set; }
 }

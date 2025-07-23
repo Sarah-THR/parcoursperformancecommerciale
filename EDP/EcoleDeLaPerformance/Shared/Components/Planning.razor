@@ -1,6 +1,6 @@
 ﻿@using EcoleDeLaPerformance.Ui.Models
 <div class="m-3">
-    <MudGrid>
+    @* <MudGrid>
         <MudItem xs="12">
             <MudGrid Justify="Justify.SpaceAround">
                 <MudItem md="1" xs="1" lg="1">
@@ -82,35 +82,35 @@
                 </MudItem>
             </MudGrid>
         </MudItem>
-    </MudGrid>
+    </MudGrid> *@
 </div>
 
 @code {
-    [Parameter]
-    public List<HalfDayPlanning>? halfDayPlanningsList { get; set; }
+    // [Parameter]
+    // public List<HalfDayPlanning>? halfDayPlanningsList { get; set; }
 
-    private string GetTaskColor(string taskTitle)
-    {
-        switch (taskTitle)
-        {
-            case "1/2 jour terrain seul":
-                return "background-color:#f3c5c5;";
-            case "1/2 jour terrain accompagné":
-                return "background-color:#f9e4e4;";
-            case "1/2 jour agence montage offre + rôle assistant co.":
-                return "background-color:#eda1a1;";
-            case "1/2 jour agence suivi performance commerciale":
-                return "background-color:#e77272;";
-            default:
-                return "background-color:#fff;";
-        }
-    }
+    // private string GetTaskColor(string taskTitle)
+    // {
+    //     switch (taskTitle)
+    //     {
+    //         case "1/2 jour terrain seul":
+    //             return "background-color:#f3c5c5;";
+    //         case "1/2 jour terrain accompagné":
+    //             return "background-color:#f9e4e4;";
+    //         case "1/2 jour agence montage offre + rôle assistant co.":
+    //             return "background-color:#eda1a1;";
+    //         case "1/2 jour agence suivi performance commerciale":
+    //             return "background-color:#e77272;";
+    //         default:
+    //             return "background-color:#fff;";
+    //     }
+    // }
 
-    private string GetTaskTitle(string dayOfWeek, bool halfDayTime)
-    {
-        return halfDayPlanningsList
-                .Where(x => x.HalfDayDate.DayOfWeek.ToString() == dayOfWeek && x.HalfDayTime == halfDayTime)
-                .Select(x => x.Task.Titled)
-                .FirstOrDefault();
-    }
+    // private string GetTaskTitle(string dayOfWeek, bool halfDayTime)
+    // {
+    //     return halfDayPlanningsList
+    //             .Where(x => x.HalfDayDate.DayOfWeek.ToString() == dayOfWeek && x.HalfDayTime == halfDayTime)
+    //             .Select(x => x.Task.Titled)
+    //             .FirstOrDefault();
+    // }
 }

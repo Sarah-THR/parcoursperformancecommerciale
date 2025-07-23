@@ -9,7 +9,7 @@
 @inject IUserService userService
 @inject IJSRuntime JsRuntime
 
-<PageTitle>EcoleDeLaPerformance</PageTitle>
+<PageTitle>Parcours Performance Commerciale</PageTitle>
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -17,140 +17,56 @@
     <CascadingAuthenticationState>
         <AuthorizeView>
             <Authorized>
-                @if (isInitialized)
-                {
-                    @if (unknowUser)
-                    {
-                        <MudNavMenu Class="shadow p-1 px-3">
-                            <MudImage Src="/images/Logo.png" Width="500" />
-                        </MudNavMenu>
-                        <UnknowUser />
-                    }
-                    else if (firstWeekStartDate > currentDate)
-                    {
-                        <MudNavMenu Class="shadow p-1 px-3">
-                            <MudImage Src="/images/EDP.svg" Width="500" />
-                        </MudNavMenu>
-                        <div class="mt-8 d-flex justify-content-center">
-                            Vous aurez accès au site à partir du @firstWeekStartDate.
+                <CascadingValue Value="@stateContainerService.UserInfo">
+                    <MudLayout>
+                        <MudPaper Elevation="0" Class="px-6 py-2 border-bottom" Style="background-color: white; position: fixed; top: 0; width: 100%; z-index: 1100;">
+                            <MudGrid Class="align-items-center" Justify="Justify.SpaceBetween">
+                                <MudItem xs="12" md="6">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                        <MudImage Src="/images/Logo.png" Width="150" />
+                                            <MudText Class="text-slate-800 fw-bold pt-1">Parcours Performance Commerciale</MudText>
+                                    </MudStack>
+                                </MudItem>
+
+                                <MudItem xs="12" md="6">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
+                                        <MudAvatar>
+                                            PN
+                                        </MudAvatar>
+                                        <MudText Typo="Typo.subtitle2" Class="font-medium text-slate-700">Prénom NOM</MudText>
+                                    </MudStack>
+                                </MudItem>
+                            </MudGrid>
+                            </MudPaper>
+                        <div class="d-flex">
+                            <MudDrawer Elevation="0" Width="125px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
+                                <MudNavMenu Class="p-2">
+                                    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">
+                                        Accueil
+                                    </MudNavLink>
+                                    <MudNavLink Href="/semaine" Icon="@Icons.Material.Outlined.CalendarMonth" Class="linkmenu">
+                                        Planning
+                                    </MudNavLink>
+                                    <MudNavLink Href="/brief" Icon="@Icons.Material.Outlined.Message" Class="linkmenu">
+                                        Brief/Debrief
+                                    </MudNavLink>
+                                    <MudNavLink Href="/historique" Icon="@Icons.Material.Outlined.History" Class="linkmenu">
+                                        Historique
+                                    </MudNavLink>
+                                    <MudNavLink Href="/support" Icon="@Icons.Material.Outlined.Handyman" Class="linkmenu">
+                                        Support
+                                    </MudNavLink>
+                                    <MudText Class="p-4">
+                                        v.@version
+                                    </MudText>
+                                </MudNavMenu>
+                            </MudDrawer>
                         </div>
-                    }
-                    else
-                    {
-                        <CascadingValue Value="@stateContainerService.UserInfo">
-                            <MudLayout>
-                                <MudAppBar Elevation="1" Style="background-color:white; display: flex; ">
-                                    @if (screenSize <= 1279)
-                                    {
-                                        <MudImage Src="/images/Logo.png" Width="300" />
-                                        <MudSpacer />
-                                        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" Class="menuButtonClass" />
-
-                                    }
-                                    else
-                                    {
-                                        <MudImage Src="/images/Logo.png" Width="500" />
-                                        <MudSpacer />
-
-                                        <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopLeft">
-                                            <ActivatorContent>
-                                                <MudItem Class="d-flex align-center">
-                                                    @if (stateContainerService.UserInfo.Role.Contains("Commercial"))
-                                                    {
-                                                        <MudAvatar Class="me-2"><MudImage Src="@imageDataUrl" Width="100" /></MudAvatar>
-                                                    }
-                                                    <MudText Color="Color.Dark">@stateContainerService.UserInfo.FirstName @stateContainerService.UserInfo.LastName</MudText>
-                                                </MudItem>
-                                            </ActivatorContent>
-                                            <ChildContent>
-                                                @if (stateContainerService.UserInfo.Role.Contains("Commercial"))
-                                                {
-                                                    <MudItem Class="d-flex align-center">
-                                                        <MudMenuItem OnClick="() => NavigateToProfile()"><MudIcon Icon="@Icons.Material.Filled.AccountCircle" Class="me-2" />Mon Profil</MudMenuItem>
-                                                    </MudItem>
-                                                }
-                                                <MudItem Class="d-flex align-center">
-                                                    <MudMenuItem OnClick="()=>Logout()"><MudIcon Icon="@Icons.Material.Filled.Logout" Class="me-2" />Déconnexion</MudMenuItem>
-                                                </MudItem>
-                                            </ChildContent>
-                                        </MudMenu>
-                                    }
-                                </MudAppBar>
-                                <MudDrawer @bind-Open="open" ClipMode="DrawerClipMode.Always" Breakpoint="Breakpoint.Lg" Elevation="1" Variant="DrawerVariant.Responsive">
-                                    <MudNavMenu>
-
-                                        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">Tableau de bord</MudNavLink>
-                                        @if (stateContainerService.UserInfo.Role == "Manager")
-                                        {
-                                            <MudNavLink Href="/manageteam" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Groups" Class="linkmenu">Gérer mon équipe</MudNavLink>
-                                        }
-                                        else if (stateContainerService.UserInfo.Role.Contains("Commercial"))
-                                        {
-                                            if (stateContainerService.UserInfo.Role == "Commercial junior")
-                                            {
-                                                <MudNavLink Href="/week" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.CalendarMonth" Class="linkmenu">Semaine en cours</MudNavLink>
-                                            }
-                                            <MudNavLink Href="/briefdebrief" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.ContentPasteSearch" Class="linkmenu">Brief/Debrief</MudNavLink>
-                                            <MudNavLink Href="/history" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.History" Class="linkmenu">Historique</MudNavLink>
-                                            <MudNavLink Href="/utils" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Handyman" Class="linkmenu">Outils</MudNavLink>
-                                        }
-                                        else
-                                        {
-                                            <MudNavLink Href="/managecontent" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.BackupTable" Class="linkmenu">Gérer le contenu</MudNavLink>
-                                            <MudNavLink Href="/manageusers" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Groups" Class="linkmenu">Gérer les utilisateurs</MudNavLink>
-                                        }
-                                        @if ((stateContainerService.UserInfo.EmailAdress == "s.rosenthal@xefi.fr" 
-                                                || stateContainerService.UserInfo.EmailAdress == "c.dumont@xefi.fr" 
-                                                || stateContainerService.UserInfo.EmailAdress == "a.perrotin@xefi.fr" 
-                                                || stateContainerService.UserInfo.EmailAdress == "m.ratsivalaka@xefi.fr" 
-                                                || stateContainerService.UserInfo.EmailAdress == "h.barcatta@xefi.fr"
-                                                || stateContainerService.UserInfo.EmailAdress == "v.minicillo@xefi.fr"
-                                                || stateContainerService.UserInfo.EmailAdress == "b.jacobucci@xefi.fr"))
-                                        {
-                                            <MudNavLink OnClick="()=>UpdateUserRole(roleName[0])" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Phonelink" Class="linkmenu">Vue super admin</MudNavLink>
-                                            <MudNavLink OnClick="()=>UpdateUserRole(roleName[1])" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Phonelink" Class="linkmenu">Vue manager</MudNavLink>
-                                            <MudNavLink OnClick="()=>UpdateUserRole(roleName[2])" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Phonelink" Class="linkmenu">Vue commercial junior</MudNavLink>
-                                            <MudNavLink OnClick="()=>UpdateUserRole(roleName[3])" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Phonelink" Class="linkmenu">Vue commercial senior</MudNavLink>
-                                        }
-                                        @if (screenSize <= 1279)
-                                        {
-                                            <MudMenu AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopLeft" Class="m-5">
-                                                <ActivatorContent>
-                                                    <MudItem Class="d-flex align-center">
-                                                        @if (stateContainerService.UserInfo.Role.Contains("Commercial"))
-                                                        {
-                                                            <MudAvatar Class="me-2"><MudImage Src="@imageDataUrl" Width="100" /></MudAvatar>
-                                                        }
-                                                        <MudText Color="Color.Dark">@stateContainerService.UserInfo.FirstName @stateContainerService.UserInfo.LastName</MudText>
-                                                    </MudItem>
-                                                </ActivatorContent>
-                                                <ChildContent>
-                                                    @if (stateContainerService.UserInfo.Role.Contains("Commercial"))
-                                                    {
-                                                        <MudItem Class="d-flex align-center">
-                                                            <MudMenuItem OnClick="() => NavigateToProfile()"><MudIcon Icon="@Icons.Material.Filled.AccountCircle" Class="me-2" />Mon Profil</MudMenuItem>
-                                                        </MudItem>
-                                                    }
-
-                                                    <MudItem Class="d-flex align-center">
-                                                        <MudMenuItem OnClick="()=>Logout()"><MudIcon Icon="@Icons.Material.Filled.Logout" Class="me-2" />Déconnexion</MudMenuItem>
-                                                    </MudItem>
-                                                </ChildContent>
-                                            </MudMenu>
-                                        }
-                                    </MudNavMenu>
-                                    <div style="position: fixed; bottom: 0; left: 0; text-align: center; padding: 1rem;">
-                                        <MudText>v.@version</MudText>
-                                    </div>
-                                </MudDrawer>
-                                <MudMainContent Class="pt-16 px-16">
-                                    @Body
-                                </MudMainContent>
-                            </MudLayout>
-
-                        </CascadingValue>
-                    }
-                }
+                        <MudMainContent>
+                            @Body 
+                        </MudMainContent>
+                    </MudLayout>
+                </CascadingValue>
             </Authorized>
             <NotAuthorized>
                 <LandingPage />
@@ -176,22 +92,11 @@
             }
         };
 
-    string[] roleName = new string[]
-    {
-        "Superviseur",
-        "Manager",
-        "Commercial junior",
-        "Commercial senior"
-    };
-
     bool open = true;
-    private string imageDataUrl;
     string version;
     private bool unknowUser { get; set; }
     private bool isInitialized { get; set; }
     private int screenSize;
-    DateOnly firstWeekStartDate;
-    DateOnly currentDate = DateOnly.FromDateTime(DateTime.Now);
     private bool userInfoLoaded = false;
 
     void ToggleDrawer()
@@ -206,72 +111,51 @@
         base.OnInitialized();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        try
-        {
-            if (!userInfoLoaded)
-            {
-                var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-                if (authState.User?.Identity?.IsAuthenticated ?? false)
-                {
-                    try
-                    {
-                        stateContainerService.UserInfo = await userService.GetUserByEmailAsync(authState.User.Identity.Name);
+    // protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     try
+    //     {
+    //         if (!userInfoLoaded)
+    //         {
+    //             var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+    //             if (authState.User?.Identity?.IsAuthenticated ?? false)
+    //             {
+    //                 try
+    //                 {
+    //                     stateContainerService.UserInfo = await userService.GetUserByEmailAsync(authState.User.Identity.Name);
 
-                        if (stateContainerService.UserInfo == null)
-                        {
-                            unknowUser = true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        unknowUser = true;
-                    }
+    //                     if (stateContainerService.UserInfo == null)
+    //                     {
+    //                         unknowUser = true;
+    //                     }
+    //                 }
+    //                 catch (Exception ex)
+    //                 {
+    //                     unknowUser = true;
+    //                 }
 
-                    isInitialized = true;
-                    userInfoLoaded = true;
-                }
+    //                 isInitialized = true;
+    //                 userInfoLoaded = true;
+    //             }
 
-                if (stateContainerService.UserInfo != null)
-                {
-                    if (stateContainerService.UserInfo.ProfilePicture != null)
-                    {
-                        imageDataUrl = $"data:/images/png;base64,{Convert.ToBase64String(stateContainerService.UserInfo.ProfilePicture)}";
-                    }
-                    if (stateContainerService.UserInfo.Weeks.Count != 0)
-                    {
-                        firstWeekStartDate = stateContainerService.UserInfo.Weeks.Where(x => x.WeekNumber == 1).Select(x => x.StartDateWeek).First();
-                    }
-                }
-                screenSize = await JsRuntime.InvokeAsync<int>("BlazorScreenSize.getScreenSize");
-            }
+    //             screenSize = await JsRuntime.InvokeAsync<int>("BlazorScreenSize.getScreenSize");
+    //         }
 
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-    }
+    //         StateHasChanged();
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         throw ex;
+    //     }
+    // }
 
-    public async void UpdateUserRole(string role)
-    {
-        User newUser = stateContainerService.UserInfo;
-        newUser.Role = role;
-        stateContainerService.UserInfo = await userService.UpdateUserAsync(newUser);
+    // public void Logout()
+    // {
+    //     navigationManager.NavigateTo("MicrosoftIdentity/Account/SignOut", forceLoad: true);
+    // }
 
-        navigationManager.NavigateTo("/", forceLoad: true);
-        StateHasChanged();
-    }
-
-    public void Logout()
-    {
-        navigationManager.NavigateTo("MicrosoftIdentity/Account/SignOut", forceLoad: true);
-    }
-
-    public void NavigateToProfile()
-    {
-        navigationManager.NavigateTo("/profile", forceLoad: true);
-    }
+    // public void NavigateToProfile()
+    // {
+    //     navigationManager.NavigateTo("/profile", forceLoad: true);
+    // }
 }

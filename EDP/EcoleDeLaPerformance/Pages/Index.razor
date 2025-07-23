@@ -9,32 +9,99 @@
 
 <PageTitle>Tableau de bord</PageTitle>
 
-@if (userInfo.Role == "Manager")
-{
-    <SupervisorInfo userInfo="userInfo" period="period" />
-}
-else if (userInfo.Role.Contains("Commercial"))
-{
-    <ProgressBar activeIndex="@period" />
-    <PeriodInfo period="@period" currentWeek="@currentWeek" userInfo="userInfo" />
-}
-else
-{
-    <SuperAdminView userInfo="userInfo" period="period" />
-}
+<div class="px-6">
+    <MudPaper Elevation="1" Class="p-4 mb-6">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Color="Color.Info" />
+            <MudText Typo="Typo.h6">Objectifs</MudText>
+        </MudStack>
+        <MudGrid>
+            <MudItem xs="12" md="3">
+                <MudText Typo="Typo.caption" Class="text-slate-600">Objectif mensuel</MudText>
+                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">80K</MudText>
+                <MudProgressLinear Value="65" Color="Color.Primary"/>
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudText Typo="Typo.caption" Class="text-slate-600">Objectif trimestriel</MudText>
+                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">240K</MudText>
+                <MudProgressLinear Value="45" Color="Color.Secondary"/>
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudText Typo="Typo.caption" Class="text-slate-600">Contrats sauvegardés</MudText>
+                <MudText Typo="Typo.h5" Class="text-blue-600 font-bold">5</MudText>
+            </MudItem>
+            <MudItem xs="12" md="3">
+                <MudGrid>
+                    <MudItem xs="6">
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #fef2f2, #fee2e2);">
+                            <MudText Typo="Typo.caption" Class="text-red-600 font-medium">CA généré</MudText>
+                            <MudText Typo="Typo.h6" Class="text-red-700 font-bold">3450 €</MudText>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #ecfdf5, #d1fae5);">
+                            <MudText Typo="Typo.caption" Class="text-green-600 font-medium">Variable</MudText>
+                            <MudText Typo="Typo.h6" Class="text-green-700 font-bold">321 €</MudText>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudPaper Elevation="1" Class="p-4 mb-6">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Error" />
+            <MudText Typo="Typo.h6">Chiffres de la période en cours</MudText>
+        </MudStack>
+        <MudGrid>
+            <MudItem xs="12" md="4">
+                <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contratData" Labels="@contratLabels" />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MetricCard Title="Rendez-vous à venir" Value="8" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" />
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MetricCard Title="Heures de formation" Value="24h" Progress="80" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudGrid>
+        <MudItem xs="12" lg="6">
+            <MudPaper Elevation="1" Class="p-4">
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.TrackChanges" Color="Color.Warning" />
+                    <MudText Typo="Typo.h6">Engagement de signature de la semaine</MudText>
+                </MudStack>
+                <MudList Dense="true">
+                    <EngagementItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                    <EngagementItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                    <EngagementItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                </MudList>
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" lg="6">
+            <MudPaper Elevation="1" Class="p-4">
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.AssignmentTurnedIn" Color="Color.Secondary" />
+                    <MudText Typo="Typo.h6">Dossiers à checker</MudText>
+                </MudStack>
+                <MudList Dense="true">
+                    <FileItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                    <FileItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                    <FileItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                </MudList>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</div>
 
 @code {
-    public User userInfo => stateContainerService.UserInfo;
-    int period = 0;
-    Week currentWeek;
-
+    double[] contratData = new[] { 5.0, 3.0, 4.0 };
+    string[] contratLabels = new[] { "Sauvegarde", "Maintenance", "Sécurité" };
     protected override void OnInitialized()
     {
-        var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-        currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-        if (currentWeek != null)
-        {
-            period = currentWeek.PeriodNumber;
-        }
     }
 }

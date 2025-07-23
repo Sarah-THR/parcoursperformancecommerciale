@@ -6,7 +6,7 @@
 @inject ISnackbar Snackbar
 
 <div>
-    @if (!string.IsNullOrEmpty(imageDataUrl))
+   @*  @if (!string.IsNullOrEmpty(imageDataUrl))
     {
         <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
             <ButtonTemplate>
@@ -26,107 +26,107 @@
                         for="@context.Id" />
             </ButtonTemplate>
         </MudFileUpload>
-    }
+    } *@
 </div>
 
 @code {
-    [Parameter]
-    public User userInfo { get; set; }
+    // [Parameter]
+    // public User userInfo { get; set; }
 
-    IList<IBrowserFile> filesList = new List<IBrowserFile>();
-    private string imageDataUrl;
+    // IList<IBrowserFile> filesList = new List<IBrowserFile>();
+    // private string imageDataUrl;
 
-    protected override void OnInitialized()
-    {
-        if (userInfo.ProfilePicture.Length != 0)
-        {
-            imageDataUrl = $"data:/images/jpg;base64,{Convert.ToBase64String(userInfo.ProfilePicture)}";
-        }
-    }
+    // protected override void OnInitialized()
+    // {
+    //     if (userInfo.ProfilePicture.Length != 0)
+    //     {
+    //         imageDataUrl = $"data:/images/jpg;base64,{Convert.ToBase64String(userInfo.ProfilePicture)}";
+    //     }
+    // }
 
-    private async Task UploadFiles(IBrowserFile file)
-    {
-        if (file != null)
-        {
-            long maxSize = 512 * 1024;
+    // private async System.Threading.Tasks.Task UploadFiles(IBrowserFile file)
+    // {
+    //     if (file != null)
+    //     {
+    //         long maxSize = 512 * 1024;
 
-            if (file.ContentType == "image/jpeg" || file.ContentType == "image/jpg" || file.ContentType == "image/png")
-            {
-                if (file.Size < maxSize)
-                {
-                    using (var stream = new MemoryStream())
-                    {
-                        await file.OpenReadStream().CopyToAsync(stream);
-                        using (var image = System.Drawing.Image.FromStream(stream))
-                        {
-                            if (image.Width > 300 || image.Height > 300)
-                            {
-                                using (var resizedImage = ResizeImage(image, 300, 300))
-                                {
-                                    using (var resizedStream = new MemoryStream())
-                                    {
-                                        resizedImage.Save(resizedStream, System.Drawing.Imaging.ImageFormat.Png);
-                                        var buffer = resizedStream.ToArray();
-                                        userInfo.ProfilePicture = buffer;
-                                        var UpdatedUser = await userService.UpdateUserAsync(userInfo);
-                                        userInfo.ProfilePicture = UpdatedUser.ProfilePicture;
-                                        imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(userInfo.ProfilePicture)}";
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                using (var resizedStream = new MemoryStream())
-                                {
-                                    stream.Seek(0, SeekOrigin.Begin);
-                                    await stream.CopyToAsync(resizedStream);
-                                    var buffer = resizedStream.ToArray();
-                                    userInfo.ProfilePicture = buffer;
-                                    var UpdatedUser = await userService.UpdateUserAsync(userInfo);
-                                    userInfo.ProfilePicture = UpdatedUser.ProfilePicture;
-                                    imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(userInfo.ProfilePicture)}";
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    Snackbar.Add("La taille de l'image ne doit pas dépasser 512Ko.", MudBlazor.Severity.Error);
-                }
-            }
-            else
-            {
-                Snackbar.Add("Seulement les formats .jpeg, .png et .jpg sont acceptés", MudBlazor.Severity.Error);
-            }
-        }
-    }
+    //         if (file.ContentType == "image/jpeg" || file.ContentType == "image/jpg" || file.ContentType == "image/png")
+    //         {
+    //             if (file.Size < maxSize)
+    //             {
+    //                 using (var stream = new MemoryStream())
+    //                 {
+    //                     await file.OpenReadStream().CopyToAsync(stream);
+    //                     using (var image = System.Drawing.Image.FromStream(stream))
+    //                     {
+    //                         if (image.Width > 300 || image.Height > 300)
+    //                         {
+    //                             using (var resizedImage = ResizeImage(image, 300, 300))
+    //                             {
+    //                                 using (var resizedStream = new MemoryStream())
+    //                                 {
+    //                                     resizedImage.Save(resizedStream, System.Drawing.Imaging.ImageFormat.Png);
+    //                                     var buffer = resizedStream.ToArray();
+    //                                     userInfo.ProfilePicture = buffer;
+    //                                     var UpdatedUser = await userService.UpdateUserAsync(userInfo);
+    //                                     userInfo.ProfilePicture = UpdatedUser.ProfilePicture;
+    //                                     imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(userInfo.ProfilePicture)}";
+    //                                 }
+    //                             }
+    //                         }
+    //                         else
+    //                         {
+    //                             using (var resizedStream = new MemoryStream())
+    //                             {
+    //                                 stream.Seek(0, SeekOrigin.Begin);
+    //                                 await stream.CopyToAsync(resizedStream);
+    //                                 var buffer = resizedStream.ToArray();
+    //                                 userInfo.ProfilePicture = buffer;
+    //                                 var UpdatedUser = await userService.UpdateUserAsync(userInfo);
+    //                                 userInfo.ProfilePicture = UpdatedUser.ProfilePicture;
+    //                                 imageDataUrl = $"data:image/png;base64,{Convert.ToBase64String(userInfo.ProfilePicture)}";
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //             else
+    //             {
+    //                 Snackbar.Add("La taille de l'image ne doit pas dépasser 512Ko.", MudBlazor.Severity.Error);
+    //             }
+    //         }
+    //         else
+    //         {
+    //             Snackbar.Add("Seulement les formats .jpeg, .png et .jpg sont acceptés", MudBlazor.Severity.Error);
+    //         }
+    //     }
+    // }
 
-    #region ImageFormat
-    private System.Drawing.Image ResizeImage(System.Drawing.Image image, int width, int height)
-    {
-        var destRect = new System.Drawing.Rectangle(0, 0, width, height);
-        var destImage = new System.Drawing.Bitmap(width, height);
+    // #region ImageFormat
+    // private System.Drawing.Image ResizeImage(System.Drawing.Image image, int width, int height)
+    // {
+    //     var destRect = new System.Drawing.Rectangle(0, 0, width, height);
+    //     var destImage = new System.Drawing.Bitmap(width, height);
 
-        destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+    //     destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
 
-        using (var graphics = System.Drawing.Graphics.FromImage(destImage))
-        {
-            graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-            graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-            graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-            graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-            graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+    //     using (var graphics = System.Drawing.Graphics.FromImage(destImage))
+    //     {
+    //         graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+    //         graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+    //         graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+    //         graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+    //         graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
-            using (var wrapMode = new System.Drawing.Imaging.ImageAttributes())
-            {
-                wrapMode.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
-                graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, System.Drawing.GraphicsUnit.Pixel);
-            }
-        }
+    //         using (var wrapMode = new System.Drawing.Imaging.ImageAttributes())
+    //         {
+    //             wrapMode.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+    //             graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, System.Drawing.GraphicsUnit.Pixel);
+    //         }
+    //     }
 
-        return destImage;
-    }
-    #endregion
+    //     return destImage;
+    // }
+    // #endregion
 
 }
