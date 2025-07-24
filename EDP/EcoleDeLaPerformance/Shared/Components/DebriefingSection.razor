@@ -1,0 +1,169 @@
+﻿<div>
+	<MudGrid Class="mt-6">
+		<MudItem xs="12" md="12">
+			<MudCard Elevation="1">
+				<MudCardContent>
+					<MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+						<MudIcon Icon="@Icons.Material.Filled.BarChart" Color="Color.Primary" Size="Size.Large" />
+						<div>
+							<MudText Typo="Typo.h6">Affaires levées</MudText>
+						</div>
+						<MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
+							<MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
+						</MudTooltip>
+					</MudStack>
+
+					<MudStack Spacing="1">
+						<MudTextField @bind-Value="NewCaseClosedItem" Label="Nouvelle affaire levée" Variant="Variant.Outlined"
+									  Immediate="true" Adornment="Adornment.End"
+									  OnKeyDown="@((e) => HandleKey(e, AddCaseClosedItem))"
+									  AdornmentIcon="@Icons.Material.Filled.Add"
+									  OnAdornmentClick="AddCaseClosedItem" />
+
+						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;">
+							@foreach (var (item, index) in CaseClosedItems.Select((val, i) => (val, i)))
+							{
+								<MudListItem>
+									<MudText Typo="Typo.body2">@item</MudText>
+									<MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+												   Color="Color.Error"
+												   OnClick="@(() => RemoveItem("caseClosed", index))"
+												   Class="ml-auto" />
+								</MudListItem>
+							}
+						</MudList>
+					</MudStack>
+				</MudCardContent>
+			</MudCard>
+		</MudItem>
+
+		<MudItem xs="12" md="12">
+			<MudCard Elevation="1">
+				<MudCardContent>
+					<MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+						<MudIcon Icon="@Icons.Material.Filled.BarChart" Color="Color.Success" Size="Size.Large" />
+						<div>
+							<MudText Typo="Typo.h6">Affaires en cours</MudText>
+						</div>
+						<MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
+							<MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
+						</MudTooltip>
+					</MudStack>
+
+					<MudStack Spacing="1">
+						<MudTextField @bind-Value="NewOngoingCaseItem" Label="Nouvelle affaire en cours" Variant="Variant.Outlined"
+									  Immediate="true" Adornment="Adornment.End"
+									  OnKeyDown="@((e) => HandleKey(e, AddOngoingCaseItem))"
+									  AdornmentIcon="@Icons.Material.Filled.Add"
+									  OnAdornmentClick="AddOngoingCaseItem" />
+
+						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;">
+							@foreach (var (item, index) in OngoingCaseItems.Select((val, i) => (val, i)))
+							{
+								<MudListItem>
+									<MudText Typo="Typo.body2">@item</MudText>
+									<MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+												   Color="Color.Error"
+												   OnClick="@(() => RemoveItem("ongoingCase", index))"
+												   Class="ml-auto" />
+								</MudListItem>
+							}
+						</MudList>
+					</MudStack>
+				</MudCardContent>
+			</MudCard>
+		</MudItem>
+
+		<MudItem xs="12" md="12">
+			<MudPaper Elevation="1">
+				<MudCardContent>
+					<MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+						<MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Secondary" Size="Size.Large" />
+						<MudText Typo="Typo.h6">Dossiers et contrats signés</MudText>
+					</MudStack>
+					<MudGrid>
+						<MudItem xs="12" md="4"> 
+							<DonutCard Title="Location" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@rentalData" Number="5" />
+						</MudItem>
+						<MudItem xs="12" md="4">
+							<DonutCard Title="Achats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@purchaseData" Number="2" />
+						</MudItem>
+						<MudItem xs="12" md="4">
+							<DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@contratData" Number="2" />
+						</MudItem>
+					</MudGrid>
+				</MudCardContent>
+			</MudPaper>
+		</MudItem>
+
+		<MudItem xs="12" md="12">
+			<MudPaper Elevation="1">
+				<MudCardContent>
+					<MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+						<MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Warning" Size="Size.Large" />
+						<div>
+							<MudText Typo="Typo.h6">Nombre de RDV PRA</MudText>
+							<MudText Typo="Typo.caption">(pris - réalisés - à venir)</MudText>
+						</div>
+						<MudTooltip Text="Il est nécessaire de saisir les informations dans la CRM afin qu'elles puissent être visualisées dans le debrief après." Arrow="true" Placement="Placement.Right">
+							<MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
+						</MudTooltip>
+					</MudStack>
+					<MudGrid>
+						<MudItem xs="12" md="12">
+							<DonutCard Title="Rendez-vous" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@appointmentData" Labels="@appointmentLabels" Number="9"/>
+						</MudItem>
+					</MudGrid>
+				</MudCardContent>
+			</MudPaper>
+		</MudItem>
+
+		<MudItem xs="12" md="12" Class="d-flex justify-content-center">
+			<MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.SaveAs" Class="ma-4">Brouillon</MudButton>
+			<MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Save" Class="ma-4">Enregistrer</MudButton>
+		</MudItem>
+	</MudGrid>
+</div>
+
+@code {
+	private List<string> CaseClosedItems = new();
+	private List<string> OngoingCaseItems = new();
+	private string NewCaseClosedItem = "";
+	private string NewOngoingCaseItem = "";
+	double[] appointmentData = new[] { 5.0, 10.0 };
+	double[] rentalData = new[] { 5.0 };
+	double[] purchaseData = new[] { 2.0 };
+	double[] contratData = new[] { 2.0 };
+	string[] appointmentLabels = new[] { "Rendez-vous à venir", "Rendez-vous réalisés" };
+
+	private void AddCaseClosedItem()
+	{
+		if (!string.IsNullOrWhiteSpace(NewCaseClosedItem))
+		{
+			CaseClosedItems.Add(NewCaseClosedItem.Trim());
+			NewCaseClosedItem = "";
+		}
+	}
+
+	private void AddOngoingCaseItem()
+	{
+		if (!string.IsNullOrWhiteSpace(NewOngoingCaseItem))
+		{
+			OngoingCaseItems.Add(NewOngoingCaseItem.Trim());
+			NewOngoingCaseItem = "";
+		}
+	}
+
+	private void RemoveItem(string type, int index)
+	{
+		if (type == "caseClosed" && index >= 0 && index < CaseClosedItems.Count)
+			CaseClosedItems.RemoveAt(index);
+		else if (type == "ongoingCase" && index >= 0 && index < OngoingCaseItems.Count)
+			OngoingCaseItems.RemoveAt(index);
+	}
+
+	private void HandleKey(KeyboardEventArgs e, Action handler)
+	{
+		if (e.Key == "Enter") handler();
+	}
+}

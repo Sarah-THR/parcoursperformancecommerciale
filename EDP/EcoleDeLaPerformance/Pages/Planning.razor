@@ -1,4 +1,4 @@
-@page "/semaine"
+@page "/planning"
 @using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Interfaces;
 @using EcoleDeLaPerformance.Ui.Shared.Components
@@ -7,8 +7,8 @@
 @inject ISnackbar snackbar
 @inject NavigationManager NavigationManager
 
-<div style="user-select: none;" onselectstart="return false">
-    <MudPaper Class="p-4 ma-4">
+<div class="px-6" style="user-select: none;" onselectstart="return false">
+    <MudPaper Class="p-4 mb-6">
         <MudDropContainer T="DropItem"
                           Items="_items"
                           ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
