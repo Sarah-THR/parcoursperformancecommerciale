@@ -15,7 +15,10 @@
                           ItemDropped="ItemUpdated"
                           Class="d-flex flex-column">
             <ChildContent>
-                <MudText Typo="Typo.h6" Class="mb-4">Activités de la semaine</MudText>
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.EventAvailable" Color="Color.Secondary" />
+                    <MudText Typo="Typo.h6">Liste des activités</MudText>
+                </MudStack>
                 @for (int r = 0; r < 2; r++)
                 {
                     var row = r.ToString();
@@ -27,8 +30,10 @@
                         }
                     </div>
                 }
-
-                <MudText Typo="Typo.h6" Class="my-4">Semaine actuelle</MudText>
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                    <MudIcon Icon="@Icons.Material.Filled.DateRange" Color="Color.Info" />
+                    <MudText Typo="Typo.h6" Class="my-4">Planning de la semaine</MudText>
+                </MudStack>
                 <div>
                     <div class="drop-row my-2">
                         @foreach (var jour in jours)
@@ -54,7 +59,7 @@
                 </div>
             </ChildContent>
             <ItemRenderer>
-                <MudPaper Class="w-100 d-flex align-items-center justify-center" Elevation="1" Style="height:70px;">
+                <MudPaper Class="w-100 d-flex align-items-center justify-center" Elevation="1" Style="height:70px; background: linear-gradient(to right, #fef2f2, #fee2e2);">
                     <MudText Typo="Typo.subtitle1" Class="ma-2">@context.Name</MudText>
                 </MudPaper>
             </ItemRenderer>
