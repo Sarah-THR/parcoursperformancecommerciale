@@ -16,31 +16,27 @@
             <MudText Typo="Typo.h6">Objectifs</MudText>
         </MudStack>
         <MudGrid>
-            <MudItem xs="12" md="3">
-                <MudText Typo="Typo.caption" Class="text-slate-600">Objectif mensuel</MudText>
-                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">80K</MudText>
+            <MudItem xs="12" md="4">
+                <MudText Typo="Typo.subtitle1" Class="text-slate-600">Objectif mensuel</MudText>
+                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">800 000€</MudText>
                 <MudProgressLinear Value="65" Color="Color.Primary"/>
             </MudItem>
-            <MudItem xs="12" md="3">
-                <MudText Typo="Typo.caption" Class="text-slate-600">Objectif trimestriel</MudText>
-                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">240K</MudText>
+            <MudItem xs="12" md="4">
+                <MudText Typo="Typo.subtitle1" Class="text-slate-600">Objectif trimestriel</MudText>
+                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">240 000€</MudText>
                 <MudProgressLinear Value="45" Color="Color.Secondary"/>
             </MudItem>
-            <MudItem xs="12" md="3">
-                <MudText Typo="Typo.caption" Class="text-slate-600">Contrats sauvegardés</MudText>
-                <MudText Typo="Typo.h5" Class="text-blue-600 font-bold">5</MudText>
-            </MudItem>
-            <MudItem xs="12" md="3">
+            <MudItem xs="12" md="4">
                 <MudGrid>
                     <MudItem xs="6">
-                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #fef2f2, #fee2e2);">
-                            <MudText Typo="Typo.caption" Class="text-red-600 font-medium">CA généré</MudText>
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #fef2f2, #fee2e2);" MaxHeight="108px">
+                            <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré</MudText>
                             <MudText Typo="Typo.h6" Class="text-red-700 font-bold">3450 €</MudText>
                         </MudPaper>
                     </MudItem>
                     <MudItem xs="6">
-                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #ecfdf5, #d1fae5);">
-                            <MudText Typo="Typo.caption" Class="text-green-600 font-medium">Variable</MudText>
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #ecfdf5, #d1fae5);" MaxHeight="108px">
+                            <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable</MudText>
                             <MudText Typo="Typo.h6" Class="text-green-700 font-bold">321 €</MudText>
                         </MudPaper>
                     </MudItem>
@@ -59,7 +55,7 @@
                 <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contratData" Labels="@contratLabels" />
             </MudItem>
             <MudItem xs="12" md="4">
-                <MetricCard Title="Rendez-vous à venir" Value="8" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" />
+                <MetricCard Title="Rendez-vous à venir" Value="8" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" Subtitle="RENDEZ-VOUS" />
             </MudItem>
             <MudItem xs="12" md="4">
                 <MetricCard Title="Heures de formation" Value="24h" Progress="80" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />

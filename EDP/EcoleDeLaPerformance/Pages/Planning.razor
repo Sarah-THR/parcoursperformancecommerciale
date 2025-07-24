@@ -1,4 +1,4 @@
-@page "/week"
+@page "/semaine"
 @using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Interfaces;
 @using EcoleDeLaPerformance.Ui.Shared.Components
@@ -7,395 +7,129 @@
 @inject ISnackbar snackbar
 @inject NavigationManager NavigationManager
 
-<div>
-    @* <MudGrid>
-        <MudItem xs="12">
-            <MudGrid Justify="Justify.Center">
-                <MudItem xs=12 Class="pa-8">
-                    <MudGrid Justify="Justify.SpaceBetween">
-                        <MudItem xs="10" Class="d-flex">
-                            <MudItem>
-                                <MudText Typo="Typo.h4" Color="Color.Primary" Class="text-uppercase">
-                                    Activité de la semaine @currentWeek.WeekNumber du @currentWeek.StartDateWeek au @currentWeek.EndDateWeek.AddDays(-3)
-                                </MudText>
-                            </MudItem>
-                            <MudItem Class="ms-4">
-                                <MudImage Src="/images/Planning.png" Width="40" />
-                            </MudItem>
-                        </MudItem>
-                        <MudItem xs="2" Class="d-flex justify-end">
-                            <MudButton OnClick="SaveButton" Style=" text-transform: none" Variant="Variant.Filled" Color="Color.Secondary">Enregistrer les modifications</MudButton>
-                        </MudItem>
-                    </MudGrid>
-                </MudItem>
-                <MudItem xs="12" Class="d-flex justify-center">
-                    <MudDropContainer T="TaskPlanning" @ref="_container" DraggingClass="mud-alert-text-warning" ItemDraggingClass="mud-alert-text-warning" CanDrop="@( (item,identifier ) => defaultTask.Count(x => x.Identifier == identifier && identifier != "Delete" ) == 0)" Items="defaultTask" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" NoDropClass="mud-border-error" ItemDropped="ItemUpdated">
-                        <ChildContent>
-                            <MudGrid>
-                                <MudItem md="1" xs="1" lg="1" />
-                                <MudItem xs="11">
-                                    <MudGrid Justify="Justify.SpaceAround">
-                                        <MudItem>
-                                            <MudDropZone T="TaskPlanning" Identifier="Origin1" Class="rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                            </MudDropZone>
-                                        </MudItem>
-                                        <MudItem>
-                                            <MudDropZone T="TaskPlanning" Identifier="Origin2" Class=" rounded-lg border-2 border-dashed mud-border-lines-default ma-1">
-                                            </MudDropZone>
-                                        </MudItem>
-                                        <MudItem>
-                                            <MudDropZone T="TaskPlanning" Identifier="Origin3" Class=" rounded-lg border-2 border-dashed mud-border-lines-default ma-1">
-                                            </MudDropZone>
-                                        </MudItem>
-                                        <MudItem>
-                                            <MudDropZone T="TaskPlanning" Identifier="Origin4" Class=" rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                            </MudDropZone>
-                                        </MudItem>
-                                        <MudItem>
-                                            <MudDropZone T="TaskPlanning" Identifier="Origin5" Class="rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                            </MudDropZone>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudItem>
-                            </MudGrid>
-                            <MudGrid Class="d-flex justify-center">
-                                <MudItem xs=12>
-                                    <MudGrid Justify="Justify.SpaceAround" Class="pt-6">
-                                        <MudItem md="1" xs="1" lg="1">
-                                        </MudItem>
-                                        <MudItem md="2" xs="2" lg="2">
-                                            <h5 class="text-center fw-bold">Lundi</h5>
-                                        </MudItem>
-                                        <MudItem md="2" xs="2" lg="2">
-                                            <h5 class="text-center fw-bold">Mardi</h5>
-                                        </MudItem>
-                                        <MudItem md="2" xs="2" lg="2">
-                                            <h5 class="text-center fw-bold ">Mercredi</h5>
-                                        </MudItem>
-                                        <MudItem md="2" xs="2" lg="2">
-                                            <h5 class="text-center fw-bold">Jeudi</h5>
-                                        </MudItem>
-                                        <MudItem md="2" xs="2" lg="2">
-                                            <h5 class="text-center fw-bold">Vendredi</h5>
-                                        </MudItem>
-                                    </MudGrid>
+<div style="user-select: none;" onselectstart="return false">
+    <MudPaper Class="p-4 ma-4">
+        <MudDropContainer T="DropItem"
+                          Items="_items"
+                          ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
+                          ItemDropped="ItemUpdated"
+                          Class="d-flex flex-column">
+            <ChildContent>
+                <MudText Typo="Typo.h6" Class="mb-4">Activités de la semaine</MudText>
+                @for (int r = 0; r < 2; r++)
+                {
+                    var row = r.ToString();
+                    <div class="drop-row">
+                        @for (int c = 0; c < 5; c++)
+                        {
+                            var col = c.ToString();
+                            <MudDropZone T="DropItem" Identifier="@($"Task{row}{col}")" Class="border-1 ma-4 docs-gray-bg mud-border-lines-default rounded border-dashed" Style="height:70px" />
+                        }
+                    </div>
+                }
 
-                                </MudItem>
-                                <MudGrid Justify="Justify.SpaceAround">
-                                    <MudItem md="1" xs="1" lg="1" class="d-flex align-items-center">
-                                        <h4>Matin</h4>
-                                    </MudItem>
-                                    <MudItem xs="11">
-                                        <MudCard Class="rounded-lg pa-6" Style="background-color:#F5F5F6">
-                                            <MudGrid Justify="Justify.SpaceAround">
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="MondayFalse" Class="rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="TuesdayFalse" Class=" rounded-lg border-2 border-dashed mud-border-lines-default ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="WednesdayFalse" Class=" rounded-lg border-2 border-dashed mud-border-lines-default ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="ThursdayFalse" Class=" rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="FridayFalse" Class="rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                            </MudGrid>
-                                        </MudCard>
-                                    </MudItem>
-                                    <MudItem md="1" xs="1" lg="1" class="d-flex align-items-center">
-                                        <h4>Après-midi</h4>
-                                    </MudItem>
-                                    <MudItem xs="11">
-                                        <MudCard Class="rounded-lg pa-6" Style="background-color:#F5F5F6">
-                                            <MudGrid Justify="Justify.SpaceAround">
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="MondayTrue" Class="rounded-lg border-2 border-dashed mud-border-lines-default ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="TuesdayTrue" Class="rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="WednesdayTrue" Class="rounded-lg border-2 border-dashed mud-border-lines-default ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="ThursdayTrue" Class="rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                                <MudItem>
-                                                    <MudDropZone T="TaskPlanning" Identifier="FridayTrue" Class="rounded-lg border-2 border-dashed mud-border-lines-default  ma-1">
-                                                    </MudDropZone>
-                                                </MudItem>
-                                            </MudGrid>
-                                        </MudCard>
-                                    </MudItem>
-                                </MudGrid>
-                                <MudItem xs="1" />
-                                <MudItem xs="11">
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem md="2" xs="6">
-                                            <MudDropZone T="TaskPlanning" Identifier="Delete" OnlyZone="true" Class="rounded-lg border-2 border-dashed mud-border-lines-default ma-1 delete-zone">
-                                                <MudGrid Justify="Justify.Center">
-                                                    <MudItem>
-                                                        <MudIcon Icon="@Icons.Material.Filled.Delete" />
-                                                    </MudItem>
-                                                </MudGrid>
-                                            </MudDropZone>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudItem>
-                            </MudGrid>
-                        </ChildContent>
-                        <ItemRenderer>
-                            @if (context.Titled.Replace("1/2 j", "J") == "Jour terrain accompagné")
+                <MudText Typo="Typo.h6" Class="my-4">Semaine actuelle</MudText>
+                <div>
+                    <div class="drop-row my-2">
+                        @foreach (var jour in jours)
+                        {
+                            <div style="text-align:center; font-weight:bold;">
+                                @jour
+                            </div>
+                        }
+                    </div>
+                    @for (int r = 0; r < 2; r++)
+                    {
+                        var currentRow = r;
+                        <div class="drop-row">
+                            @for (int c = 0; c < 5; c++)
                             {
-                                <MudPaper Class="rounded-lg border-2 mud-border-lines-default pa-5 task-paper accompanied" Elevation="4">
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem xs="12" Class="d-flex justify-center pb-0">
-                                            <MudText Typo="Typo.body1">1/2</MudText>
-                                        </MudItem>
-                                        <MudItem xs="12" Class="d-flex justify-center pt-0">
-                                            <MudText Style="text-align:center" Typo="Typo.body1">@context.Titled.Replace("1/2 j", "J")</MudText>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudPaper>
+                                var col = c.ToString();
+                                <MudDropZone T="DropItem" Identifier="@($"planning{currentRow}{col}")" Class="border-1 ma-4 docs-gray-bg mud-border-lines-default rounded border-dashed" Style="height:70px; position:relative;">
+                                    <MudText Typo="Typo.subtitle1" Class="ma-2 opacity-50" Style="white-space: nowrap; position:absolute; top:0; left:0; ">@((currentRow == 0) ? "Matin" : "Après-midi")</MudText>
+                                </MudDropZone>
                             }
-                            else if (context.Titled.Replace("1/2 j", "J") == "Jour terrain seul")
-                            {
-                                <MudPaper Class="rounded-lg border-2 mud-border-lines-default pa-5 task-paper alone" Elevation="4">
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem xs="12" Class="d-flex justify-center pb-0">
-                                            <MudText Typo="Typo.body1">1/2</MudText>
-                                        </MudItem>
-                                        <MudItem xs="12" Class="d-flex justify-center pt-0">
-                                            <MudText Style="text-align:center" Typo="Typo.body1">@context.Titled.Replace("1/2 j", "J")</MudText>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudPaper>
-                            }
-                            else if (context.Titled.Replace("1/2 j", "J") == "Jour agence montage offre + rôle assistant co.")
-                            {
-                                <MudPaper Class="rounded-lg border-2 mud-border-lines-default pa-5 task-paper agency" Elevation="4">
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem xs="12" Class="d-flex justify-center pb-0">
-                                            <MudText Typo="Typo.body1">1/2</MudText>
-                                        </MudItem>
-                                        <MudItem xs="12" Class="d-flex justify-center pt-0">
-                                            <MudText Style="text-align:center" Typo="Typo.body1">@context.Titled.Replace("1/2 j", "J")</MudText>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudPaper>
-                            }
-                            else
-                            {
-                                <MudPaper Class="rounded-lg border-2 mud-border-lines-default pa-5 task-paper performance" Elevation="4">
-                                    <MudGrid Justify="Justify.Center">
-                                        <MudItem xs="12" Class="d-flex justify-center pb-0">
-                                            <MudText Typo="Typo.body1">1/2</MudText>
-                                        </MudItem>
-                                        <MudItem xs="12" Class="d-flex justify-center pt-0">
-                                            <MudText Style="text-align:center" Typo="Typo.body1">@context.Titled.Replace("1/2 j", "J")</MudText>
-                                        </MudItem>
-                                    </MudGrid>
-                                </MudPaper>
-                            }
-
-                        </ItemRenderer>
-                    </MudDropContainer>
-                </MudItem>
-            </MudGrid>
-        </MudItem>
-    </MudGrid> *@
+                        </div>
+                    }
+                </div>
+            </ChildContent>
+            <ItemRenderer>
+                <MudPaper Class="w-100 d-flex align-items-center justify-center" Elevation="1" Style="height:70px;">
+                    <MudText Typo="Typo.subtitle1" Class="ma-2">@context.Name</MudText>
+                </MudPaper>
+            </ItemRenderer>
+        </MudDropContainer>
+    </MudPaper>
 </div>
+
 @code {
-    // public User userInfo => stateContainerService.UserInfo;
-    // Week? currentWeek = new Week();
-    // List<HalfDayPlanning> halfDayPlanningsList = new List<HalfDayPlanning>();
-    // List<TaskPlanning> defaultTask = new List<TaskPlanning>();
-    // List<TaskPlanning> taskList = new List<TaskPlanning>();
-    // List<HalfDayPlanning> halfDayPlanningsCloneForWitness = new List<HalfDayPlanning>();
-    // private MudDropContainer<TaskPlanning> _container;
-
-
-
-    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
     {
-        // if (userInfo.Role != "Commercial junior")
-        // {
-        //     NavigationManager.NavigateTo("/");
-        // }
-        // else
-        // {
-        //     try
-        //     {
-        //         var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-        //         currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && currentDate < week.EndDateWeek);
-        //         halfDayPlanningsList = await halfDayPlanningService.GetHalfDayPlanningsByWeekIdAsync(currentWeek.WeekId);
-        //         defaultTask = taskList = await taskPlanningService.GetAllTaskPlanning();
-        //         halfDayPlanningsCloneForWitness = halfDayPlanningsList.ToList();
-        //         ConvertIntoDropItem();
-        //         StateHasChanged();
-        //         _container.Refresh();
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         SentrySdk.CaptureException(ex);
-        //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-        //     }
-        // }
+        var oldIdentifier = dropItem.Item.Identifier; 
+
+        bool alreadyOccupied = _items.Any(i =>
+            i.Identifier == dropItem.DropzoneIdentifier &&
+            i != dropItem.Item);
+
+        if (alreadyOccupied)
+        {
+            snackbar.Add("Cette zone est déjà occupée", Severity.Warning);
+
+            return;
+        }
+
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
 
-    // private void ItemUpdated(MudItemDropInfo<TaskPlanning> dropItem)
-    // {
-    //     if (dropItem.Item.Identifier.Contains("Origin"))
-    //     {
-    //         TaskPlanning taskCloned = new TaskPlanning
-    //             {
-    //                 TaskId = dropItem.Item.TaskId,
-    //                 Identifier = dropItem.DropzoneIdentifier,
-    //                 Titled = dropItem.Item.Titled
-    //             };
-    //         defaultTask.Add(taskCloned);
-    //     }
-    //     else
-    //     {
-    //         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
-    //     }
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task00" },
+        new DropItem(){ Name = "Tomcat", Team = "BLUE", Identifier = "Task01" },
+        new DropItem(){ Name = "McDonnell", Team = "BLUE", Identifier = "Task02" },
+        new DropItem(){ Name = "test", Team = "BLUE", Identifier = "Task03" },
+        new DropItem(){ Name = "test@", Team = "BLUE", Identifier = "Task04" },
+        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task05" },
+        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task10" },
+        new DropItem(){ Name = "Tomcat", Team = "BLUE", Identifier = "Task11" },
+        new DropItem(){ Name = "McDonnell", Team = "BLUE", Identifier = "Task12" },
+        new DropItem(){ Name = "test", Team = "BLUE", Identifier = "Task13" },
+        new DropItem(){ Name = "test@", Team = "BLUE", Identifier = "Task14" },
+        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task15" },
+    };
 
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Team { get; init; }
+        public string Identifier { get; set; }
+    }
 
-    //     List<HalfDayPlanning> halfDayPlanningList = halfDayPlanningsList.Where(x => x.Task.TaskId == dropItem.Item.TaskId).ToList();
-    //     if (halfDayPlanningList.Count > 0)
-    //         halfDayPlanningsList.Where(x => x.Task.TaskId == dropItem.Item.TaskId).First().Task.Identifier = dropItem.Item.Identifier;
-    // }
+    private DateTime GetMondayOfCurrentWeek()
+    {
+        var today = DateTime.Today;
+        int diff = DayOfWeek.Monday - today.DayOfWeek;
+        if (diff > 0) diff -= 7;
+        return today.AddDays(diff);
+    }
 
-    // public void ConvertIntoDropItem()
-    // {
-    //     foreach (HalfDayPlanning item in halfDayPlanningsList)
-    //     {
-    //         var identifier = item.HalfDayDate.DayOfWeek.ToString() + item.HalfDayTime.ToString();
-    //         if (!defaultTask.Any(x => x.Identifier == identifier))
-    //         {
-    //             item.Task.Identifier = identifier;
-    //             defaultTask.Add(new TaskPlanning() { TaskId = item.HalfDayId, Titled = item.Task.Titled, Identifier = identifier });
-    //         }
-    //     }
-    // }
+    private string[] GetWeekDays()
+    {
+        var culture = System.Globalization.CultureInfo.GetCultureInfo("fr-FR");
+        DateTime monday = GetMondayOfCurrentWeek();
 
-    // public async void SaveButton()
-    // {
-    //     #region Insert Part
-    //     List<TaskPlanning> selectedInsertElement = defaultTask.Where(x => !halfDayPlanningsList.Any(y => y.HalfDayId == x.TaskId) && !x.Identifier.Contains("Origin") && !x.Identifier.Contains("Delete")).ToList();
-    //     List<HalfDayPlanning> insertList = new List<HalfDayPlanning>();
-    //     foreach (TaskPlanning OneTaskPlanning in selectedInsertElement)
-    //     {
+        return Enumerable.Range(0, 5)
+                         .Select(offset =>
+                         {
+                             var dayName = monday.AddDays(offset).ToString("dddd", culture);
+                             return char.ToUpper(dayName[0]) + dayName.Substring(1);
+                         })
+                         .ToArray();
+    }
 
-    //         //Trouver le jour en string
-    //         string jourAnglais = OneTaskPlanning.Identifier.Replace("True", "").Replace("False", "");
-    //         DayOfWeek jourSemaine = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), jourAnglais);
+    private string[] jours = Array.Empty<string>();
 
-    //         // Trouver la date du jour de la semaine spécifié
-    //         DateTime dateJourSemaine = currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000"));
-    //         while (dateJourSemaine.DayOfWeek != jourSemaine)
-    //         {
-    //             dateJourSemaine = dateJourSemaine.AddDays(1);
-    //         }
-
-    //         bool isHalfDayTime = OneTaskPlanning.Identifier.Contains("True");
-    //         insertList.Add(new HalfDayPlanning
-    //             {
-    //                 HalfDayDate = dateJourSemaine,
-    //                 WeekId = currentWeek.WeekId,
-    //                 TaskId = OneTaskPlanning.TaskId,
-    //                 HalfDayTime = isHalfDayTime
-    //             });
-    //     }
-
-    //     try
-    //     {
-    //         foreach (HalfDayPlanning OneHalfDayPlanning in insertList)
-    //         {
-    //             await halfDayPlanningService.InsertHalfDayPlanningAsync(OneHalfDayPlanning);
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         SentrySdk.CaptureException(ex);
-    //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-    //     }
-    //     #endregion
-
-    //     #region Update Part
-    //     List<TaskPlanning> selectedUpdateElement = defaultTask.Where(x => halfDayPlanningsList.Any(y => y.HalfDayId == x.TaskId) && !x.Identifier.Contains("Origin") && !x.Identifier.Contains("Delete")).ToList();
-    //     List<HalfDayPlanning> updateList = new List<HalfDayPlanning>();
-    //     foreach (TaskPlanning OneTaskPlanning in selectedUpdateElement)
-    //     {
-    //         //Trouver le jour en string
-    //         string jourAnglais = OneTaskPlanning.Identifier.Replace("True", "").Replace("False", "");
-    //         DayOfWeek jourSemaine = (DayOfWeek)Enum.Parse(typeof(DayOfWeek), jourAnglais);
-
-    //         // Trouver la date du jour de la semaine spécifié
-    //         DateTime dateJourSemaine = currentWeek.StartDateWeek.ToDateTime(TimeOnly.Parse("00:00:00.000"));
-    //         while (dateJourSemaine.DayOfWeek != jourSemaine)
-    //         {
-    //             dateJourSemaine = dateJourSemaine.AddDays(1);
-    //         }
-
-    //         bool isHalfDayTime = OneTaskPlanning.Identifier.Contains("True");
-    //         updateList.Add(new HalfDayPlanning
-    //             {
-    //                 HalfDayId = halfDayPlanningsList.Where(x => x.HalfDayId == OneTaskPlanning.TaskId).First().HalfDayId,
-    //                 HalfDayDate = dateJourSemaine,
-    //                 WeekId = currentWeek.WeekId,
-    //                 TaskId = taskList.FirstOrDefault(x => x.Titled == OneTaskPlanning.Titled).TaskId,
-    //                 HalfDayTime = isHalfDayTime
-    //             });
-    //     }
-    //     try
-    //     {
-    //         foreach (HalfDayPlanning OneHalfDayPlanning in updateList)
-    //         {
-    //             await halfDayPlanningService.UpdateHalfDayPlanningAsync(OneHalfDayPlanning);
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         SentrySdk.CaptureException(ex);
-    //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-    //     }
-    //     #endregion
-
-    //     #region Delete Part
-    //     List<TaskPlanning> tasksToRemove = defaultTask.Where(x => x.Identifier.Contains("Delete")).ToList();
-    //     List<HalfDayPlanning> halfPlanningToRemove = halfDayPlanningsList.Where(x => tasksToRemove.Any(y => x.HalfDayId == y.TaskId)).ToList();
-
-    //     try
-    //     {
-    //         foreach (HalfDayPlanning halfPlanning in halfPlanningToRemove)
-    //         {
-    //             await halfDayPlanningService.DeleteHalfDayPlanningAsync(halfPlanning.HalfDayId);
-    //         }
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         SentrySdk.CaptureException(ex);
-    //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-    //     }
-    //     #endregion
-
-    //     snackbar.Add("Le planning a bien été enregistré.", Severity.Success);
-
-
-    // }
-
+    protected override void OnInitialized()
+    {
+        jours = GetWeekDays();
+    }
 }

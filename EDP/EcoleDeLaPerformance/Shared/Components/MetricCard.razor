@@ -1,20 +1,20 @@
-﻿<MudPaper Class="p-4" MinHeight="305px">
+﻿<MudPaper Class="p-4" MinHeight="305px" MaxHeight="305px">
     <MudStack Spacing="1">
         <MudStack AlignItems="AlignItems.Center" Spacing="1">
             <MudIcon Icon="@Icon" Color="@Color" />
             <MudText Typo="Typo.subtitle1" Class="font-semibold">@Title</MudText>
         </MudStack>
-        @if (!string.IsNullOrEmpty(Subtitle))
-        {
-            <MudText Typo="Typo.caption">@Subtitle</MudText>
-        }
-        <MudText Typo="Typo.h5" Class="font-bold">@Value</MudText>
-        <MudProgressLinear Value="@Progress" Height="6" Color="@Color" />
-        @ChildContent
+        <div class="py-8">
+            @if (!string.IsNullOrEmpty(Subtitle))
+            {
+                <MudText Typo="Typo.caption">@Subtitle</MudText>
+            }
+            <MudText Typo="Typo.h5" Class="font-bold">@Value</MudText>
+            <MudProgressLinear Value="@Progress" Color="@Color" />
+        </div>
     </MudStack>
 </MudPaper>
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public string Value { get; set; }
     [Parameter] public int Progress { get; set; }

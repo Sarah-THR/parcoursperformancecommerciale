@@ -1,4 +1,4 @@
-﻿<MudPaper Class="p-4" MinHeight="305px">
+﻿<MudPaper Class="p-4" MinHeight="305px" MaxHeight="305px">
     <MudStack Spacing="1">
         <MudStack AlignItems="AlignItems.Center" Spacing="1">
             <MudIcon Icon="@Icon" Color="@IconColor" />
@@ -8,7 +8,7 @@
                   Height="150px"
                   Width="150px"
                   InputData="@Data"
-                  InputLabels="@Labels">
+                  InputLabels="@Labels" ChartOptions="options">
         </MudChart>
     </MudStack>
 </MudPaper>
@@ -18,4 +18,5 @@
     [Parameter] public double[] Data { get; set; }
     [Parameter] public string[] Labels { get; set; }
     [Parameter] public Color IconColor { get; set; } = Color.Primary;
+    ChartOptions options = new() { ChartPalette = new string[] { "#FD969C", "#E10600", "#E45E66" } };
 }
