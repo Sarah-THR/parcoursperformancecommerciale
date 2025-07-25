@@ -10,41 +10,27 @@
 
 @page "/history"
 
-<div>
-    <MudGrid>
-        <MudItem xs="12">
-            <MudGrid Justify="Justify.Center">
-                <MudItem xs=11 Class="pa-12">
-                    <MudGrid>
-                        <MudItem>
-                            <MudText Typo="Typo.h6" Color="Color.Primary" Class="text-uppercase">
-                                Historique
-                            </MudText>
-                        </MudItem>
-                        <MudItem>
-                            <MudImage Src="/images/History.png" Width="40" />
-                        </MudItem>
-                    </MudGrid>
-                </MudItem>
-                <MudItem xs="12" Class="d-flex justify-center">
-                    <MudTable Items="@allWeek" Hover="true" Style="width:70%">
-                        <HeaderContent>
-                            <MudTh><MudText Color="Color.Primary"><strong>Semaines passées</strong></MudText></MudTh>
-                            <MudTh><MudText Color="Color.Primary"><strong>Sauvegarde</strong></MudText></MudTh>
-                            <MudTh><MudText Color="Color.Primary"><strong>Maintenance</strong></MudText></MudTh>
-                            <MudTh><MudText Color="Color.Primary"><strong>Sécurité</strong></MudText></MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            @* <MudTd DataLabel="Semaines passées">@("Semaine " + context.week.WeekNumber.ToString())</MudTd>
+<div class="px-6">
+    <MudPaper Class="p-4 mb-6">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Secondary" Size="Size.Large" />
+            <MudText Typo="Typo.h6">Historique</MudText>
+        </MudStack>
+        <MudTable Items="@allWeek" Hover="true">
+            <HeaderContent>
+                <MudTh><MudText Color="Color.Primary"><strong>Semaines passées</strong></MudText></MudTh>
+                <MudTh><MudText Color="Color.Primary"><strong>Sauvegarde</strong></MudText></MudTh>
+                <MudTh><MudText Color="Color.Primary"><strong>Maintenance</strong></MudText></MudTh>
+                <MudTh><MudText Color="Color.Primary"><strong>Sécurité</strong></MudText></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                @* <MudTd DataLabel="Semaines passées">@("Semaine " + context.week.WeekNumber.ToString())</MudTd>
                             <MudTd DataLabel="Sécurité">@(context.signedContractList.Count(x => x.Sauvegarde == "OUI"))</MudTd>
                             <MudTd DataLabel="Maintenance">@(context.signedContractList.Count(x => x.Maintenance == "OUI"))</MudTd>
                             <MudTd DataLabel="Sauvegarde">@(context.signedContractList.Count(x => x.Sécurité == "OUI"))</MudTd> *@
-                        </RowTemplate>
-                    </MudTable>
-                </MudItem>
-            </MudGrid>
-        </MudItem>
-    </MudGrid>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
 </div>
 
 @code {

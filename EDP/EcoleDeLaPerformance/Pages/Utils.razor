@@ -5,9 +5,9 @@
 @inject StateContainerService stateContainerService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@page "/utils"
+@page "/support"
 
-@* @if (isBack)
+@if (isBack)
 {
     <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" OnClick="BackToHomePage" Class="mt-5">Retour</MudButton>
 }
@@ -15,16 +15,16 @@
 {
     <div class="d-flex align-items-center" id="divContainer">
         <MudGrid Justify="Justify.SpaceAround">
-            <MudItem md="4" xs="12" lg="4" @onclick="@(() => OnItemClick("Techniques de vente"))">
-                <MudCardMedia Image="../images/TechniqueImage.png" Height="375" />
+            <MudItem md="3" xs="12" @onclick="@(() => OnItemClick("Techniques de vente"))">
+                <MudCardMedia Image="../images/TechniqueImage.png" Height="200" />
                 <div class="image-text">Techniques de vente</div>
             </MudItem>
-            <MudItem md="4" xs="12" lg="4" @onclick="@(() => OnItemClick("SMS 1234"))">
-                <MudCardMedia Image="../images/smsImage.png" Height="375" />
-                <div class="image-text ">SMS 1234</div>
+            <MudItem md="3" xs="12" @onclick="@(() => OnItemClick("SMS 1234"))">
+                <MudCardMedia Image="../images/smsImage.png" Height="200" />
+                <div class="image-text">SMS 1234</div>
             </MudItem>
-            <MudItem md="4" xs="12" lg="4" @onclick="()=>OnELearningClick()">
-                <MudCardMedia Image="../images/learningImage.jpg" Height="375" Style="filter: brightness(0.5);" />
+            <MudItem md="3" xs="12" @onclick="()=>OnELearningClick()">
+                <MudCardMedia Image="../images/learningImage.jpg" Height="200" Style="filter: brightness(0.5);" />
                 <div class="image-text">e-Learning</div>
             </MudItem>
         </MudGrid>
@@ -34,11 +34,11 @@ else
 {
     <ClassComponent classes="classesList" />
 }
- *@
+
 @code {
-    // public List<Class> classesList = new List<Class>();
-    // public bool isBack = false;
-    // public User userInfo => stateContainerService.UserInfo;
+    public List<Category> classesList = new List<Category>();
+    public bool isBack = false;
+    public User userInfo => stateContainerService.UserInfo;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
@@ -48,23 +48,23 @@ else
         // }
     }
 
-    // async void OnItemClick(string itemName)
-    // {
-    //     var allClassesList = await classService.GetClassesAsync();
-    //     classesList = allClassesList.Where(x => x.ClassName == itemName).ToList();
-    //     isBack = true;
-    //     InvokeAsync(() => StateHasChanged());
-    // }
+    async void OnItemClick(string itemName)
+    {
+        // var allClassesList = await classService.GetClassesAsync();
+        // classesList = allClassesList.Where(x => x.ClassName == itemName).ToList();
+        isBack = true;
+        InvokeAsync(() => StateHasChanged());
+    }
 
-    // void OnELearningClick()
-    // {
-    //     JSRuntime.InvokeVoidAsync("openInNewTab", "https://lms.omnysis.com/");
-    // }
+    void OnELearningClick()
+    {
+        JSRuntime.InvokeVoidAsync("openInNewTab", "https://lms.omnysis.com/");
+    }
 
-    // void BackToHomePage()
-    // {
-    //     isBack = false;
-    //     classesList = null;
-    //     StateHasChanged();
-    // }
+    void BackToHomePage()
+    {
+        isBack = false;
+        classesList = null;
+        StateHasChanged();
+    }
 }
