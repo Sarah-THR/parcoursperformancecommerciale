@@ -8,13 +8,10 @@
 @inject IUserService userService
 @inject NavigationManager navigationManager
 
-@page "/History"
+@page "/history"
 
 <div>
-    @* <MudGrid>
-        <MudItem xs=12 Class="pb-12">
-            <ProgressBar activeIndex="@period"></ProgressBar>
-        </MudItem>
+    <MudGrid>
         <MudItem xs="12">
             <MudGrid Justify="Justify.Center">
                 <MudItem xs=11 Class="pa-12">
@@ -30,32 +27,30 @@
                     </MudGrid>
                 </MudItem>
                 <MudItem xs="12" Class="d-flex justify-center">
-                    <MudTable Items="@allWeek" T=TempClass Hover="true" Style="width:70%" OnRowClick="RowClicked">
+                    <MudTable Items="@allWeek" Hover="true" Style="width:70%">
                         <HeaderContent>
                             <MudTh><MudText Color="Color.Primary"><strong>Semaines passées</strong></MudText></MudTh>
                             <MudTh><MudText Color="Color.Primary"><strong>Sauvegarde</strong></MudText></MudTh>
                             <MudTh><MudText Color="Color.Primary"><strong>Maintenance</strong></MudText></MudTh>
                             <MudTh><MudText Color="Color.Primary"><strong>Sécurité</strong></MudText></MudTh>
-                            <MudTh><MudText Color="Color.Primary"><strong>Compte PRLVT</strong></MudText></MudTh>
                         </HeaderContent>
                         <RowTemplate>
-                            <MudTd DataLabel="Semaines passées">@("Semaine " + context.week.WeekNumber.ToString())</MudTd>
+                            @* <MudTd DataLabel="Semaines passées">@("Semaine " + context.week.WeekNumber.ToString())</MudTd>
                             <MudTd DataLabel="Sécurité">@(context.signedContractList.Count(x => x.Sauvegarde == "OUI"))</MudTd>
                             <MudTd DataLabel="Maintenance">@(context.signedContractList.Count(x => x.Maintenance == "OUI"))</MudTd>
-                            <MudTd DataLabel="Sauvegarde">@(context.signedContractList.Count(x => x.Sécurité == "OUI"))</MudTd>
-                            <MudTd DataLabel="Compte PRLVT">@context.openAccounts.Amount</MudTd>
+                            <MudTd DataLabel="Sauvegarde">@(context.signedContractList.Count(x => x.Sécurité == "OUI"))</MudTd> *@
                         </RowTemplate>
                     </MudTable>
                 </MudItem>
             </MudGrid>
         </MudItem>
-    </MudGrid> *@
+    </MudGrid>
 </div>
 
 @code {
-    // List<TempClass> allWeek = new List<TempClass>();
-    // public User userInfo => stateContainerService.UserInfo;
-    // int period = 0;
+    List<string> allWeek = new();
+    public User userInfo => stateContainerService.UserInfo;
+    int period = 0;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {

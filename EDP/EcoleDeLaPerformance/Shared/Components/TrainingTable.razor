@@ -1,0 +1,72 @@
+﻿@using MudBlazor
+
+<MudContainer MaxWidth = "MaxWidth.Large" Class = "py-6 px-4 mt-5" >
+    <MudPaper Elevation="4" Class="overflow-hidden">
+        <MudTable Items="trainingData" Elevation="0" Bordered="false" HeaderClass="bg-primary bg-opacity-10">
+            <HeaderContent>
+                <MudTh Class="fw-bold fs-6">Formation</MudTh>
+                <MudTh Class="fw-bold fs-6">Check</MudTh>
+                <MudTh Class="fw-bold fs-6">Évaluation</MudTh>
+                <MudTh Class="fw-bold fs-6">Commentaires</MudTh>
+                <MudTh Class="fw-bold fs-6">Statut</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd>
+                    <MudStack Row Spacing="2">
+                            <MudText Typo="Typo.subtitle2">@context.Name</MudText>
+                    </MudStack>
+                </MudTd>
+                <MudTd>
+                    <MudCheckBox Checked="@context.Completed" ReadOnly="true" Color="Color.Primary"/>
+                </MudTd>
+                <MudTd>
+                    @GetEvaluationBadge(context.Evaluation)
+                </MudTd>
+                <MudTd>
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Filled.Visibility" Color="Color.Error">
+                        Visualiser
+                    </MudButton>
+                </MudTd>
+                <MudTd>
+                    @GetStatusBadge(context.Status)
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    public class TrainingItem
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public bool Completed { get; set; }
+        public string Evaluation { get; set; }
+        public string Status { get; set; } 
+        public string Icon { get; set; }   
+    }
+
+    private List<TrainingItem> trainingData = new()
+    {
+        new() { Id = "1", Name = "Pitch ta boite", Completed = true, Evaluation = "excellent", Status = "completed", Icon = Icons.Material.Filled.TrendingUp },
+        new() { Id = "2", Name = "Prise de rendez-vous", Completed = true, Evaluation = "good", Status = "retake", Icon = Icons.Material.Filled.Group },
+        new() { Id = "3", Name = "Cycle de vente", Completed = true, Evaluation = "needs-improvement", Status = "retake", Icon = Icons.Material.Filled.MenuBook },
+        new() { Id = "4", Name = "Recommandation", Completed = false, Evaluation = null, Status = "pending", Icon = Icons.Material.Filled.Message },
+    };
+
+    private RenderFragment GetEvaluationBadge(string eval) => eval switch
+    {
+        "excellent" => @<MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Check" />,
+        "good" => @<MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.StackedLineChart" />,
+        "needs-improvement" => @<MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Clear" />,
+        _ => @<MudText Typo="Typo.caption" Color="Color.Secondary">Non évalué</MudText>
+    };
+
+    private RenderFragment GetStatusBadge(string status) => status switch
+    {
+        "completed" => @<MudChip Color="Color.Success" Variant="Variant.Text">Formation suivante</MudChip>,
+        "retake" => @<MudChip Color="Color.Error" Variant="Variant.Text">À repasser</MudChip>,
+        "pending" => @<MudChip Color="Color.Warning" Variant="Variant.Text">En attente</MudChip>,
+        _ => null
+    };
+}
