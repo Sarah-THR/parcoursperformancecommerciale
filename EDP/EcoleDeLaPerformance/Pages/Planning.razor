@@ -5,6 +5,8 @@
 @using EcoleDeLaPerformance.Ui.Models
 @inject StateContainerService stateContainerService
 @inject ITaskService taskService
+@inject IPlanningsTaskService planningsTaskService
+@inject IPlanningService planningService
 @inject ISnackbar snackbar
 @inject NavigationManager NavigationManager
 
@@ -72,7 +74,23 @@
 </div>
 
 @code {
-    private void ItemUpdated(MudItemDropInfo<Models.Task> dropItem)
+    public User userInfo => stateContainerService.UserInfo;
+    private List<Models.Task?> _items = new();
+    private bool isInitialized { get; set; }
+    private string[] days = Array.Empty<string>();
+    DateTime monday;
+    DateTime endOfWeek;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        days = GetWeekDays();
+        _items = await taskService.GetTasksAsync();
+        monday = GetMondayOfCurrentWeek();
+        endOfWeek = monday.AddDays(4).Date.AddDays(1).AddTicks(-1);
+        isInitialized = true;
+    }
+
+    private async void ItemUpdated(MudItemDropInfo<Models.Task> dropItem)
     {
         var oldIdentifier = dropItem.Item.Identifier;
 
@@ -88,17 +106,35 @@
         }
 
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+        var planning = planningService.GetPlanningByUserAsync(monday, endOfWeek, userInfo.Id).Result.FirstOrDefault();
+        if(planning == null)
+        {
+            Models.Planning newPlanning = new Models.Planning
+            {
+                UserId = userInfo.Id,
+            };
+            planning = await planningService.InsertPlanningAsync(newPlanning);
+        }
+        PlanningsTask planningsTask = new PlanningsTask
+            {
+                TaskId = dropItem.Item.Id,
+                TimeOfDay = dropItem.DropzoneIdentifier.StartsWith("planning0") ? "Après-midi" : "Matin",
+                PlanningId = planning.Id,
+            };
+        planningsTaskService.InsertPlanningsTaskAsync(planningsTask);
     }
-    private List<Models.Task?> _items = new();
-    private bool isInitialized { get; set; }
 
-    private string[] days = Array.Empty<string>();
-
-    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    private string[] GetWeekDays()
     {
-        days = GetWeekDays();
-        _items = await taskService.GetTasksAsync();
-        isInitialized = true;
+        var culture = System.Globalization.CultureInfo.GetCultureInfo("fr-FR");
+
+        return Enumerable.Range(0, 5)
+                         .Select(offset =>
+                         {
+                             var dayName = monday.AddDays(offset).ToString("dddd", culture);
+                             return char.ToUpper(dayName[0]) + dayName.Substring(1);
+                         })
+                         .ToArray();
     }
 
     private DateTime GetMondayOfCurrentWeek()
@@ -109,17 +145,4 @@
         return today.AddDays(diff);
     }
 
-    private string[] GetWeekDays()
-    {
-        var culture = System.Globalization.CultureInfo.GetCultureInfo("fr-FR");
-        DateTime monday = GetMondayOfCurrentWeek();
-
-        return Enumerable.Range(0, 5)
-                         .Select(offset =>
-                         {
-                             var dayName = monday.AddDays(offset).ToString("dddd", culture);
-                             return char.ToUpper(dayName[0]) + dayName.Substring(1);
-                         })
-                         .ToArray();
-    }
 }

@@ -17,7 +17,7 @@ namespace EcoleDeLaPerformance.Ui.Services
 
         public async Task<List<Planning?>> GetPlanningByUserAsync(DateTime startDateWeek, DateTime endDateWeek, int userId)
         {
-            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/plannings");
+            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/plannings?startDateWeek={startDateWeek}&endDateWeek={endDateWeek}&userId={userId}");
 
             return response.StatusCode switch
             {

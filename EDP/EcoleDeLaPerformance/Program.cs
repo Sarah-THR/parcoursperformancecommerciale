@@ -44,6 +44,8 @@ builder.Services.AddMudBlazorDialog();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBriefService, BriefService>();
 builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IPlanningsTaskService, PlanningsTaskService>();
+builder.Services.AddScoped<IPlanningService, PlanningService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<StateContainerService>();
 builder.Services.AddScoped<CRMService>();
