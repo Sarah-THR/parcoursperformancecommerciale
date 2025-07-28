@@ -4,73 +4,77 @@
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @using EcoleDeLaPerformance.Ui.Models
 @inject StateContainerService stateContainerService
+@inject ITaskService taskService
 @inject ISnackbar snackbar
 @inject NavigationManager NavigationManager
 
-<div class="px-6" style="user-select: none;" onselectstart="return false">
-    <MudPaper Class="p-4 mb-6">
-        <MudDropContainer T="DropItem"
-                          Items="_items"
-                          ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
-                          ItemDropped="ItemUpdated"
-                          Class="d-flex flex-column">
-            <ChildContent>
-                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-                    <MudIcon Icon="@Icons.Material.Filled.EventAvailable" Color="Color.Secondary" />
-                    <MudText Typo="Typo.h6">Liste des activités</MudText>
-                </MudStack>
-                @for (int r = 0; r < 2; r++)
-                {
-                    var row = r.ToString();
-                    <div class="drop-row">
-                        @for (int c = 0; c < 5; c++)
-                        {
-                            var col = c.ToString();
-                            <MudDropZone T="DropItem" Identifier="@($"Task{row}{col}")" Class="border-1 ma-4 docs-gray-bg mud-border-lines-default rounded border-dashed" Style="height:70px" />
-                        }
-                    </div>
-                }
-                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-                    <MudIcon Icon="@Icons.Material.Filled.DateRange" Color="Color.Info" />
-                    <MudText Typo="Typo.h6" Class="my-4">Planning de la semaine</MudText>
-                </MudStack>
-                <div>
-                    <div class="drop-row my-2">
-                        @foreach (var jour in jours)
-                        {
-                            <div style="text-align:center; font-weight:bold;">
-                                @jour
-                            </div>
-                        }
-                    </div>
+<div class="px-6" style="user-select: none;">
+    @if (isInitialized)
+    {
+        <MudPaper Class="p-4 mb-6">
+            <MudDropContainer T="Models.Task"
+                              Items="_items"
+                              ItemsSelector="@((item, dropzone) => item.Identifier == dropzone)"
+                              ItemDropped="ItemUpdated"
+                              Class="d-flex flex-column">
+                <ChildContent>
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.EventAvailable" Color="Color.Secondary" />
+                        <MudText Typo="Typo.h6">Liste des activités</MudText>
+                    </MudStack>
                     @for (int r = 0; r < 2; r++)
                     {
-                        var currentRow = r;
+                        var row = r.ToString();
                         <div class="drop-row">
                             @for (int c = 0; c < 5; c++)
                             {
                                 var col = c.ToString();
-                                <MudDropZone T="DropItem" Identifier="@($"planning{currentRow}{col}")" Class="border-1 ma-4 docs-gray-bg mud-border-lines-default rounded border-dashed" Style="height:70px; position:relative;">
-                                    <MudText Typo="Typo.subtitle1" Class="ma-2 opacity-50" Style="white-space: nowrap; position:absolute; top:0; left:0; ">@((currentRow == 0) ? "Matin" : "Après-midi")</MudText>
-                                </MudDropZone>
+                                <MudDropZone T="Models.Task" Identifier="@($"Task{row}{col}")" Class="border-1 ma-4 docs-gray-bg mud-border-lines-default rounded border-dashed" Style="height:70px" />
                             }
                         </div>
                     }
-                </div>
-            </ChildContent>
-            <ItemRenderer>
-                <MudPaper Class="w-100 d-flex align-items-center justify-center" Elevation="1" Style="height:70px; background: linear-gradient(to right, #fef2f2, #fee2e2);">
-                    <MudText Typo="Typo.subtitle1" Class="ma-2">@context.Name</MudText>
-                </MudPaper>
-            </ItemRenderer>
-        </MudDropContainer>
-    </MudPaper>
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.DateRange" Color="Color.Info" />
+                        <MudText Typo="Typo.h6" Class="my-4">Planning de la semaine</MudText>
+                    </MudStack>
+                    <div>
+                        <div class="drop-row my-2">
+                            @foreach (var day in days)
+                            {
+                                <div style="text-align:center; font-weight:bold;">
+                                    @day
+                                </div>
+                            }
+                        </div>
+                        @for (int r = 0; r < 2; r++)
+                        {
+                            var currentRow = r;
+                            <div class="drop-row">
+                                @for (int c = 0; c < 5; c++)
+                                {
+                                    var col = c.ToString();
+                                    <MudDropZone T="Models.Task" Identifier="@($"planning{currentRow}{col}")" Class="border-1 ma-4 docs-gray-bg mud-border-lines-default rounded border-dashed" Style="height:70px; position:relative;">
+                                        <MudText Typo="Typo.subtitle1" Class="ma-2 opacity-50" Style="white-space: nowrap; position:absolute; top:0; left:0; ">@((currentRow == 0) ? "Matin" : "Après-midi")</MudText>
+                                    </MudDropZone>
+                                }
+                            </div>
+                        }
+                    </div>
+                </ChildContent>
+                <ItemRenderer>
+                        <MudPaper Class="w-100 d-flex align-items-center justify-center" Elevation="1" Style="height:70px; background: linear-gradient(to right, #fef2f2, #fee2e2);">
+                            <MudText Typo="Typo.subtitle1" Class="ma-2">@context.Title</MudText>
+                        </MudPaper>
+                </ItemRenderer>
+            </MudDropContainer>
+        </MudPaper>
+    }
 </div>
 
 @code {
-    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    private void ItemUpdated(MudItemDropInfo<Models.Task> dropItem)
     {
-        var oldIdentifier = dropItem.Item.Identifier; 
+        var oldIdentifier = dropItem.Item.Identifier;
 
         bool alreadyOccupied = _items.Any(i =>
             i.Identifier == dropItem.DropzoneIdentifier &&
@@ -85,28 +89,16 @@
 
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
     }
+    private List<Models.Task?> _items = new();
+    private bool isInitialized { get; set; }
 
-    private List<DropItem> _items = new()
-    {
-        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task00" },
-        new DropItem(){ Name = "Tomcat", Team = "BLUE", Identifier = "Task01" },
-        new DropItem(){ Name = "McDonnell", Team = "BLUE", Identifier = "Task02" },
-        new DropItem(){ Name = "test", Team = "BLUE", Identifier = "Task03" },
-        new DropItem(){ Name = "test@", Team = "BLUE", Identifier = "Task04" },
-        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task05" },
-        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task10" },
-        new DropItem(){ Name = "Tomcat", Team = "BLUE", Identifier = "Task11" },
-        new DropItem(){ Name = "McDonnell", Team = "BLUE", Identifier = "Task12" },
-        new DropItem(){ Name = "test", Team = "BLUE", Identifier = "Task13" },
-        new DropItem(){ Name = "test@", Team = "BLUE", Identifier = "Task14" },
-        new DropItem(){ Name = "Grumman", Team = "BLUE", Identifier = "Task15" },
-    };
+    private string[] days = Array.Empty<string>();
 
-    public class DropItem
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        public string Name { get; init; }
-        public string Team { get; init; }
-        public string Identifier { get; set; }
+        days = GetWeekDays();
+        _items = await taskService.GetTasksAsync();
+        isInitialized = true;
     }
 
     private DateTime GetMondayOfCurrentWeek()
@@ -129,12 +121,5 @@
                              return char.ToUpper(dayName[0]) + dayName.Substring(1);
                          })
                          .ToArray();
-    }
-
-    private string[] jours = Array.Empty<string>();
-
-    protected override void OnInitialized()
-    {
-        jours = GetWeekDays();
     }
 }

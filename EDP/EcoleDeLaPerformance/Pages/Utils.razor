@@ -1,39 +1,42 @@
-﻿@using EcoleDeLaPerformance.Ui.Interfaces
+﻿@page "/support"
+@using EcoleDeLaPerformance.Ui.Interfaces
 @using EcoleDeLaPerformance.Ui.Models
 @using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @inject StateContainerService stateContainerService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
-@page "/support"
 
-@if (isBack)
-{
-    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Color="Color.Primary" OnClick="BackToHomePage" Class="mt-5">Retour</MudButton>
-}
-@if (classesList == null || classesList.Count == 0)
-{
-    <div class="d-flex align-items-center" id="divContainer">
-        <MudGrid Justify="Justify.SpaceAround">
-            <MudItem md="3" xs="12" @onclick="@(() => OnItemClick("Techniques de vente"))">
-                <MudCardMedia Image="../images/TechniqueImage.png" Height="200" />
-                <div class="image-text">Techniques de vente</div>
+<div class="px-6">
+    <MudPaper Class="p-4 mb-6 align-content-center" Height="800px" id="divContainer">
+        <MudGrid>
+            <MudItem xs="12" md="4">
+                <MudCard>
+                    <MudCardMedia Image="images/TechniqueImage.png" Height="200" />
+                    <MudCardContent>
+                        <MudText Typo="Typo.h5">Technique de vente</MudText>
+                    </MudCardContent>
+                </MudCard>
             </MudItem>
-            <MudItem md="3" xs="12" @onclick="@(() => OnItemClick("SMS 1234"))">
-                <MudCardMedia Image="../images/smsImage.png" Height="200" />
-                <div class="image-text">SMS 1234</div>
+            <MudItem xs="12" md="4">
+                <MudCard>
+                    <MudCardMedia Image="images/smsImage.png" Height="200" />
+                    <MudCardContent>
+                        <MudText Typo="Typo.h5">SMS 1234</MudText>
+                    </MudCardContent>
+                </MudCard>
             </MudItem>
-            <MudItem md="3" xs="12" @onclick="()=>OnELearningClick()">
-                <MudCardMedia Image="../images/learningImage.jpg" Height="200" Style="filter: brightness(0.5);" />
-                <div class="image-text">e-Learning</div>
+            <MudItem xs="12" md="4">
+                <MudCard>
+                    <MudCardMedia Image="images/learningImage.jpg" Height="200" Style="filter: brightness(0.5);" />
+                    <MudCardContent>
+                        <MudText Typo="Typo.h5">E-Learning</MudText>
+                    </MudCardContent>
+                </MudCard>
             </MudItem>
         </MudGrid>
-    </div>
-}
-else
-{
-    <ClassComponent classes="classesList" />
-}
+    </MudPaper>
+</div>
 
 @code {
     public List<Category> classesList = new List<Category>();

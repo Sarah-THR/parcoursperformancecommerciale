@@ -98,7 +98,7 @@ namespace EcoleDeLaPerformance.Ui.Services
         }
 
         #region APICRM
-        public async Task<decimal> GetStudentBonusAsync(string name, DateOnly startDate, DateOnly endDate)
+        public async Task<decimal> GetUserBonusAsync(string name, DateOnly startDate, DateOnly endDate)
         {
             try
             {
@@ -128,111 +128,140 @@ namespace EcoleDeLaPerformance.Ui.Services
             }
         }
 
-        public async Task<int> GetNbOpenAccountsAsync(string name)
+        public async Task<decimal> GetUserTurnoverAsync(string name, DateOnly startDate, DateOnly endDate)
         {
             try
             {
                 var apiUrl = _configuration.GetValue<string>("EDPApiUrl");
-                var queryString = $"?name={Uri.EscapeDataString(name)}";
+                var queryString = $"?name={Uri.EscapeDataString(name)}&startDate={startDate}&endDate={endDate}";
 
-                var response = await new HttpClient().GetAsync($"{apiUrl}api/debitAccount{queryString}");
-
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    return await response.Content.ReadFromJsonAsync<int>();
-                }
-                else if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    throw new Exception("Le nom de l'étudiant est obligatoire.");
-                }
-                else
-                {
-                    throw new Exception($"Une erreur est survenue lors de la récupération du nombre de compte en prélèvements : {await response.Content.ReadAsStringAsync()}");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur lors de la récupération du nombre de compte en prélèvements : {ex.Message}");
-                throw;
-            }
-        }
-
-        public int GetNbOpenAccountsByPeriod(string name, DateOnly periodFirstDay, DateOnly periodLastDay)
-        {
-            try
-            {
-                var apiUrl = _configuration.GetValue<string>("EDPApiUrl");
-                var queryString = $"?name={Uri.EscapeDataString(name)}&periodFirstDay={Uri.EscapeDataString(periodFirstDay.ToString("dd-MM-yyyy"))}&periodLastDay={Uri.EscapeDataString(periodLastDay.ToString("dd-MM-yyyy"))}";
-
-                var response = new HttpClient().GetAsync($"{apiUrl}api/debitAccountByPeriod{queryString}").Result;
+                var response = await new HttpClient().GetAsync($"{apiUrl}api/turnover{queryString}");
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return response.Content.ReadFromJsonAsync<int>().Result;
+                    var turnover = await response.Content.ReadFromJsonAsync<decimal>();
+                    return turnover;
                 }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
-                    throw new Exception("Le nom de l'étudiant et les dates de début et de fin de période est obligatoire.");
+                    throw new Exception("Le nom de l'étudiant, la date de début et la date de fin sont obligatoires.");
                 }
                 else
                 {
-                    throw new Exception($"Une erreur est survenue lors de la récupération du nombre de compte en prélèvements : {response.Content.ReadAsStringAsync().Result}");
+                    throw new Exception($"Une erreur est survenue lors de la prime : {await response.Content.ReadAsStringAsync()}");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erreur lors de la récupération du nombre de compte en prélèvements : {ex.Message}");
-                return 0;
-            }
-        }
-
-        public async Task<decimal> GetUserTurnover(string email, DateOnly beginningDate, DateOnly endingDate)
-        {
-            await _crmService.GetCrmTokenAsync();
-            string pattern = @"^([^@]+)";
-
-            Regex regex = new Regex(pattern);
-            Match match = regex.Match(email);
-            string domain = match.Groups[1].Value;
-            var requestData = new
-            {
-                DomainName = "XEFI\\" + domain,
-                BeginningDate = beginningDate,
-                EndingDate = endingDate
-            };
-            try
-            {
-                string requestDataJson = System.Text.Json.JsonSerializer.Serialize(requestData);
-
-                string response = await _crmService.SendRequestToCRMApiAsync("api/Sales/GetWeeklyByUser", requestDataJson);
-
-                dynamic responseObject = System.Text.Json.JsonSerializer.Deserialize<dynamic>(response);
-
-                if (responseObject.ValueKind == JsonValueKind.Array)
-                {
-                    decimal totalAmount = 0;
-
-                    foreach (JsonElement item in responseObject.EnumerateArray())
-                    {
-                        if (item.TryGetProperty("Amount", out JsonElement amountElement))
-                        {
-                            if (amountElement.TryGetDecimal(out decimal amount))
-                            {
-                                totalAmount += amount;
-                            }
-                        }
-                    }
-
-                    return totalAmount;
-                }
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur lors de la récupération du chiffre d'affaires : {ex.Message}");
+                Console.WriteLine($"Erreur lors de la récupération de la prime : {ex.Message}");
                 throw;
             }
         }
+        //public async Task<int> GetNbOpenAccountsAsync(string name)
+        //{
+        //    try
+        //    {
+        //        var apiUrl = _configuration.GetValue<string>("EDPApiUrl");
+        //        var queryString = $"?name={Uri.EscapeDataString(name)}";
+
+        //        var response = await new HttpClient().GetAsync($"{apiUrl}api/debitAccount{queryString}");
+
+        //        if (response.StatusCode == HttpStatusCode.OK)
+        //        {
+        //            return await response.Content.ReadFromJsonAsync<int>();
+        //        }
+        //        else if (response.StatusCode == HttpStatusCode.BadRequest)
+        //        {
+        //            throw new Exception("Le nom de l'étudiant est obligatoire.");
+        //        }
+        //        else
+        //        {
+        //            throw new Exception($"Une erreur est survenue lors de la récupération du nombre de compte en prélèvements : {await response.Content.ReadAsStringAsync()}");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur lors de la récupération du nombre de compte en prélèvements : {ex.Message}");
+        //        throw;
+        //    }
+        //}
+
+        //public int GetNbOpenAccountsByPeriod(string name, DateOnly periodFirstDay, DateOnly periodLastDay)
+        //{
+        //    try
+        //    {
+        //        var apiUrl = _configuration.GetValue<string>("EDPApiUrl");
+        //        var queryString = $"?name={Uri.EscapeDataString(name)}&periodFirstDay={Uri.EscapeDataString(periodFirstDay.ToString("dd-MM-yyyy"))}&periodLastDay={Uri.EscapeDataString(periodLastDay.ToString("dd-MM-yyyy"))}";
+
+        //        var response = new HttpClient().GetAsync($"{apiUrl}api/debitAccountByPeriod{queryString}").Result;
+
+        //        if (response.StatusCode == HttpStatusCode.OK)
+        //        {
+        //            return response.Content.ReadFromJsonAsync<int>().Result;
+        //        }
+        //        else if (response.StatusCode == HttpStatusCode.BadRequest)
+        //        {
+        //            throw new Exception("Le nom de l'étudiant et les dates de début et de fin de période est obligatoire.");
+        //        }
+        //        else
+        //        {
+        //            throw new Exception($"Une erreur est survenue lors de la récupération du nombre de compte en prélèvements : {response.Content.ReadAsStringAsync().Result}");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur lors de la récupération du nombre de compte en prélèvements : {ex.Message}");
+        //        return 0;
+        //    }
+        //}
+
+        //public async Task<decimal> GetUserTurnoverAsync(string email, DateOnly beginningDate, DateOnly endingDate)
+        //{
+        //    await _crmService.GetCrmTokenAsync();
+        //    string pattern = @"^([^@]+)";
+
+        //    Regex regex = new Regex(pattern);
+        //    Match match = regex.Match(email);
+        //    string domain = match.Groups[1].Value;
+        //    var requestData = new
+        //    {
+        //        DomainName = "XEFI\\" + domain,
+        //        BeginningDate = beginningDate,
+        //        EndingDate = endingDate
+        //    };
+        //    try
+        //    {
+        //        string requestDataJson = System.Text.Json.JsonSerializer.Serialize(requestData);
+
+        //        string response = await _crmService.SendRequestToCRMApiAsync("api/Sales/GetWeeklyByUser", requestDataJson);
+
+        //        dynamic responseObject = System.Text.Json.JsonSerializer.Deserialize<dynamic>(response);
+
+        //        if (responseObject.ValueKind == JsonValueKind.Array)
+        //        {
+        //            decimal totalAmount = 0;
+
+        //            foreach (JsonElement item in responseObject.EnumerateArray())
+        //            {
+        //                if (item.TryGetProperty("Amount", out JsonElement amountElement))
+        //                {
+        //                    if (amountElement.TryGetDecimal(out decimal amount))
+        //                    {
+        //                        totalAmount += amount;
+        //                    }
+        //                }
+        //            }
+
+        //            return totalAmount;
+        //        }
+        //        return 0;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Erreur lors de la récupération du chiffre d'affaires : {ex.Message}");
+        //        throw;
+        //    }
+        //}
 
         public async Task<int> GetNbAppointmentsAsync(string email, DateOnly beginningDate, DateOnly endingDate)
         {

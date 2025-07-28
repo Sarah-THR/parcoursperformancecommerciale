@@ -289,6 +289,9 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
             entity.Property(e => e.Title)
                 .HasMaxLength(255)
                 .HasColumnName("title");
+            entity.Property(e => e.Identifier)
+                .HasMaxLength(255)
+                .HasColumnName("identifier");
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("updated_at");

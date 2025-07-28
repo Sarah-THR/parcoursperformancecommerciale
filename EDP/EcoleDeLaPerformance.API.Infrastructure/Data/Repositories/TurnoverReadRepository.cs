@@ -27,10 +27,9 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
             decimal? turnover = _xefiMscrmContext.Contracts
             .Where(c => c.CreatedOn.Value.Date >= startDate.Date &&
                         c.CreatedOn.Value.Date <= endDate.Date &&
-                        _xefiMscrmContext.Accounts.Any(a => a.AccountId == c.CustomerId &&
-                                                      a.CreatedOn.Value.Date == c.CreatedOn.Value.Date))
+                        _xefiMscrmContext.Accounts.Any(a => a.AccountId == c.CustomerId))
             .Join(_xefiMscrmContext.SystemUsers,
-                  c => c.CreatedBy,
+                  c => c.ContractCommercial,
                   u => u.SystemUserId,
                   (c, u) => new { Contract = c, User = u })
             .Where(join => join.User.FullName == name)

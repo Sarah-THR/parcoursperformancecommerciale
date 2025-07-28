@@ -1,10 +1,13 @@
 ﻿@using EcoleDeLaPerformance.Ui.Interfaces
 @using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Models.BI
 @using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Shared
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @inject StateContainerService stateContainerService
 @inject IUserService userService
+@inject IBriefService briefService
+@inject IContractService contractService
 @page "/"
 
 <PageTitle>Tableau de bord</PageTitle>
@@ -18,26 +21,26 @@
         <MudGrid>
             <MudItem xs="12" md="4">
                 <MudText Typo="Typo.subtitle1" Class="text-slate-600">Objectif mensuel</MudText>
-                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">800 000€</MudText>
-                <MudProgressLinear Value="65" Color="Color.Primary"/>
+                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">@monthGoal.ToString("F") €</MudText>
+                <MudProgressLinear Value="@monthlyTurnoverProgress" Color="Color.Primary" />
             </MudItem>
             <MudItem xs="12" md="4">
                 <MudText Typo="Typo.subtitle1" Class="text-slate-600">Objectif trimestriel</MudText>
-                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">240 000€</MudText>
-                <MudProgressLinear Value="45" Color="Color.Secondary"/>
+                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">@trimestrialMonthGoal.ToString("F") €</MudText>
+                <MudProgressLinear Value="@trimestrialMonthlyTurnoverProgress" Color="Color.Secondary" />
             </MudItem>
             <MudItem xs="12" md="4">
                 <MudGrid>
                     <MudItem xs="6">
                         <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #fef2f2, #fee2e2);" MaxHeight="108px">
                             <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré</MudText>
-                            <MudText Typo="Typo.h6" Class="text-red-700 font-bold">3450 €</MudText>
+                            <MudText Typo="Typo.h6" Class="text-red-700 font-bold">@turnover.ToString("F") €</MudText>
                         </MudPaper>
                     </MudItem>
                     <MudItem xs="6">
                         <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #ecfdf5, #d1fae5);" MaxHeight="108px">
                             <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable</MudText>
-                            <MudText Typo="Typo.h6" Class="text-green-700 font-bold">321 €</MudText>
+                            <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@bonus.ToString("F") €</MudText>
                         </MudPaper>
                     </MudItem>
                 </MudGrid>
@@ -52,13 +55,13 @@
         </MudStack>
         <MudGrid>
             <MudItem xs="12" md="4">
-                <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contratData" Labels="@contratLabels" />
+                <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contractData" Labels="@contractLabels" />
             </MudItem>
             <MudItem xs="12" md="4">
-                <MetricCard Title="Rendez-vous à venir" Value="8" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" Subtitle="RENDEZ-VOUS" />
+                <MetricCard Title="Rendez-vous à venir" Value="@nbAppointments.ToString()" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" Subtitle="RENDEZ-VOUS" />
             </MudItem>
             <MudItem xs="12" md="4">
-                <MetricCard Title="Heures de formation" Value="24h" Progress="80" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />
+                <MetricCard Title="Heures de formation" Value="0h" Progress="0" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />
             </MudItem>
         </MudGrid>
     </MudPaper>
@@ -70,10 +73,11 @@
                     <MudIcon Icon="@Icons.Material.Filled.TrackChanges" Color="Color.Warning" />
                     <MudText Typo="Typo.h6">Engagement de signature de la semaine</MudText>
                 </MudStack>
-                <MudList Dense="true">
-                    <EngagementItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
-                    <EngagementItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
-                    <EngagementItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                <MudList Dense="true" T="string" Disabled>
+                    @foreach (var brief in briefs)
+                    {
+                        <EngagementItem Text="@brief?.SignatureCommitment" />
+                    }
                 </MudList>
             </MudPaper>
         </MudItem>
@@ -84,10 +88,11 @@
                     <MudIcon Icon="@Icons.Material.Filled.AssignmentTurnedIn" Color="Color.Secondary" />
                     <MudText Typo="Typo.h6">Dossiers à checker</MudText>
                 </MudStack>
-                <MudList Dense="true">
-                    <FileItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
-                    <FileItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
-                    <FileItem Text="Quisquam tempore aliquam et, laborum doloreque illum aperitatur ipsum velit recusandae non. Quo voluptate perspiciatis" />
+                <MudList Dense="true" T="string" Disabled>
+                    @foreach (var brief in briefs)
+                    {
+                        <FileItem Text="@brief?.FilesToCheck" />
+                    }
                 </MudList>
             </MudPaper>
         </MudItem>
@@ -95,9 +100,35 @@
 </div>
 
 @code {
-    double[] contratData = new[] { 5.0, 3.0, 4.0 };
-    string[] contratLabels = new[] { "Sauvegarde", "Maintenance", "Sécurité" };
-    protected override void OnInitialized()
+    public User userInfo => stateContainerService.UserInfo;
+    double[] contractData;
+    string[] contractLabels = new[] { "Sauvegarde", "Maintenance", "Sécurité" };
+    decimal trimestrialTurnover = 0;
+    decimal trimestrialMonthGoal = 0;
+    int trimestrialMonthlyTurnoverProgress => trimestrialMonthGoal == 0 ? 0 : (int)Math.Round((trimestrialTurnover / trimestrialMonthGoal) * 100);
+    decimal turnover = 0; 
+    decimal monthGoal = 0;
+    int monthlyTurnoverProgress => monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
+    decimal bonus = 0;
+    decimal nbAppointments = 0;
+    DateOnly today = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+    DateOnly firstMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
+    DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
+    List<Brief?> briefs = new();
+    List<EcolePerformanceSm?> contracts = new();
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
+        turnover = await userService.GetUserTurnoverAsync(userInfo.Name, firstMonthDay, lastMonthDay);
+        bonus = await userService.GetUserBonusAsync(userInfo.Name, firstMonthDay, lastMonthDay);
+        nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.Email, firstMonthDay, lastMonthDay);
+        briefs = await briefService.GetBriefByUserId(firstMonthDay.ToDateTime(TimeOnly.MinValue), lastMonthDay.ToDateTime(TimeOnly.MinValue), userInfo.Id);
+        contracts = contractService.GetContractsByPeriod(userInfo.Name, firstMonthDay, lastMonthDay);
+        contractData = new[]
+            {
+                (double)contracts.Count(c => c.Sauvegarde == "OUI"),
+                (double)contracts.Count(c => c.Maintenance == "OUI"),
+                (double)contracts.Count(c => c.Sécurité == "OUI")
+            };
     }
 }

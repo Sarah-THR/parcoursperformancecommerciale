@@ -13,60 +13,65 @@
 <MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<MudPopoverProvider />
+
 <div>
     <CascadingAuthenticationState>
         <AuthorizeView>
             <Authorized>
-                <CascadingValue Value="@stateContainerService.UserInfo">
-                    <MudLayout>
-                        <MudPaper Elevation="0" Class="px-6 py-2 border-bottom" Style="background-color: white; position: fixed; top: 0; width: 100%; z-index: 1100;">
-                            <MudGrid Class="align-items-center" Justify="Justify.SpaceBetween">
-                                <MudItem xs="12" md="6">
-                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                                        <MudImage Src="/images/Logo.png" Width="150" />
+                @if (isInitialized)
+                {
+                    <CascadingValue Value="@stateContainerService.UserInfo">
+                        <MudLayout>
+                            <MudPaper Elevation="0" Class="px-6 py-2 border-bottom" Style="background-color: white; position: fixed; top: 0; width: 100%; z-index: 1100;">
+                                <MudGrid Class="align-items-center" Justify="Justify.SpaceBetween">
+                                    <MudItem xs="12" md="6">
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                            <MudImage Src="/images/Logo.png" Width="150" />
                                             <MudText Class="text-slate-800 fw-bold pt-1">Parcours Performance Commerciale</MudText>
-                                    </MudStack>
-                                </MudItem>
+                                        </MudStack>
+                                    </MudItem>
 
-                                <MudItem xs="12" md="6">
-                                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
-                                        @* <MudAvatar>
+                                    <MudItem xs="12" md="6">
+                                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
+                                            @* <MudAvatar>
                                             PN
                                         </MudAvatar> *@
-                                        <MudText Typo="Typo.subtitle2" Class="font-medium text-slate-700">Prénom NOM</MudText>
-                                    </MudStack>
-                                </MudItem>
-                            </MudGrid>
+                                            <MudText Typo="Typo.subtitle2" Class="font-medium text-slate-700">@stateContainerService.UserInfo.Name</MudText>
+                                        </MudStack>
+                                    </MudItem>
+                                </MudGrid>
                             </MudPaper>
-                        <div class="d-flex">
-                            <MudDrawer Elevation="0" Width="125px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
-                                <MudNavMenu Class="p-2">
-                                    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">
-                                        Accueil
-                                    </MudNavLink>
-                                    <MudNavLink Href="/planning" Icon="@Icons.Material.Outlined.CalendarMonth" Class="linkmenu">
-                                        Planning
-                                    </MudNavLink>
-                                    <MudNavLink Href="/brief" Icon="@Icons.Material.Outlined.Message" Class="linkmenu">
-                                        Brief/Debrief
-                                    </MudNavLink>
-                                    <MudNavLink Href="/history" Icon="@Icons.Material.Outlined.History" Class="linkmenu">
-                                        Historique
-                                    </MudNavLink>
-                                    <MudNavLink Href="/support" Icon="@Icons.Material.Outlined.Handyman" Class="linkmenu">
-                                        Support
-                                    </MudNavLink>
-                                    <MudText Class="p-4">
-                                        v.@version
-                                    </MudText>
-                                </MudNavMenu>
-                            </MudDrawer>
-                        </div>
-                        <MudMainContent>
-                            @Body 
-                        </MudMainContent>
-                    </MudLayout>
-                </CascadingValue>
+                            <div class="d-flex">
+                                <MudDrawer Elevation="0" Width="125px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
+                                    <MudNavMenu Class="p-2">
+                                        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">
+                                            Accueil
+                                        </MudNavLink>
+                                        <MudNavLink Href="/planning" Icon="@Icons.Material.Outlined.CalendarMonth" Class="linkmenu">
+                                            Planning
+                                        </MudNavLink>
+                                        <MudNavLink Href="/brief" Icon="@Icons.Material.Outlined.Message" Class="linkmenu">
+                                            Brief/Debrief
+                                        </MudNavLink>
+                                        <MudNavLink Href="/history" Icon="@Icons.Material.Outlined.History" Class="linkmenu">
+                                            Historique
+                                        </MudNavLink>
+                                        <MudNavLink Href="/support" Icon="@Icons.Material.Outlined.Handyman" Class="linkmenu">
+                                            Support
+                                        </MudNavLink>
+                                        <MudText Class="p-4">
+                                            v.@version
+                                        </MudText>
+                                    </MudNavMenu>
+                                </MudDrawer>
+                            </div>
+                            <MudMainContent>
+                                @Body
+                            </MudMainContent>
+                        </MudLayout>
+                    </CascadingValue>
+                }
             </Authorized>
             <NotAuthorized>
                 <LandingPage />
@@ -77,21 +82,13 @@
 
 @code {
     private readonly MudTheme _currentTheme = new()
+    {
+        PaletteLight = new PaletteLight
         {
-            Palette = new PaletteLight
-            {
-                Primary = "rgba(10, 50, 78, 1)",
-                Secondary = "#E10600",
-            },
-            Typography = new Typography()
-            {
-                Default = new Default()
-                {
-                    FontFamily = new[] { "Roboto Flex" }
-                }
-            }
-        };
-
+            Primary = "rgba(10, 50, 78, 1)",
+            Secondary = "#E10600",
+        }
+    };
     bool open = true;
     string version;
     private bool unknowUser { get; set; }
@@ -111,51 +108,51 @@
         base.OnInitialized();
     }
 
-    // protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
-    // {
-    //     try
-    //     {
-    //         if (!userInfoLoaded)
-    //         {
-    //             var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
-    //             if (authState.User?.Identity?.IsAuthenticated ?? false)
-    //             {
-    //                 try
-    //                 {
-    //                     stateContainerService.UserInfo = await userService.GetUserByEmailAsync(authState.User.Identity.Name);
+    protected override async System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            if (!userInfoLoaded)
+            {
+                var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+                if (authState.User?.Identity?.IsAuthenticated ?? false)
+                {
+                    try
+                    {
+                        stateContainerService.UserInfo = await userService.GetUserByEmailAsync("b.sterin@xefi.fr");
 
-    //                     if (stateContainerService.UserInfo == null)
-    //                     {
-    //                         unknowUser = true;
-    //                     }
-    //                 }
-    //                 catch (Exception ex)
-    //                 {
-    //                     unknowUser = true;
-    //                 }
+                        if (stateContainerService.UserInfo == null)
+                        {
+                            unknowUser = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        unknowUser = true;
+                    }
 
-    //                 isInitialized = true;
-    //                 userInfoLoaded = true;
-    //             }
+                    isInitialized = true;
+                    userInfoLoaded = true;
+                }
 
-    //             screenSize = await JsRuntime.InvokeAsync<int>("BlazorScreenSize.getScreenSize");
-    //         }
+                screenSize = await JsRuntime.InvokeAsync<int>("BlazorScreenSize.getScreenSize");
+            }
 
-    //         StateHasChanged();
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         throw ex;
-    //     }
-    // }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
 
-    // public void Logout()
-    // {
-    //     navigationManager.NavigateTo("MicrosoftIdentity/Account/SignOut", forceLoad: true);
-    // }
+    public void Logout()
+    {
+        navigationManager.NavigateTo("MicrosoftIdentity/Account/SignOut", forceLoad: true);
+    }
 
-    // public void NavigateToProfile()
-    // {
-    //     navigationManager.NavigateTo("/profile", forceLoad: true);
-    // }
+    public void NavigateToProfile()
+    {
+        navigationManager.NavigateTo("/profile", forceLoad: true);
+    }
 }

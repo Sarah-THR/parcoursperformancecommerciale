@@ -12,13 +12,13 @@ namespace EcoleDeLaPerformance.Ui.Services
             _configuration = configuration;
         }
 
-        public async Task<List<Task?>> GetTasksAsync()
+        public async Task<List<Models.Task?>> GetTasksAsync()
         {
             var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/tasks");
 
             return response.StatusCode switch
             {
-                HttpStatusCode.OK => await response.Content.ReadFromJsonAsync<List<Task?>>(),
+                HttpStatusCode.OK => await response.Content.ReadFromJsonAsync<List<Models.Task?>>(),
                 HttpStatusCode.NoContent => null,
                 _ => throw new Exception($"Une erreur est survenue lors de la récupération des Tasks : {await response.Content.ReadAsStringAsync()}"),
             };

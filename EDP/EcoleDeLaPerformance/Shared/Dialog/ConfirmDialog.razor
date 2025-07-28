@@ -14,7 +14,7 @@
     </DialogActions>
 </MudDialog>
 @code {
-    [CascadingParameter] MudDialogInstance mudDialog { get; set; }
+    [CascadingParameter] IMudDialogInstance mudDialog { get; set; }
 
     [Parameter] public string mainMessage { get; set; }
     [Parameter] public string warningMessage { get; set; }

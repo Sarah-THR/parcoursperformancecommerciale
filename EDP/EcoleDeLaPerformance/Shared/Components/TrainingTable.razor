@@ -1,4 +1,6 @@
-﻿@using MudBlazor
+﻿@using EcoleDeLaPerformance.Ui.Shared.Dialog
+@using MudBlazor
+@inject IDialogService DialogService
 
 <MudContainer MaxWidth = "MaxWidth.Large" Class = "py-6 px-4 mt-5" >
     <MudPaper Elevation="4" Class="overflow-hidden">
@@ -17,13 +19,13 @@
                     </MudStack>
                 </MudTd>
                 <MudTd>
-                    <MudCheckBox Checked="@context.Completed" ReadOnly="true" Color="Color.Primary"/>
+                    <MudCheckBox @bind-Value="@context.Completed" ReadOnly="true" Color="Color.Primary" />
                 </MudTd>
                 <MudTd>
                     @GetEvaluationBadge(context.Evaluation)
                 </MudTd>
                 <MudTd>
-                    <MudButton Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Filled.Visibility" Color="Color.Error">
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Filled.Visibility" Color="Color.Error" @onclick="OpenCommentDialogAsync">
                         Visualiser
                     </MudButton>
                 </MudTd>
@@ -64,9 +66,16 @@
 
     private RenderFragment GetStatusBadge(string status) => status switch
     {
-        "completed" => @<MudChip Color="Color.Success" Variant="Variant.Text">Formation suivante</MudChip>,
-        "retake" => @<MudChip Color="Color.Error" Variant="Variant.Text">À repasser</MudChip>,
-        "pending" => @<MudChip Color="Color.Warning" Variant="Variant.Text">En attente</MudChip>,
+        "completed" => @<MudChip T="string" Color="Color.Success" Variant="Variant.Text">Formation suivante</MudChip>,
+        "retake" => @<MudChip T="string" Color="Color.Error" Variant="Variant.Text">À repasser</MudChip>,
+        "pending" => @<MudChip T="string" Color="Color.Warning" Variant="Variant.Text">En attente</MudChip>,
         _ => null
     };
+
+    private Task OpenCommentDialogAsync()
+    {
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        return DialogService.ShowAsync<Comment>("Details du suivi", options);
+    }
 }

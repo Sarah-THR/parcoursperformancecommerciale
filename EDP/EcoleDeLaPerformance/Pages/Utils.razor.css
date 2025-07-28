@@ -1,20 +1,10 @@
-﻿.image-text {
-    position: relative;
-    bottom: 210px;
-    color: white;
-    padding: 8px;
-    font-size: 40px;
-    font-weight:bold;
-    text-align:center;
-    text-transform: uppercase
-}
-::deep .mud-grid-item:hover {
+﻿::deep .mud-grid-item:hover {
     cursor: pointer !important;
     opacity: 0.9 !important;
 }
 
-#divContainer{
+::deep #divContainer{
     background-image: url(../images/vector.png);
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
 }

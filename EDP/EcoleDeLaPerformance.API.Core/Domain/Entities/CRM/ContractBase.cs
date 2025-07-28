@@ -21,6 +21,8 @@ public partial class ContractBase
 
     public string? CustomerIdName { get; set; }
 
+    public int? ContractCommercial { get; set; }
+
     public string? CustomerIdYomiName { get; set; }
 
     public virtual ICollection<ContractBase> InverseOriginatingContractNavigation { get; set; } = new List<ContractBase>();

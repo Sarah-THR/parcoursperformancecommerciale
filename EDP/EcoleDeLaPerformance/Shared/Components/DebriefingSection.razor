@@ -20,7 +20,7 @@
 									  AdornmentIcon="@Icons.Material.Filled.Add"
 									  OnAdornmentClick="AddCaseClosedItem" />
 
-						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;">
+						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
 							@foreach (var (item, index) in CaseClosedItems.Select((val, i) => (val, i)))
 							{
 								<MudListItem>
@@ -57,7 +57,7 @@
 									  AdornmentIcon="@Icons.Material.Filled.Add"
 									  OnAdornmentClick="AddOngoingCaseItem" />
 
-						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;">
+						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
 							@foreach (var (item, index) in OngoingCaseItems.Select((val, i) => (val, i)))
 							{
 								<MudListItem>

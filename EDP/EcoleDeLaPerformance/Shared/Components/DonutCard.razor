@@ -1,52 +1,73 @@
-﻿<MudPaper Class="p-4" MinHeight="305px" MaxHeight="305px">
-	<MudStack Spacing="1">
-		<MudStack AlignItems="AlignItems.Center" Spacing="1">
-			<MudIcon Icon="@Icon" Color="@IconColor" />
-			<MudText Typo="Typo.subtitle1" Class="font-bold">@Title</MudText>
-		</MudStack>
-		@if (Labels != null && Labels.Length > 0 && Number == 0)
-		{
-			<MudChart ChartType="ChartType.Donut"
-					  Height="150px"
-					  Width="150px"
-					  InputData="@Data"
-					  InputLabels="@Labels"
-					  ChartOptions="options" />
-		}
-		else if (Labels == null)
-		{
-			<MudChart ChartType="ChartType.Donut"
-					  Height="150px"
-					  Width="150px"
-					  InputData="@Data"
-					  ChartOptions="optionsChartWithoutLabels">
-				<CustomGraphics>
-					<text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica">@Number</text>
-				</CustomGraphics>
-			</MudChart>
-		}
-		else
-		{
-			<MudChart ChartType="ChartType.Donut"
-					  Height="150px"
-					  Width="150px"
-					  InputData="@Data"
-					  InputLabels="@Labels"
-					  ChartOptions="options">
-				<CustomGraphics>
-					<text class="donut-inner-text" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica">@Number</text>
-				</CustomGraphics>
-			</MudChart>
-		}
-	</MudStack>
-</MudPaper>
+﻿<div>
+    <MudPaper Class="p-4" MinHeight="305px" MaxHeight="305px">
+        <MudStack Spacing="1" AlignItems="AlignItems.Center">
+            <MudStack AlignItems="AlignItems.Center" Spacing="1">
+                <MudIcon Icon="@Icon" Color="@IconColor" />
+                <MudText Typo="Typo.subtitle1" Class="font-bold">@Title</MudText>
+            </MudStack>
+            @if (Labels != null && Labels.Length > 0 && Number == 0)
+            {
+                <MudChart ChartType="ChartType.Donut"
+                          Height="150px"
+                          Width="150px"
+                          InputData="@Data"
+                          InputLabels="@Labels"
+                          ChartOptions="options" />
+            }
+            else if (Labels == null)
+            {
+                <MudChart ChartType="ChartType.Donut"
+                          Height="150px"
+                          Width="150px"
+                          InputData="@Data"
+                          ChartOptions="optionsChartWithoutLabels">
+                    <CustomGraphics>
+                        <text class="donut-inner-text fs-1" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black">@Number</text>
+                    </CustomGraphics>
+                </MudChart>
+            }
+            else
+            {
+                <MudChart ChartType="ChartType.Donut"
+                          Height="150px"
+                          Width="150px"
+                          InputData="@Data"
+                          InputLabels="@Labels"
+                          ChartOptions="options">
+                    <CustomGraphics>
+                        <text class="donut-inner-text fs-1" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="black" font-family="Helvetica">@Number</text>
+                    </CustomGraphics>
+                </MudChart>
+            }
+        </MudStack>
+    </MudPaper>
+</div>
+
 @code {
-	[Parameter] public string? Title { get; set; }
-	[Parameter] public string? Icon { get; set; }
-	[Parameter] public double[]? Data { get; set; }
-	[Parameter] public int Number { get; set; }
-	[Parameter] public string[]? Labels { get; set; }
-	[Parameter] public Color IconColor { get; set; } = Color.Primary;
-	ChartOptions options = new() { ChartPalette = new string[] { "#E10600", "#FD969C", "#E45E66" } };
-	ChartOptions optionsChartWithoutLabels = new() { ChartPalette = new string[] { "#E10600", "#FD969C", "#E45E66" }, DisableLegend = true };
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public double[]? Data { get; set; }
+    [Parameter] public int Number { get; set; }
+    [Parameter] public string[]? Labels { get; set; }
+    [Parameter] public Color IconColor { get; set; } = Color.Primary;
+    ChartOptions options;
+    ChartOptions optionsChartWithoutLabels;
+
+    protected override void OnParametersSet()
+    {
+        bool shouldShowLegend = Data != null && Data.All(d => d != 0);
+
+        options = new ChartOptions
+        {
+            ChartPalette = new[] { "#E10600", "#FD969C", "#E45E66" },
+            ShowLegend = shouldShowLegend
+        };
+
+        optionsChartWithoutLabels = new ChartOptions
+        {
+            ChartPalette = new[] { "#E10600", "#FD969C", "#E45E66" },
+            ShowLegend = false,
+            ShowToolTips = false
+        };
+    }
 }

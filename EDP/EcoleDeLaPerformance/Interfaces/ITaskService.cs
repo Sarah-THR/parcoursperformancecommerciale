@@ -2,6 +2,6 @@
 {
     public interface ITaskService
     {
-        Task<List<Task?>> GetTasksAsync();
+        Task<List<Models.Task?>> GetTasksAsync();
     }
 }

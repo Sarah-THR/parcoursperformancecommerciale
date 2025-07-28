@@ -28,11 +28,11 @@
     </MudFileUpload>
     @if (filesList != null)
     {
-        <MudList>
+        <MudList T="string">
             @foreach (var file in filesList)
             {
                 <MudListItem @key="@file">
-                    <MudChip Variant="Variant.Outlined" Color="Color.Primary" OnClose="Closed" CloseIcon="@Icons.Material.Filled.Close" Text="@file.Name">@file.Name</MudChip>
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Primary" OnClose="Closed" CloseIcon="@Icons.Material.Filled.Close" Text="@file.Name">@file.Name</MudChip>
                 </MudListItem>
             }
         </MudList>
@@ -101,7 +101,7 @@
         }
     }
 
-    async void Closed(MudChip chip)
+    async void Closed(MudChip<string> chip)
     {
         var fileName = chip.Text.ToString();
         await Clear(fileName);
