@@ -1,155 +1,229 @@
-﻿<div>
-	<MudGrid Class="mt-6">
-		<MudItem xs="12" md="12">
-			<MudCard Elevation="1">
-				<MudCardContent>
-					<MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
-						<MudIcon Icon="@Icons.Material.Filled.Bolt" Color="Color.Primary" Size="Size.Large" />
-						<div>
-							<MudText Typo="Typo.h6">Engagements</MudText>
-							<MudText Typo="Typo.caption">Signature de la semaine</MudText>
-						</div>
-						<MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
-							<MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
-						</MudTooltip>
-					</MudStack>
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@inject StateContainerService stateContainerService
+@inject IUserService userService
+@inject IBriefService briefService
 
-					<MudStack Spacing="1">
-						<MudTextField @bind-Value="NewSignatureItem" Label="Nouvel engagement" Variant="Variant.Outlined"
-									  Immediate="true" Adornment="Adornment.End"
-									  OnKeyDown="@((e) => HandleKey(e, AddSignatureItem))"
-									  AdornmentIcon="@Icons.Material.Filled.Add"
-									  OnAdornmentClick="AddSignatureItem" />
+<div>
+    <MudGrid Class="mt-6">
+        <MudItem xs="12" md="12">
+            <MudCard Elevation="1">
+                <MudCardContent>
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.Bolt" Color="Color.Primary" Size="Size.Large" />
+                        <div>
+                            <MudText Typo="Typo.h6">Engagements</MudText>
+                            <MudText Typo="Typo.caption">Signature de la semaine</MudText>
+                        </div>
+                        <MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
+                        </MudTooltip>
+                    </MudStack>
 
-						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
-							@foreach (var (item, index) in SignatureItems.Select((val, i) => (val, i)))
-							{
-								<MudListItem>
-									<MudText Typo="Typo.body2">@item</MudText>
-									<MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-												   Color="Color.Error"
-												   OnClick="@(() => RemoveItem("signature", index))"
-												   Class="ml-auto" />
-								</MudListItem>
-							}
-						</MudList>
-					</MudStack>
-				</MudCardContent>
-			</MudCard>
-		</MudItem>
+                    <MudStack Spacing="1">
+                        <MudTextField @bind-Value="newSignatureItem" Label="Nouvel engagement" Variant="Variant.Outlined"
+                                      Immediate="true" Adornment="Adornment.End"
+                                      OnKeyDown="@((e) => HandleKey(e, AddSignatureItem))"
+                                      AdornmentIcon="@Icons.Material.Filled.Add"
+                                      OnAdornmentClick="AddSignatureItem" />
 
-		<MudItem xs="12" md="12">
-			<MudCard Elevation="1">
-				<MudCardContent>
-					<MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
-						<MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Success" Size="Size.Large" />
-						<div>
-							<MudText Typo="Typo.h6">Dossiers</MudText>
-							<MudText Typo="Typo.caption">À checker</MudText>
-						</div>
-						<MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
-							<MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
-						</MudTooltip>
-					</MudStack>
+                        <MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
+                            @foreach (var (item, index) in (signatureItems ?? new List<string>()).Select((val, i) => (val, i)))
+                            {
+                                <MudListItem>
+                                    <MudText Typo="Typo.body2">@item</MudText>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveItem("signature", index))"
+                                                   Class="ml-auto" />
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-					<MudStack Spacing="1">
-						<MudTextField @bind-Value="NewCheckItem" Label="Nouveau dossier" Variant="Variant.Outlined"
-									  Immediate="true" Adornment="Adornment.End"
-									  OnKeyDown="@((e) => HandleKey(e, AddCheckItem))"
-									  AdornmentIcon="@Icons.Material.Filled.Add"
-									  OnAdornmentClick="AddCheckItem" />
+        <MudItem xs="12" md="12">
+            <MudCard Elevation="1">
+                <MudCardContent>
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Success" Size="Size.Large" />
+                        <div>
+                            <MudText Typo="Typo.h6">Dossiers</MudText>
+                            <MudText Typo="Typo.caption">À checker</MudText>
+                        </div>
+                        <MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
+                        </MudTooltip>
+                    </MudStack>
 
-						<MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
-							@foreach (var (item, index) in CheckItems.Select((val, i) => (val, i)))
-							{
-								<MudListItem>
-									<MudText Typo="Typo.body2">@item</MudText>
-									<MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-												   Color="Color.Error"
-												   OnClick="@(() => RemoveItem("check", index))"
-												   Class="ml-auto" />
-								</MudListItem>
-							}
-						</MudList>
-					</MudStack>
-				</MudCardContent>
-			</MudCard>
-		</MudItem>
+                    <MudStack Spacing="1">
+                        <MudTextField @bind-Value="newCheckItem" Label="Nouveau dossier" Variant="Variant.Outlined"
+                                      Immediate="true" Adornment="Adornment.End"
+                                      OnKeyDown="@((e) => HandleKey(e, AddCheckItem))"
+                                      AdornmentIcon="@Icons.Material.Filled.Add"
+                                      OnAdornmentClick="AddCheckItem" />
 
-		<MudItem xs="12" md="12">
-			<MudCard Elevation="1">
-				<MudCardContent>
-					<MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
-						<MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Warning" Size="Size.Large" />
-						<div>
-							<MudText Typo="Typo.h6">Rendez-vous</MudText>
-							<MudText Typo="Typo.caption">À venir cette semaine</MudText>
-						</div>
-						<MudTooltip Text="Il est nécessaire de saisir les informations dans la CRM pour qu'elles puissent être consultées dans la section debriefing." Arrow="true" Placement="Placement.Right">
-							<MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
-						</MudTooltip>
-					</MudStack>
+                        <MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
+                            @foreach (var (item, index) in (checkItems ?? new List<string>()).Select((val, i) => (val, i)))
+                            {
+                                <MudListItem>
+                                    <MudText Typo="Typo.body2">@item</MudText>
+                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                   Color="Color.Error"
+                                                   OnClick="@(() => RemoveItem("check", index))"
+                                                   Class="ml-auto" />
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudStack>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
 
-					<MudPaper Class="p-3 mb-4" Style="background-color: #FFF7ED;">
-						<MudStack Spacing="1">
-							<MudText Typo="Typo.caption" Color="Color.Warning">
-								<MudIcon Icon="@Icons.Material.Filled.Schedule" Class="mr-1" />
-								Prochains RDV
-							</MudText>
-							<MudText Typo="Typo.h6" Class="text-slate-800">5 rendez-vous</MudText>
-							<MudText Typo="Typo.caption" Color="Color.Warning">Cette semaine</MudText>
-						</MudStack>
-					</MudPaper>
+        <MudItem xs="12" md="12">
+            <MudCard Elevation="1">
+                <MudCardContent>
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Warning" Size="Size.Large" />
+                        <div>
+                            <MudText Typo="Typo.h6">Rendez-vous</MudText>
+                            <MudText Typo="Typo.caption">À venir cette semaine</MudText>
+                        </div>
+                        <MudTooltip Text="Il est nécessaire de saisir les informations dans la CRM pour qu'elles puissent être consultées dans la section debriefing." Arrow="true" Placement="Placement.Right">
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
+                        </MudTooltip>
+                    </MudStack>
 
-					<MudText Typo="Typo.subtitle2" Class="mb-1">Notes</MudText>
-					<MudTextField T="string" @bind-Value="Notes" Variant="Variant.Outlined"
-								  Placeholder="Ajoutez vos notes..."
-								  Lines="5" />
-				</MudCardContent>
-			</MudCard>
-		</MudItem>
-		<MudItem xs="12" md="12" Class="d-flex justify-content-center">
-			<MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.SaveAs" Class="ma-4">Brouillon</MudButton>
-			<MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Save" Class="ma-4">Enregistrer</MudButton>
-		</MudItem>
-	</MudGrid>
+                    <MudPaper Class="p-3 mb-4" Style="background-color: #FFF7ED;">
+                        <MudStack Spacing="1">
+                            <MudText Typo="Typo.caption" Color="Color.Warning">
+                                <MudIcon Icon="@Icons.Material.Filled.Schedule" Class="mr-1" />
+                                Prochains RDV
+                            </MudText>
+                            <MudText Typo="Typo.h6" Class="text-slate-800">@nbAppointments rendez-vous</MudText>
+                            <MudText Typo="Typo.caption" Color="Color.Warning">Cette semaine</MudText>
+                        </MudStack>
+                    </MudPaper>
+
+                    <MudText Typo="Typo.subtitle2" Class="mb-1">Notes</MudText>
+                    <MudTextField T="string" @bind-Value="@notes" Variant="Variant.Outlined"
+                                  Placeholder="Ajoutez vos notes..."
+                                  Lines="5" />
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" md="12" Class="d-flex justify-content-center">
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.SaveAs" Class="ma-4">Brouillon</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Save" Class="ma-4" OnClick="() => SaveBrief()">Enregistrer</MudButton>
+        </MudItem>
+    </MudGrid>
 </div>
 
 @code {
-	private List<string> SignatureItems = new();
-	private List<string> CheckItems = new();
-	private string NewSignatureItem = "";
-	private string NewCheckItem = "";
-	private string Notes = "";
+    public User userInfo => stateContainerService.UserInfo;
+    private List<string> signatureItems = new();
+    private List<string> checkItems = new();
+    private string newSignatureItem = "";
+    private string newCheckItem = "";
+    private string notes = "";
+    decimal nbAppointments = 0;
+    DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+    DateOnly monday;
+    DateOnly friday;
+    Brief? brief = new();
 
-	private void AddSignatureItem()
-	{
-		if (!string.IsNullOrWhiteSpace(NewSignatureItem))
-		{
-			SignatureItems.Add(NewSignatureItem.Trim());
-			NewSignatureItem = "";
-		}
-	}
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        monday = today.AddDays(-((int)today.DayOfWeek == 0 ? 6 : (int)today.DayOfWeek - 1));
+        friday = monday.AddDays(4);
+        var briefs = await briefService.GetBriefByUserId(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), userInfo.Id);
+        brief = (briefs != null && briefs.Any()) ? briefs.First() : null;
 
-	private void AddCheckItem()
-	{
-		if (!string.IsNullOrWhiteSpace(NewCheckItem))
-		{
-			CheckItems.Add(NewCheckItem.Trim());
-			NewCheckItem = "";
-		}
-	}
+        notes = brief?.Note ?? "";
 
-	private void RemoveItem(string type, int index)
-	{
-		if (type == "signature" && index >= 0 && index < SignatureItems.Count)
-			SignatureItems.RemoveAt(index);
-		else if (type == "check" && index >= 0 && index < CheckItems.Count)
-			CheckItems.RemoveAt(index);
-	}
+        signatureItems = !string.IsNullOrWhiteSpace(brief?.SignatureCommitment)
+            ? brief.SignatureCommitment.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList()
+            : new List<string>();
 
-	private void HandleKey(KeyboardEventArgs e, Action handler)
-	{
-		if (e.Key == "Enter") handler();
-	}
+        checkItems = !string.IsNullOrWhiteSpace(brief?.FilesToCheck)
+            ? brief.FilesToCheck.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList()
+            : new List<string>();
+
+        nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.Email, monday, friday);
+    }
+
+    private async System.Threading.Tasks.Task SaveBrief()
+    {
+        Brief briefToSave;
+
+        var existingBriefs = await briefService.GetBriefByUserId(
+            monday.ToDateTime(TimeOnly.MinValue),
+            friday.ToDateTime(TimeOnly.MinValue),
+            userInfo.Id
+        );
+
+        string? noteValue = string.IsNullOrWhiteSpace(notes) ? null : notes;
+        string? signatureCommitment = (signatureItems == null || !signatureItems.Any())
+            ? null
+            : string.Join("\n", signatureItems.Where(s => !string.IsNullOrWhiteSpace(s)));
+        string? filesToCheck = (checkItems == null || !checkItems.Any())
+            ? null
+            : string.Join("\n", checkItems.Where(s => !string.IsNullOrWhiteSpace(s)));
+
+        if (existingBriefs.Any())
+        {
+            briefToSave = existingBriefs.First();
+            briefToSave.Note = noteValue;
+            briefToSave.SignatureCommitment = signatureCommitment;
+            briefToSave.FilesToCheck = filesToCheck;
+
+            await briefService.UpdateBriefAsync(briefToSave);
+        }
+        else
+        {
+            Brief newBrief = new()
+            {
+                Note = noteValue,
+                UserId = userInfo.Id,
+                SignatureCommitment = signatureCommitment,
+                FilesToCheck = filesToCheck
+            };
+
+            brief = await briefService.InsertBriefAsync(newBrief);
+        }
+    }
+
+    private void AddSignatureItem()
+    {
+        if (!string.IsNullOrWhiteSpace(newSignatureItem))
+        {
+            signatureItems.Add(newSignatureItem.Trim());
+            newSignatureItem = "";
+        }
+    }
+
+    private void AddCheckItem()
+    {
+        if (!string.IsNullOrWhiteSpace(newCheckItem))
+        {
+            checkItems.Add(newCheckItem.Trim());
+            newCheckItem = "";
+        }
+    }
+
+    private void RemoveItem(string type, int index)
+    {
+        if (type == "signature" && index >= 0 && index < signatureItems.Count)
+            signatureItems.RemoveAt(index);
+        else if (type == "check" && index >= 0 && index < checkItems.Count)
+            checkItems.RemoveAt(index);
+    }
+
+    private void HandleKey(KeyboardEventArgs e, Action handler)
+    {
+        if (e.Key == "Enter") handler();
+    }
 }

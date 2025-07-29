@@ -4,11 +4,10 @@ public partial class Brief
 {
     public int Id { get; set; }
 
-    public string SignatureCommitment { get; set; } = null!;
+    public string? SignatureCommitment { get; set; }
 
-    public string FilesToCheck { get; set; } = null!;
-
-    public string Note { get; set; } = null!;
+    public string? FilesToCheck { get; set; }
+    public string? Note { get; set; }
 
     public int UserId { get; set; }
 

@@ -76,7 +76,10 @@
                 <MudList Dense="true" T="string" Disabled>
                     @foreach (var brief in briefs)
                     {
-                        <EngagementItem Text="@brief?.SignatureCommitment" />
+                        @foreach (string signatureCommitment in (brief?.SignatureCommitment ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <EngagementItem Text="@signatureCommitment" />
+                        }
                     }
                 </MudList>
             </MudPaper>
@@ -91,7 +94,10 @@
                 <MudList Dense="true" T="string" Disabled>
                     @foreach (var brief in briefs)
                     {
-                        <FileItem Text="@brief?.FilesToCheck" />
+                        @foreach (string filesToCheck in (brief?.FilesToCheck ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <FileItem Text="@filesToCheck" />
+                        }
                     }
                 </MudList>
             </MudPaper>
@@ -106,12 +112,12 @@
     decimal trimestrialTurnover = 0;
     decimal trimestrialMonthGoal = 0;
     int trimestrialMonthlyTurnoverProgress => trimestrialMonthGoal == 0 ? 0 : (int)Math.Round((trimestrialTurnover / trimestrialMonthGoal) * 100);
-    decimal turnover = 0; 
+    decimal turnover = 0;
     decimal monthGoal = 0;
     int monthlyTurnoverProgress => monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
     decimal bonus = 0;
     decimal nbAppointments = 0;
-    DateOnly today = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day);
+    DateOnly today = DateOnly.FromDateTime(DateTime.Today);
     DateOnly firstMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
     DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
     List<Brief?> briefs = new();
