@@ -1,4 +1,5 @@
-﻿@using EcoleDeLaPerformance.Ui.Services
+﻿@using EcoleDeLaPerformance.Ui.Models.BI
+@using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Interfaces;
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @using EcoleDeLaPerformance.Ui.Models
@@ -17,7 +18,7 @@
             <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Secondary" Size="Size.Large" />
             <MudText Typo="Typo.h6">Historique</MudText>
         </MudStack>
-        <MudTable Items="@allWeek" Hover="true">
+        <MudTable Items="@allWeeks" Hover="true">
             <HeaderContent>
                 <MudTh><MudText Color="Color.Primary"><strong>Semaines passées</strong></MudText></MudTh>
                 <MudTh><MudText Color="Color.Primary"><strong>Sauvegarde</strong></MudText></MudTh>
@@ -25,66 +26,40 @@
                 <MudTh><MudText Color="Color.Primary"><strong>Sécurité</strong></MudText></MudTh>
             </HeaderContent>
             <RowTemplate>
-                @* <MudTd DataLabel="Semaines passées">@("Semaine " + context.week.WeekNumber.ToString())</MudTd>
-                            <MudTd DataLabel="Sécurité">@(context.signedContractList.Count(x => x.Sauvegarde == "OUI"))</MudTd>
-                            <MudTd DataLabel="Maintenance">@(context.signedContractList.Count(x => x.Maintenance == "OUI"))</MudTd>
-                            <MudTd DataLabel="Sauvegarde">@(context.signedContractList.Count(x => x.Sécurité == "OUI"))</MudTd> *@
+                <MudTd DataLabel="Semaines passées">@("Semaine du " + context.planning.CreatedAt.AddDays(-((int)context.planning.CreatedAt.DayOfWeek == 0 ? 6 : (int)context.planning.CreatedAt.DayOfWeek - 1)).ToShortDateString())</MudTd>
+                <MudTd DataLabel="Sécurité">@(context.signedContractList.Count(x => x.Sauvegarde == "OUI"))</MudTd>
+                <MudTd DataLabel="Maintenance">@(context.signedContractList.Count(x => x.Maintenance == "OUI"))</MudTd>
+                <MudTd DataLabel="Sauvegarde">@(context.signedContractList.Count(x => x.Sécurité == "OUI"))</MudTd>
             </RowTemplate>
         </MudTable>
     </MudPaper>
 </div>
 
 @code {
-    List<string> allWeek = new();
     public User userInfo => stateContainerService.UserInfo;
-    int period = 0;
+    double[] contractData;
+    List<TempClass> allWeeks = new();
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        // if (!userInfo.Role.Contains("Commercial"))
-        // {
-        //     navigationManager.NavigateTo("/");
-        // }
-        // else
-        // {
-        //     try
-        //     {
-        //         var weekListFromTheStart = userInfo.Weeks.Where(x => x.EndDateWeek <= DateOnly.FromDateTime(DateTime.Now)).ToList();
-        //         foreach (var oneWeek in weekListFromTheStart)
-        //         {
-        //             TempClass temp = new TempClass();
-        //             temp.week = oneWeek;
+        foreach (var week in userInfo.Plannings)
+        {
+            TempClass temp = new TempClass();
+            temp.planning = week;
 
-        //             var studentName = (userInfo.FirstName + " " + userInfo.LastName);
+            DateTime firstWeekDay = week.CreatedAt.AddDays(-((int)week.CreatedAt.DayOfWeek == 0 ? 6 : (int)week.CreatedAt.DayOfWeek - 1));
+            DateTime lastWeekDay = week.CreatedAt.AddDays(5 - ((int)week.CreatedAt.DayOfWeek == 0 ? 7 : (int)week.CreatedAt.DayOfWeek));
 
-        //             temp.signedContractList = contractService.GetContractsByPeriod(studentName, oneWeek.StartDateWeek, oneWeek.EndDateWeek);
-
-        //             var nbOpenAccounts = await userService.GetNbOpenAccountsAsync(userInfo.FirstName + " " + userInfo.LastName.ToUpper());
-        //             temp.openAccounts = new CRMData { Label = "", Amount = nbOpenAccounts };
-        //             allWeek.Add(temp);
-        //         }
-        //         var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-        //         var currentWeek = userInfo.Weeks.FirstOrDefault(week => week.StartDateWeek <= currentDate && week.EndDateWeek >= currentDate);
-        //         if (currentWeek != null)
-        //         {
-        //             period = currentWeek.PeriodNumber;
-        //         }
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         SentrySdk.CaptureException(ex);
-        //         snackbar.Add("Une erreur est survenue. Contactez l'administrateur", Severity.Error);
-        //     }
-        // }
-
+            temp.signedContractList = contractService.GetContractsByPeriod(userInfo.Name, DateOnly.FromDateTime(firstWeekDay), DateOnly.FromDateTime(lastWeekDay));
+            allWeeks.Add(temp);
+        }
     }
 
-    // public class TempClass
-    // {
-    //     public Week week { get; set; } = new Week();
-    //     public List<SignedContract?> signedContractList { get; set; } = new List<SignedContract?>();
-    //     public CRMData openAccounts { get; set; }
-    // }
+    public class TempClass
+    {
+        public Models.Planning planning { get; set; } = new Models.Planning();
+        public List<EcolePerformanceSm?> signedContractList { get; set; } = new List<EcolePerformanceSm?>();
+    }
 
     // public void RowClicked(TableRowClickEventArgs<TempClass> week)
     // {
