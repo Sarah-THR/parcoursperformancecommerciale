@@ -21,56 +21,63 @@
             <Authorized>
                 @if (isInitialized)
                 {
-                    <CascadingValue Value="@stateContainerService.UserInfo">
-                        <MudLayout>
-                            <MudPaper Elevation="0" Class="px-6 py-2 border-bottom" Style="background-color: white; position: fixed; top: 0; width: 100%; z-index: 1100;">
-                                <MudGrid Class="align-items-center" Justify="Justify.SpaceBetween">
-                                    <MudItem xs="12" md="6">
-                                        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
-                                            <MudImage Src="/images/Logo.png" Width="150" />
-                                            <MudText Class="text-slate-800 fw-bold pt-1">Parcours Performance Commerciale</MudText>
-                                        </MudStack>
-                                    </MudItem>
+                    @if (unknowUser)
+                    {
+                        <UnknowUser />
+                    }
+                    else
+                    {
+                        <CascadingValue Value="@stateContainerService.UserInfo">
+                            <MudLayout>
+                                <MudPaper Elevation="0" Class="px-6 py-2 border-bottom" Style="background-color: white; position: fixed; top: 0; width: 100%; z-index: 1100;">
+                                    <MudGrid Class="align-items-center" Justify="Justify.SpaceBetween">
+                                        <MudItem xs="12" md="6">
+                                            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                                <MudImage Src="/images/Logo.png" Width="150" />
+                                                <MudText Class="text-slate-800 fw-bold pt-1">Parcours Performance Commerciale</MudText>
+                                            </MudStack>
+                                        </MudItem>
 
-                                    <MudItem xs="12" md="6">
-                                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
-                                            @* <MudAvatar>
+                                        <MudItem xs="12" md="6">
+                                            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
+                                                @* <MudAvatar>
                                             PN
                                         </MudAvatar> *@
-                                            <MudText Typo="Typo.subtitle2" Class="font-medium text-slate-700">@stateContainerService.UserInfo.Name</MudText>
-                                        </MudStack>
-                                    </MudItem>
-                                </MudGrid>
-                            </MudPaper>
-                            <div class="d-flex">
-                                <MudDrawer Elevation="0" Width="125px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
-                                    <MudNavMenu Class="p-2">
-                                        <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">
-                                            Accueil
-                                        </MudNavLink>
-                                        <MudNavLink Href="/planning" Icon="@Icons.Material.Outlined.CalendarMonth" Class="linkmenu">
-                                            Planning
-                                        </MudNavLink>
-                                        <MudNavLink Href="/brief" Icon="@Icons.Material.Outlined.Message" Class="linkmenu">
-                                            Brief/Debrief
-                                        </MudNavLink>
-                                        <MudNavLink Href="/history" Icon="@Icons.Material.Outlined.History" Class="linkmenu">
-                                            Historique
-                                        </MudNavLink>
-                                        <MudNavLink Href="/support" Icon="@Icons.Material.Outlined.Handyman" Class="linkmenu">
-                                            Support
-                                        </MudNavLink>
-                                        <MudText Class="p-4">
-                                            v.@version
-                                        </MudText>
-                                    </MudNavMenu>
-                                </MudDrawer>
-                            </div>
-                            <MudMainContent>
-                                @Body
-                            </MudMainContent>
-                        </MudLayout>
-                    </CascadingValue>
+                                                <MudText Typo="Typo.subtitle2" Class="font-medium text-slate-700">@stateContainerService.UserInfo.Name</MudText>
+                                            </MudStack>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudPaper>
+                                <div class="d-flex">
+                                    <MudDrawer Elevation="0" Width="125px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
+                                        <MudNavMenu Class="p-2">
+                                            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">
+                                                Accueil
+                                            </MudNavLink>
+                                            <MudNavLink Href="/planning" Icon="@Icons.Material.Outlined.CalendarMonth" Class="linkmenu">
+                                                Planning
+                                            </MudNavLink>
+                                            <MudNavLink Href="/brief" Icon="@Icons.Material.Outlined.Message" Class="linkmenu">
+                                                Brief/Debrief
+                                            </MudNavLink>
+                                            <MudNavLink Href="/history" Icon="@Icons.Material.Outlined.History" Class="linkmenu">
+                                                Historique
+                                            </MudNavLink>
+                                            <MudNavLink Href="/support" Icon="@Icons.Material.Outlined.Handyman" Class="linkmenu">
+                                                Support
+                                            </MudNavLink>
+                                            <MudText Class="p-4">
+                                                v.@version
+                                            </MudText>
+                                        </MudNavMenu>
+                                    </MudDrawer>
+                                </div>
+                                <MudMainContent>
+                                    @Body
+                                </MudMainContent>
+                            </MudLayout>
+                        </CascadingValue>
+                    }
                 }
             </Authorized>
             <NotAuthorized>
@@ -119,7 +126,7 @@
                 {
                     try
                     {
-                        stateContainerService.UserInfo = await userService.GetUserByEmailAsync("b.sterin@xefi.fr");
+                        stateContainerService.UserInfo = await userService.GetUserByEmailAsync(authState.User.Identity.Name);
 
                         if (stateContainerService.UserInfo == null)
                         {
