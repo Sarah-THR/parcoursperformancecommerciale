@@ -6,9 +6,9 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Debriefs
     {
         public int Id { get; set; }
 
-        public string CompletedBusiness { get; set; } = null!;
+        public string? CompletedBusiness { get; set; }
 
-        public string BusinessInProgress { get; set; } = null!;
+        public string? BusinessInProgress { get; set; }
 
         public int UserId { get; set; }
 

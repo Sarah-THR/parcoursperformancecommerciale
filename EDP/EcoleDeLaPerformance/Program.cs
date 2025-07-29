@@ -43,6 +43,7 @@ builder.Services.AddMudServices();
 builder.Services.AddMudBlazorDialog();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBriefService, BriefService>();
+builder.Services.AddScoped<IDebriefService, DebriefService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IPlanningsTaskService, PlanningsTaskService>();
 builder.Services.AddScoped<IPlanningService, PlanningService>();
