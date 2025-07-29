@@ -87,6 +87,18 @@
         _items = await taskService.GetTasksAsync();
         monday = GetMondayOfCurrentWeek();
         endOfWeek = monday.AddDays(4).Date.AddDays(1).AddTicks(-1);
+        var planning = await planningService.GetPlanningByUserAsync(monday, endOfWeek, userInfo.Id);
+        if (planning != null && planning.PlanningsTasks != null)
+        {
+            foreach (var pt in planning.PlanningsTasks)
+            {
+                var task = _items.FirstOrDefault(t => t?.Id == pt.TaskId);
+                if (task != null)
+                {
+                    task.Identifier = pt.Identifier;
+                }
+            }
+        }
         isInitialized = true;
     }
 
@@ -106,7 +118,7 @@
         }
 
         dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
-        var planning = planningService.GetPlanningByUserAsync(monday, endOfWeek, userInfo.Id).Result.FirstOrDefault();
+        var planning = await planningService.GetPlanningByUserAsync(monday, endOfWeek, userInfo.Id);
         if(planning == null)
         {
             Models.Planning newPlanning = new Models.Planning
@@ -118,9 +130,11 @@
         PlanningsTask planningsTask = new PlanningsTask
             {
                 TaskId = dropItem.Item.Id,
-                TimeOfDay = dropItem.DropzoneIdentifier.StartsWith("planning0") ? "Après-midi" : "Matin",
+                TimeOfDay = dropItem.DropzoneIdentifier.StartsWith("planning0") ? "morning" : "afternoon",
                 PlanningId = planning.Id,
+                Identifier = dropItem.Item.Identifier,
             };
+
         planningsTaskService.InsertPlanningsTaskAsync(planningsTask);
     }
 

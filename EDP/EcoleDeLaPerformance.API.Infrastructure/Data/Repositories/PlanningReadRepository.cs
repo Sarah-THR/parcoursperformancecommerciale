@@ -12,7 +12,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
             _parcoursPerformanceCommercialeContext = parcoursPerformanceCommercialeContext;
         }
 
-        public async Task<List<Planning?>> GetPlanningByUserAsync(DateTime startDateWeek, DateTime endDateWeek, int userId)
+        public async Task<Planning?> GetPlanningByUserAsync(DateTime startDateWeek, DateTime endDateWeek, int userId)
         {
             var result = await _parcoursPerformanceCommercialeContext.Plannings
                 .Include(x => x.PlanningsTasks)
@@ -20,7 +20,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
                 .Where(x => x.UserId == userId &&
                     x.CreatedAt >= startDateWeek &&
                     x.CreatedAt <= endDateWeek)
-                .ToListAsync();
+                .FirstOrDefaultAsync();
 
             return result;
         }

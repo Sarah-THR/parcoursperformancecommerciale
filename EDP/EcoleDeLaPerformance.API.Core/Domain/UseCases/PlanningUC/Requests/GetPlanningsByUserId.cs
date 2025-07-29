@@ -4,14 +4,14 @@ using MediatR;
 
 namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.PlanningUC.Requests
 {
-    public class GetPlanningsByUserId : IRequest<IEnumerable<Planning>>
+    public class GetPlanningsByUserId : IRequest<Planning>
     {
         public DateTime startDateWeek { get; set; } = default!;
         public DateTime endDateWeek { get; set; } = default!;
         public int userId { get; set; } = default!;
     }
 
-    public class GetPlanningsByUserIdHandler : IRequestHandler<GetPlanningsByUserId, IEnumerable<Planning>>
+    public class GetPlanningsByUserIdHandler : IRequestHandler<GetPlanningsByUserId, Planning>
     {
         private readonly IPlanningReadRepository _planningReadRepository;
 
@@ -20,7 +20,7 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.PlanningUC.Requests
             _planningReadRepository = planningReadRepository;
         }
 
-        public async Task<IEnumerable<Planning>> Handle(GetPlanningsByUserId request, CancellationToken cancellationToken)
+        public async Task<Planning> Handle(GetPlanningsByUserId request, CancellationToken cancellationToken)
         {
             if (request.startDateWeek == null)
                 throw new ArgumentNullException("StartDateWeek", "La date de début est obligatoire.");

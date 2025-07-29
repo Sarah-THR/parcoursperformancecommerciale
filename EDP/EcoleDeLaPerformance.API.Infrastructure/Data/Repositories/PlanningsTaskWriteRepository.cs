@@ -1,5 +1,6 @@
 ﻿using EcoleDeLaPerformance.API.Core.Domain.Entities;
 using EcoleDeLaPerformance.API.Core.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 {
@@ -14,8 +15,23 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 
         public async Task<PlanningsTask> InsertPlanningsTaskAsync(PlanningsTask planningsTask)
         {
-            _parcoursPerformanceCommercialeContext.PlanningsTasks.Add(planningsTask);
-            await _parcoursPerformanceCommercialeContext.SaveChangesAsync();
+            var existing = await _parcoursPerformanceCommercialeContext.PlanningsTasks.FirstOrDefaultAsync(pt => pt.PlanningId == planningsTask.PlanningId && pt.Identifier == planningsTask.Identifier);
+            if (existing != null)
+            {
+                _parcoursPerformanceCommercialeContext.PlanningsTasks.Remove(existing);
+                await _parcoursPerformanceCommercialeContext.SaveChangesAsync();
+            }
+            if (planningsTask.Identifier.StartsWith("Task"))
+            {
+                _parcoursPerformanceCommercialeContext.PlanningsTasks.Remove(planningsTask);
+                await _parcoursPerformanceCommercialeContext.SaveChangesAsync();
+            }
+            else
+            {
+                _parcoursPerformanceCommercialeContext.PlanningsTasks.Add(planningsTask);
+                await _parcoursPerformanceCommercialeContext.SaveChangesAsync();
+            }
+
             return planningsTask;
         }
         public async System.Threading.Tasks.Task UpdatePlanningsTaskAsync(PlanningsTask planningsTask)

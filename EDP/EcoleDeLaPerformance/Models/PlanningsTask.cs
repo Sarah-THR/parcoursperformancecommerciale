@@ -8,6 +8,8 @@ public partial class PlanningsTask
 
     public string TimeOfDay { get; set; } = null!;
 
+    public string Identifier { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

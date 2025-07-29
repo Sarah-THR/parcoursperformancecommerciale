@@ -237,6 +237,9 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
 
             entity.Property(e => e.PlanningId).HasColumnName("planning_id");
             entity.Property(e => e.TaskId).HasColumnName("task_id");
+            entity.Property(e => e.Identifier)
+               .HasMaxLength(255)
+               .HasColumnName("identifier");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("created_at");

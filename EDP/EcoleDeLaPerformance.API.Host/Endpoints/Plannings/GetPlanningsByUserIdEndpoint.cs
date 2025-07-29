@@ -9,7 +9,7 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.Plannings
 {
     [HttpGet("plannings"), AllowAnonymous]
-    public class GetPlanningsByUserIdEndpoint : Endpoint<PlanningByUserIdRequest, IEnumerable<PlanningResponse>>
+    public class GetPlanningsByUserIdEndpoint : Endpoint<PlanningByUserIdRequest, PlanningResponse>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
@@ -30,7 +30,7 @@ namespace EcoleDeLaPerformance.API.Host.Endpoints.Plannings
                     endDateWeek = req.EndDateWeek,
                 }, ct);
 
-                await SendOkAsync(_mapper.Map<IEnumerable<PlanningResponse>>(results), ct);
+                await SendOkAsync(_mapper.Map<PlanningResponse>(results), ct);
             }
             catch (ArgumentNullException)
             {

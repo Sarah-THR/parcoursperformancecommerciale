@@ -15,13 +15,13 @@ namespace EcoleDeLaPerformance.Ui.Services
             _configuration = configuration;
         }
 
-        public async Task<List<Planning?>> GetPlanningByUserAsync(DateTime startDateWeek, DateTime endDateWeek, int userId)
+        public async Task<Planning?> GetPlanningByUserAsync(DateTime startDateWeek, DateTime endDateWeek, int userId)
         {
             var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/plannings?startDateWeek={startDateWeek}&endDateWeek={endDateWeek}&userId={userId}");
 
             return response.StatusCode switch
             {
-                HttpStatusCode.OK => await response.Content.ReadFromJsonAsync<List<Planning?>>(),
+                HttpStatusCode.OK => string.IsNullOrWhiteSpace(await response.Content.ReadAsStringAsync()) ? null : await response.Content.ReadFromJsonAsync<Planning?>(),
                 HttpStatusCode.NoContent => null,
                 _ => throw new Exception($"Une erreur est survenue lors de la récupération des plannings : {await response.Content.ReadAsStringAsync()}"),
             };
