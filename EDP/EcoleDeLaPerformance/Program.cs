@@ -48,6 +48,8 @@ builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IPlanningsTaskService, PlanningsTaskService>();
 builder.Services.AddScoped<IPlanningService, PlanningService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<StateContainerService>();
 builder.Services.AddScoped<CRMService>();
 builder.Services.AddScoped<MailHelper>();

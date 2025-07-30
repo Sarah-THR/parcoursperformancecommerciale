@@ -4,8 +4,9 @@
 @using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Shared.Components
 @inject StateContainerService stateContainerService
-@inject NavigationManager NavigationManager
+@inject NavigationManager navigationManager
 @inject IJSRuntime JSRuntime
+@inject ICategoryService categoryService
 
 <PageTitle>Support</PageTitle>
 
@@ -13,7 +14,7 @@
     <MudPaper Class="p-4 mb-6 align-content-center" Height="800px" id="divContainer">
         <MudGrid>
             <MudItem xs="12" md="4">
-                <MudCard>
+                <MudCard @onclick='() => OnItemClick(categories.Where(x => x.Title == "Technique de vente").Select(x => x.Id).FirstOrDefault())'>
                     <MudCardMedia Image="images/TechniqueImage.png" Height="200" />
                     <MudCardContent>
                         <MudText Typo="Typo.h5">Technique de vente</MudText>
@@ -21,7 +22,7 @@
                 </MudCard>
             </MudItem>
             <MudItem xs="12" md="4">
-                <MudCard>
+                <MudCard @onclick='() => OnItemClick(categories.Where(x => x.Title == "SMS 1234").Select(x => x.Id).FirstOrDefault())'>
                     <MudCardMedia Image="images/smsImage.png" Height="200" />
                     <MudCardContent>
                         <MudText Typo="Typo.h5">SMS 1234</MudText>
@@ -29,7 +30,7 @@
                 </MudCard>
             </MudItem>
             <MudItem xs="12" md="4">
-                <MudCard>
+                <MudCard @onclick="OnELearningClick">
                     <MudCardMedia Image="images/learningImage.jpg" Height="200" Style="filter: brightness(0.5);" />
                     <MudCardContent>
                         <MudText Typo="Typo.h5">E-Learning</MudText>
@@ -41,35 +42,22 @@
 </div>
 
 @code {
-    public List<Category> classesList = new List<Category>();
+    public List<Category> categories = new List<Category>();
     public bool isBack = false;
     public User userInfo => stateContainerService.UserInfo;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        // if (!userInfo.Role.Contains("Commercial"))
-        // {
-        //     NavigationManager.NavigateTo("/");
-        // }
+        categories = await categoryService.GetCategoriesAsync();
     }
 
-    async void OnItemClick(string itemName)
+    async void OnItemClick(int itemId)
     {
-        // var allClassesList = await classService.GetClassesAsync();
-        // classesList = allClassesList.Where(x => x.ClassName == itemName).ToList();
-        isBack = true;
-        InvokeAsync(() => StateHasChanged());
+        navigationManager.NavigateTo($"/support/{itemId}");
     }
 
     void OnELearningClick()
     {
         JSRuntime.InvokeVoidAsync("openInNewTab", "https://lms.omnysis.com/");
-    }
-
-    void BackToHomePage()
-    {
-        isBack = false;
-        classesList = null;
-        StateHasChanged();
     }
 }

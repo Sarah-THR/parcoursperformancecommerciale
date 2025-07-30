@@ -1,0 +1,76 @@
+﻿@page "/support/{categoryId}"
+@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@inject IDocumentService documentService
+@inject IJSRuntime js
+
+<PageTitle>Support</PageTitle>
+
+<div class="px-6">
+    <MudPaper Class="p-4 mb-6 align-content-center" Height="800px" id="divContainer">
+        @if (isInitialized)
+        {
+           <MudStack Row="true" Class="my-4" Spacing="2">
+                <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos"
+                               Disabled="@IsPreviousDisabled"
+                               OnClick="PreviousPage"
+                               aria-label="previous" Class="mx-4"/>
+            
+                @foreach (var document in PaginatedDocuments)
+                {
+                    <MudButton Variant="@(document.Title == selectedDocument?.Title ? Variant.Outlined : Variant.Text)"
+                               Color="@(document.Title == selectedDocument?.Title ? Color.Secondary : Color.Primary)"
+                               OnClick="() => SelectDocument(document)" Class="mx-4">
+                        @document.Title
+                    </MudButton>
+                }
+            
+                <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos"
+                               Disabled="@IsNextDisabled"
+                               OnClick="NextPage"
+                               aria-label="next" Class="mx-4"/>
+           </MudStack>
+
+            <object data="@selectedDocument.ContentPath" type="application/pdf" width="100%" height="680px" />
+        }
+    </MudPaper>
+</div>
+
+@code {
+    [Parameter]
+    public string categoryId { get; set; }
+
+    public List<Document> documents = new List<Document>();
+    public Document selectedDocument;
+    private bool isInitialized { get; set; }
+    private int pageIndex = 0;
+    private int pageSize = 4;
+    private List<Document> PaginatedDocuments => documents.Skip(pageIndex * pageSize).Take(pageSize).ToList();
+    private bool IsPreviousDisabled => pageIndex == 0;
+    private bool IsNextDisabled => (pageIndex + 1) * pageSize >= documents.Count;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        var allDocuments = await documentService.GetDocuments();
+        documents = allDocuments.Where(x => x.CategoryId == Convert.ToInt32(categoryId)).ToList();
+        selectedDocument = documents[0];
+        isInitialized = true;
+    }
+
+    void SelectDocument(Document doc)
+    {
+        selectedDocument = doc;
+    }
+
+    private void PreviousPage()
+{
+    if (pageIndex > 0)
+        pageIndex--;
+}
+
+private void NextPage()
+{
+    if ((pageIndex + 1) * pageSize < documents.Count)
+        pageIndex++;
+}
+}
