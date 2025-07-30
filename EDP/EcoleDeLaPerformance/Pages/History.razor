@@ -18,7 +18,7 @@
             <MudIcon Icon="@Icons.Material.Filled.History" Color="Color.Secondary" Size="Size.Large" />
             <MudText Typo="Typo.h6">Historique</MudText>
         </MudStack>
-        <MudTable Items="@allWeeks" Hover="true">
+        <MudTable T="TempClass" Items="@allWeeks" Hover="true" OnRowClick="RowClickEvent">
             <HeaderContent>
                 <MudTh><MudText Color="Color.Primary"><strong>Semaines passées</strong></MudText></MudTh>
                 <MudTh><MudText Color="Color.Primary"><strong>Sauvegarde</strong></MudText></MudTh>
@@ -61,8 +61,8 @@
         public List<EcolePerformanceSm?> signedContractList { get; set; } = new List<EcolePerformanceSm?>();
     }
 
-    // public void RowClicked(TableRowClickEventArgs<TempClass> week)
-    // {
-    //     navigationManager.NavigateTo($"/summary/{week.Item.week.WeekId}");
-    // }
+    private void RowClickEvent(TableRowClickEventArgs<TempClass> tableRowClickEventArgs)
+    {
+        navigationManager.NavigateTo($"/details/{userInfo.Id}/{tableRowClickEventArgs.Item.planning.Id}");
+    }
 }
