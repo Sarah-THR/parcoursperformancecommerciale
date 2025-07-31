@@ -45,10 +45,10 @@
                     </MudSelect>
                 </MudItem>
                 <MudItem md="4" lg="4" sm="12">
-                    <MudDatePicker Label="Date début suivi" Date="startDate" TextChanged="DatePickerTextChanged" Required RequiredError="Date obligatoire !" />
+                    <MudDatePicker Label="Date début suivi" @bind-Date="startDate" TextChanged="DatePickerTextChanged" Required RequiredError="Date obligatoire !" />
                 </MudItem>
                 <MudItem md="4" lg="4" sm="12">
-                    <MudDatePicker Label="Date fin de suivi" @bind-Date="endDate" For="@(() => endDate)" TextChanged="DatePickerTextChanged" Required RequiredError="Date obligatoire !" />
+                    <MudDatePicker Label="Date fin de suivi" @bind-Date="endDate" For="@(() => endDate)" Disabled ReadOnly />
                 </MudItem>
             </MudGrid>
         </MudForm>
@@ -141,7 +141,6 @@
                     Entity = model.Entity,
                     StartFollowUp = DateOnly.FromDateTime(startDate.Value),
                     EndFollowUp = DateOnly.FromDateTime(endDate.Value),
-                    SupervisorId = supervisor.Id,
                 };
 
                 await userService.InsertUserAsync(newUser);

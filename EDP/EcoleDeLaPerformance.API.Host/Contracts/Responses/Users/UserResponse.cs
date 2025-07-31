@@ -35,25 +35,25 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Users
 
         public int? GradeId { get; set; }
 
-        public virtual ICollection<BriefResponse> Briefs { get; set; } = new List<BriefResponse>();
+        public virtual ICollection<BriefResponse>? Briefs { get; set; } = new List<BriefResponse>();
 
-        public virtual ICollection<DebriefResponse> Debriefs { get; set; } = new List<DebriefResponse>();
+        public virtual ICollection<DebriefResponse>? Debriefs { get; set; } = new List<DebriefResponse>();
 
         public virtual UserResponse? Director { get; set; }
 
-        public virtual ICollection<DocumentResponse> Documents { get; set; } = new List<DocumentResponse>();
+        public virtual ICollection<DocumentResponse>? Documents { get; set; } = new List<DocumentResponse>();
 
         public virtual GradeResponse? Grade { get; set; }
 
-        public virtual ICollection<UserResponse> InverseDirector { get; set; } = new List<UserResponse>();
+        public virtual ICollection<UserResponse>? InverseDirector { get; set; } = new List<UserResponse>();
 
-        public virtual ICollection<UserResponse> InverseSupervisor { get; set; } = new List<UserResponse>();
+        public virtual ICollection<UserResponse>? InverseSupervisor { get; set; } = new List<UserResponse>();
 
-        public virtual ICollection<PlanningResponse> Plannings { get; set; } = new List<PlanningResponse>();
+        public virtual ICollection<PlanningResponse>? Plannings { get; set; } = new List<PlanningResponse>();
 
         public virtual UserResponse? Supervisor { get; set; }
 
-        public virtual ICollection<UsersFormationResponse> UsersFormations { get; set; } = new List<UsersFormationResponse>();
+        public virtual ICollection<UsersFormationResponse>? UsersFormations { get; set; } = new List<UsersFormationResponse>();
     }
 
 }
