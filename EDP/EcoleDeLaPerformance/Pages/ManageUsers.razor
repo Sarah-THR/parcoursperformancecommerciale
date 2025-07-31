@@ -8,104 +8,165 @@
 @inject IDialogService dialog
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
-@page "/manageusers"
+@page "/users"
 
-<div>
-   @*  <MudGrid Class="mt-8 d-flex align-items-center">
-        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
-            <MudText Typo="Typo.h4" Color="Color.Primary" Class="fw-bold text-uppercase">Gérer les utilisateurs <img src="/images/TeamManage.png" width="30px" class="ms-2" /></MudText>
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Class="ml-auto mt-5" OnClick="@(async () => await CreateUser())">Ajouter</MudButton>
-        </MudItem>
-        <MudItem sm="12" md="4" lg="4">
-            <SearchBar placeholder="Rechercher un profil" onChangeSearch="Search" searchString="@searchString" />
-        </MudItem>
-        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
-            <ManageUserTable userInfo="userInfo" usersList="filteredUserList" OnUserDeleted="HandleUserDeleted" />
-        </MudItem>
-    </MudGrid>
-
-    <MudGrid Class="mt-8 d-flex align-items-center">
-        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
-            <MudText Typo="Typo.h4" Color="Color.Primary" Class="fw-bold text-uppercase">Utilisateurs archivés <img src="/images/TeamManage.png" width="30px" class="ms-2" /></MudText>
-        </MudItem>
-        <MudItem md="12" xs="12" lg="12" Class="d-flex align-baseline">
-            <ManageUserTable userInfo="userInfo" usersList="deletedUserList" OnUserDeleted="HandleUserDeleted" />
-        </MudItem>
-    </MudGrid> *@
+<div class="px-6">
+    <MudPaper Elevation="1" Class="p-4 mb-6">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Info" />
+            <MudText Typo="Typo.h6">Gestion des utilisateurs</MudText>
+        </MudStack>
+        <MudTable Items="@filteredUserList" Dense="true" Hover="true" Filter="new Func<User, bool>(FilterFunc1)" @bind-SelectedItem="selectedUser" HeaderClass="bg-primary bg-opacity-10" Elevation="0">
+            <ToolBarContent>
+                <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                <MudSpacer />
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => CreateUser()">Créer un utilisateur</MudButton>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Prénom Nom</MudTh>
+                <MudTh>Role</MudTh>
+                <MudTh>Statut</MudTh>
+                <MudTh>Entité/Site</MudTh>
+                <MudTh>Superviseur</MudTh>
+                <MudTh>Date début de suivi</MudTh>
+                <MudTh>Date fin de suivi</MudTh>
+                <MudTh></MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Prénom Nom">@context.Name</MudTd>
+                <MudTd DataLabel="Role"></MudTd>
+                <MudTd DataLabel="Statut">@context.Grade?.Name</MudTd>
+                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
+                <MudTd DataLabel="Superviseur">@context.Supervisor?.Name</MudTd>
+                <MudTd DataLabel="Date début de suivi">@context.StartFollowUp</MudTd>
+                <MudTd DataLabel="Date fin de suivi">@context.EndFollowUp</MudTd>
+                <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Create" aria-label="update" OnClick="() => CreateUser()" /></MudTd>
+                <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Secondary" OnClick="() => DeleteUser(context)"/></MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
+                               RowsPerPageString="Lignes par page"
+                               InfoFormat="{first_item}-{last_item} sur {all_items}"
+                               AllItemsText="Tous" />
+            </PagerContent>
+        </MudTable>
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.People" Color="Color.Warning" />
+            <MudText Typo="Typo.h6">Gestion des utilisateurs archivés</MudText>
+        </MudStack>
+        <MudTable Items="@deletedUserList" Dense="true" Hover="false" Filter="new Func<User, bool>(FilterFunc1)" HeaderClass="bg-primary bg-opacity-10" Elevation="0">
+            <ToolBarContent>
+                <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                <MudSpacer />
+                <MudSpacer />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Prénom Nom</MudTh>
+                <MudTh>Role</MudTh>
+                <MudTh>Statut</MudTh>
+                <MudTh>Entité/Site</MudTh>
+                <MudTh>Superviseur</MudTh>
+                <MudTh>Date début de suivi</MudTh>
+                <MudTh>Date fin de suivi</MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Prénom Nom">@context.Name</MudTd>
+                <MudTd DataLabel="Role"></MudTd>
+                <MudTd DataLabel="Statut">@context.Grade?.Name</MudTd>
+                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
+                <MudTd DataLabel="Superviseur">@context.Supervisor?.Name</MudTd>
+                <MudTd DataLabel="Date début de suivi">@context.StartFollowUp</MudTd>
+                <MudTd DataLabel="Date fin de suivi">@context.EndFollowUp</MudTd>
+                <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Cached" aria-label="recycle" Color="Color.Success" OnClick="() => RecycleUser(context)" /></MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
+                               RowsPerPageString="Lignes par page"
+                               InfoFormat="{first_item}-{last_item} sur {all_items}"
+                               AllItemsText="Tous" />
+            </PagerContent>
+        </MudTable>
+    </MudPaper>
 </div>
 
 @code {
-    // public User userInfo => stateContainerService.UserInfo;
-    // List<User?> usersList = new List<User?>();
-    // List<User?> filteredUserList = new List<User?>();
-    // List<User?> deletedUserList = new List<User?>();
-    // private string searchString = "";
+    public User userInfo => stateContainerService.UserInfo;
+    List<User?> usersList = new List<User?>();
+    List<User?> filteredUserList = new List<User?>();
+    List<User?> deletedUserList = new List<User?>();
+    User selectedUser = new User();
+    private string searchString = "";
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        // if (userInfo.Role != "Superviseur")
-        // {
-        //     NavigationManager.NavigateTo("/");
-        // }
-        // else
-        // {
-        //     usersList = await userService.GetUsersAsync();
-        //     filteredUserList = usersList;
-        //     deletedUserList = await userService.GetDeletedUsersAsync();
-        // }
+        var users = await userService.GetUsersAsync();
+        usersList = users.Where(x => x.DeletedAt == null).ToList();
+        filteredUserList = usersList;
+        deletedUserList = users.Where(x => x.DeletedAt != null).ToList();
     }
 
-    // private async void HandleUserDeleted(bool wasDeleted)
-    // {
-    //     if (wasDeleted)
-    //     {
-    //         usersList = await userService.GetUsersAsync();
-    //         filteredUserList = usersList;
-    //         deletedUserList = await userService.GetDeletedUsersAsync();
-    //     }
-    //     else
-    //     {
-    //         usersList = await userService.GetUsersAsync();
-    //         filteredUserList = usersList;
-    //         deletedUserList = await userService.GetDeletedUsersAsync();
-    //     }
+    private async void HandleUserDeleted(bool wasDeleted)
+    {
+        if (wasDeleted)
+        {
+            var users = await userService.GetUsersAsync();
+            usersList = users.Where(x => x.DeletedAt == null).ToList();
+            filteredUserList = usersList;
+            deletedUserList = users.Where(x => x.DeletedAt != null).ToList();
+        }
+        else
+        {
+            var users = await userService.GetUsersAsync();
+            usersList = users.Where(x => x.DeletedAt == null).ToList();
+            filteredUserList = usersList;
+            deletedUserList = users.Where(x => x.DeletedAt != null).ToList();
+        }
 
-    //     StateHasChanged();
-    // }
+        StateHasChanged();
+    }
 
-    // async void Search(string value)
-    // {
-    //     try
-    //     {
-    //         searchString = value.ToLower();
+    private bool FilterFunc1(User element) => FilterFunc(element, searchString);
 
-    //         if (!string.IsNullOrEmpty(searchString))
-    //         {
-    //             filteredUserList = usersList.Where(x => x.FirstName.ToLower().Contains(searchString) || x.LastName.ToLower().Contains(searchString)).ToList();
-    //         }
-    //         else
-    //         {
-    //             filteredUserList = await userService.GetUsersAsync();
-    //         }
-    //         StateHasChanged();
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         SentrySdk.CaptureException(ex);
-    //     }
-    // }
+    private bool FilterFunc(User element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
 
-    // private async Task CreateUser()
-    // {
-    //     var parameters = new DialogParameters<AddUserDialog>();
+    private async System.Threading.Tasks.Task CreateUser()
+    {
+        var parameters = new DialogParameters<AddUserDialog>();
 
-    //     parameters.Add("userInfo", userInfo);
-    //     var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, CloseButton = true, ClassBackground = "DialogBackgroundBlurEffect", FullWidth = true };
-    //     var dialogresponse = await (await dialog.ShowAsync<AddUserDialog>("Ajouter un utilisateur", parameters, options)).Result;
-    //     if (!dialogresponse.Canceled)
-    //     {
-    //         await OnInitializedAsync();
-    //         StateHasChanged();
-    //     }
-    // }
+        parameters.Add("userInfo", userInfo);
+        var options = new DialogOptions() { MaxWidth = MaxWidth.Medium, CloseButton = true, BackgroundClass = "DialogBackgroundBlurEffect", FullWidth = true };
+        var dialogresponse = await (await dialog.ShowAsync<AddUserDialog>("Ajouter un utilisateur", parameters, options)).Result;
+        if (!dialogresponse.Canceled)
+        {
+            await OnInitializedAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async void DeleteUser(User user)
+    {
+        await userService.DeleteUserAsync(user.Id);
+        usersList.Remove(user);
+        deletedUserList.Add(user);
+        StateHasChanged();
+    }
+
+
+    private async void RecycleUser(User user)
+    {
+        user.DeletedAt = null;
+        await userService.UpdateUserAsync(user);
+        usersList.Add(user);
+        deletedUserList.Remove(user);
+        StateHasChanged();
+    }
 }

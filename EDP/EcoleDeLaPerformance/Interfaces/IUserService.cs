@@ -16,7 +16,7 @@ namespace EcoleDeLaPerformance.Ui.Interfaces
         //Task<int> GetNbOpenAccountsAsync(string name);
 
         //int GetNbOpenAccountsByPeriod(string name, DateOnly periodFirstDay, DateOnly periodLastDay);
-
+        User? GetUserAAD(string email);
         Task<int> GetNbAppointmentsAsync(string email, DateOnly beginningDate, DateOnly endingDate);
     }
 }

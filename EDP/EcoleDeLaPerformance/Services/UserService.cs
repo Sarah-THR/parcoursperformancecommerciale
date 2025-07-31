@@ -1,10 +1,11 @@
-﻿using EcoleDeLaPerformance.Ui.Interfaces;
+﻿using EcoleDeLaPerformance.Ui._Helper;
+using EcoleDeLaPerformance.Ui.Interfaces;
 using EcoleDeLaPerformance.Ui.Models;
 using Microsoft.Identity.Web;
 using Newtonsoft.Json;
+using System.DirectoryServices;
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace EcoleDeLaPerformance.Ui.Services
@@ -25,6 +26,7 @@ namespace EcoleDeLaPerformance.Ui.Services
             _httpClientFactory = httpClientFactory;
             _httpClient = _httpClientFactory.CreateClient();
         }
+
         public async Task<List<User?>> GetUsersAsync()
         {
             var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/users");
@@ -94,6 +96,28 @@ namespace EcoleDeLaPerformance.Ui.Services
 
                 default:
                     throw new Exception($"Une erreur est survenue lors de modification du user : {await response.Content.ReadAsStringAsync()} avec le status code : {response.StatusCode}.");
+            }
+        }
+
+        public User? GetUserAAD(string email)
+        {
+            using DirectorySearcher dirsearcher = new(Domain.GetDirectoryEntry(),
+                                                          $"(&(objectClass=user)(mail=*{email}*))",
+                                                          new string[] { "displayName", "givenName", "mail", "company" });
+
+            var user = dirsearcher.FindOne();
+            if (user != null)
+            {
+                return new User()
+                {
+                    Name = user.GetPropertyValue("displayName"),
+                    Email = user.GetPropertyValue("mail"),
+                    Entity = user.GetPropertyValue("company"),
+                };
+            }
+            else
+            {
+                return new User();
             }
         }
 
