@@ -60,7 +60,7 @@ namespace EcoleDeLaPerformance.Ui.Helper
 
                 mail.IsBodyHtml = true;
                 mail.From = new MailAddress(creatorMail, creatorName);
-                mail.To.Add(newAccountMail);
+                mail.To.Add("s.tahar@xefi.fr");
 
                 mail.Subject = $"Accès Ecole de la performance commerciale";
 
