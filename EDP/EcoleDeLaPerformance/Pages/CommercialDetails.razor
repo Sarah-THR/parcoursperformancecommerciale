@@ -15,7 +15,14 @@
         <MudGrid>
             <MudItem xs="12" md="6" Class="d-flex">
                 <MudAvatar Size="Size.Large">
-                    <MudIcon Icon="@Icons.Material.Filled.PhotoCamera" />
+                    @if (userInfo.ProfilePicturePath != null)
+                    {
+                        <MudImage Src="@userInfo.ProfilePicturePath"></MudImage>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.PhotoCamera" />
+                    }
                 </MudAvatar>
                 <MudText Typo="Typo.h5" Color="Color.Primary" Class="fw-bold textcontent mt-3 mx-4">@commercial.Name</MudText>
             </MudItem>
@@ -41,7 +48,7 @@
                             <MudText Typo="Typo.subtitle2">@context.contracts.Count()</MudText>
                         </MudTd>
                         <MudTd>
-                            <MudText Typo="Typo.subtitle2">@context.contracts.Count()</MudText>
+                            <MudText Typo="Typo.subtitle2">@GetIndicatorIcon(context.contracts.Count(), context.contracts.Count())</MudText>
                         </MudTd>
                     </RowTemplate>
                 </MudTable>
@@ -217,6 +224,7 @@
                             </MudGrid>
                         </MudTabPanel>
                         <MudTabPanel Text="Suivi">
+                            <TrainingTable />
                         </MudTabPanel>
                     </MudTabs>
                 </MudPaper>
@@ -317,5 +325,35 @@
                              return char.ToUpper(dayName[0]) + dayName.Substring(1);
                          })
                          .ToArray();
+    }
+
+    private RenderFragment GetIndicatorIcon(int goal, int realised) => @<MudIcon Icon="@GetIcon(goal, realised)" Color="@GetColor(goal, realised)" />;
+
+    private Color GetColor(int goal, int realised)
+    {
+        if (goal == 0)
+            return Color.Default;
+
+        if (realised == goal / 2)
+            return Color.Warning;
+
+        if (realised < goal)
+            return Color.Success; 
+
+        return Color.Error;
+    }
+
+    private string GetIcon(int goal, int realised)
+    {
+        if (goal == 0)
+            return Icons.Material.Filled.HorizontalRule;
+
+        if (realised == goal / 2)
+            return Icons.Material.Filled.SsidChart;
+
+        if (realised < goal)
+            return Icons.Material.Filled.ArrowOutward;
+
+        return Icons.Material.Filled.Cancel;
     }
 }

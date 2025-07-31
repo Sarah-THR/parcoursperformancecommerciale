@@ -2,6 +2,7 @@
 @using EcoleDeLaPerformance.Ui.Interfaces
 @using EcoleDeLaPerformance.Ui.Models
 @inject IDocumentService documentService
+@inject ICategoryService categoryService
 @inject IJSRuntime js
 
 <PageTitle>Support</PageTitle>
@@ -10,6 +11,7 @@
     <MudPaper Class="p-4 mb-6 align-content-center" Height="800px" id="divContainer">
         @if (isInitialized)
         {
+            <MudText Typo="Typo.h6" Class="mb-4">@category.Title</MudText>
            <MudStack Row="true" Class="my-4" Spacing="2">
                 <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos"
                                Disabled="@IsPreviousDisabled"
@@ -42,15 +44,18 @@
 
     public List<Document> documents = new List<Document>();
     public Document selectedDocument;
+    public Category category;
     private bool isInitialized { get; set; }
     private int pageIndex = 0;
-    private int pageSize = 4;
+    private int pageSize = 5;
     private List<Document> PaginatedDocuments => documents.Skip(pageIndex * pageSize).Take(pageSize).ToList();
     private bool IsPreviousDisabled => pageIndex == 0;
     private bool IsNextDisabled => (pageIndex + 1) * pageSize >= documents.Count;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
+        var categories = await categoryService.GetCategoriesAsync();
+        category = categories.Where(x => x.Id == Convert.ToInt32(categoryId)).FirstOrDefault();
         var allDocuments = await documentService.GetDocuments();
         documents = allDocuments.Where(x => x.CategoryId == Convert.ToInt32(categoryId)).ToList();
         selectedDocument = documents[0];

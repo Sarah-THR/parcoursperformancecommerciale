@@ -40,10 +40,20 @@
 
                                         <MudItem xs="12" md="6">
                                             <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.FlexEnd" Spacing="2">
-                                                @* <MudAvatar>
-                                            PN
-                                        </MudAvatar> *@
-                                                <MudText Typo="Typo.subtitle2" Class="font-medium text-slate-700">@stateContainerService.UserInfo.Name</MudText>
+                                                <MudAvatar>
+                                                    @if (stateContainerService.UserInfo.ProfilePicturePath != null)
+                                                    {
+                                                        <MudImage Src="@stateContainerService.UserInfo.ProfilePicturePath"></MudImage>
+                                                    }
+                                                    else
+                                                    {
+                                                        <MudIcon Icon="@Icons.Material.Filled.PhotoCamera" />
+                                                    }
+                                                </MudAvatar>
+                                                <MudMenu Label="@stateContainerService.UserInfo.Name" EndIcon="@Icons.Material.Filled.KeyboardArrowDown" Class="font-medium text-slate-700">
+                                                    <MudMenuItem Label="Profil" OnClick='() => navigationManager.NavigateTo("/profile")'/>
+                                                    <MudMenuItem Label="Déconnexion" OnClick='() => navigationManager.NavigateTo("MicrosoftIdentity/Account/SignOut", forceLoad: true)' />
+                                                </MudMenu>
                                             </MudStack>
                                         </MudItem>
                                     </MudGrid>
@@ -151,15 +161,5 @@
         {
             throw ex;
         }
-    }
-
-    public void Logout()
-    {
-        navigationManager.NavigateTo("MicrosoftIdentity/Account/SignOut", forceLoad: true);
-    }
-
-    public void NavigateToProfile()
-    {
-        navigationManager.NavigateTo("/profile", forceLoad: true);
     }
 }

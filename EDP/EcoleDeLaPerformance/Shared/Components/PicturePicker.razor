@@ -1,0 +1,85 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@inject StateContainerService stateContainerService
+@inject IUserService userService
+@inject ISnackbar Snackbar
+
+<div>
+    @if (!string.IsNullOrEmpty(imageDataUrl))
+    {
+        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".png, .jpg">
+            <ActivatorContent>
+                <MudAvatar>
+                    <MudImage Src="@imageDataUrl"></MudImage>
+                </MudAvatar>
+                <MudIconButton HtmlTag="label" Icon="@Icons.Material.Filled.Edit"></MudIconButton>
+            </ActivatorContent>
+        </MudFileUpload>
+    }
+    else
+    {
+        <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles" Accept=".png, .jpg">
+            <ActivatorContent>
+                <MudFab HtmlTag="label" StartIcon="@Icons.Material.Filled.PhotoCamera" />
+            </ActivatorContent>
+        </MudFileUpload>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public User userInfo { get; set; }
+
+    IList<IBrowserFile> filesList = new List<IBrowserFile>();
+    private string imageDataUrl;
+
+    protected override void OnInitialized()
+    {
+        if (userInfo.ProfilePicturePath != null)
+        {
+            imageDataUrl = $"{userInfo.ProfilePicturePath}";
+        }
+    }
+
+    private async System.Threading.Tasks.Task UploadFiles(IBrowserFile file)
+    {
+        if (file == null)
+            return;
+
+        long maxSize = 512 * 1024;
+
+        if (file.Size > maxSize)
+        {
+            Snackbar.Add("La taille de l'image ne doit pas dépasser 512Ko.", MudBlazor.Severity.Error);
+            return;
+        }
+
+        try
+        {
+            string fileName = $"{Guid.NewGuid()}.png";
+
+            string wwwrootPath = Path.Combine(Environment.CurrentDirectory, "wwwroot", "pictures");
+
+            if (!Directory.Exists(wwwrootPath))
+                Directory.CreateDirectory(wwwrootPath);
+
+            string filePath = Path.Combine(wwwrootPath, fileName);
+
+            await using FileStream fs = new(filePath, FileMode.Create);
+            await file.OpenReadStream(maxSize).CopyToAsync(fs);
+
+            userInfo.ProfilePicturePath = $"/pictures/{fileName}";
+
+            await userService.UpdateUserAsync(userInfo);
+
+            imageDataUrl = userInfo.ProfilePicturePath;
+
+            Snackbar.Add("Image uploadée avec succès", MudBlazor.Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Erreur lors de l'upload : {ex.Message}", MudBlazor.Severity.Error);
+        }
+    }
+}

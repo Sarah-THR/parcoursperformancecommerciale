@@ -21,14 +21,12 @@
     <None Remove="Shared\Component\ManageUserTable.razor.css" />
     <None Remove="Shared\Component\PDFViewer.razor.css" />
     <None Remove="Shared\Component\PeriodInfo.razor.css" />
-    <None Remove="Shared\Component\PicturePicker.razor.css" />
     <None Remove="Shared\Component\Planning.razor.css" />
     <None Remove="Shared\Component\SearchBar.razor.css" />
     <None Remove="Shared\Component\Select.razor.css" />
     <None Remove="Shared\Component\Speedometer.razor.css" />
     <None Remove="Shared\Component\StudentDetails.razor.css" />
     <None Remove="Shared\Component\Table.razor.css" />
-    <None Remove="Shared\Component\UserForm.razor.css" />
     <None Remove="Shared\Dialog\UpdateFileDialog.razor.css" />
     <None Remove="Shared\LandingPage.razor.css" />
     <None Remove="Shared\PeriodInfo.razor.css" />
@@ -49,13 +47,11 @@
     <Content Include="Shared\Component\GoalsPaper.razor.css" />
     <Content Include="Shared\Component\ManageUserTable.razor.css" />
     <Content Include="Shared\Component\PDFViewer.razor.css" />
-    <Content Include="Shared\Component\PicturePicker.razor.css" />
     <Content Include="Shared\Component\Planning.razor.css" />
     <Content Include="Shared\Component\SearchBar.razor.css" />
     <Content Include="Shared\Component\Select.razor.css" />
     <Content Include="Shared\Component\Speedometer.razor.css" />
     <Content Include="Shared\Component\Table.razor.css" />
-    <Content Include="Shared\Component\UserForm.razor.css" />
     <Content Include="Shared\Dialog\UpdateFileDialog.razor.css" />
     <Content Include="Shared\LandingPage.razor.css" />
     <Content Include="Shared\PeriodInfo.razor.css" />
@@ -93,6 +89,10 @@
     <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
     <PackageReference Include="System.DirectoryServices.Protocols" Version="8.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\pictures\" />
   </ItemGroup>
 
 </Project>
