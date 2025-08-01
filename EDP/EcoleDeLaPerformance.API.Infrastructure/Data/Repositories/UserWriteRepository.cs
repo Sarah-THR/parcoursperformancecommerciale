@@ -31,7 +31,6 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
             user.ProfilePicturePath = updatedData.ProfilePicturePath;
             user.Entity = updatedData.Entity;
             user.StartFollowUp = updatedData.StartFollowUp;
-            user.EndFollowUp = updatedData.EndFollowUp;
             user.SupervisorId = updatedData.SupervisorId;
             user.DirectorId = updatedData.DirectorId;
             user.GradeId = updatedData.GradeId;

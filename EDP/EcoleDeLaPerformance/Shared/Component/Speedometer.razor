@@ -1,28 +1,31 @@
 ﻿@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Models.CRM
 @using Radzen.Blazor
 
-<div class="d-flex flex-column justify-content-center">
-@*     <h4 class="fw-bold text-center">@title</h4>
-    <RadzenArcGauge Style="width: 100%; height: 170px;">
-        <RadzenArcGaugeScale Step="1" Min="0" Max="@maxValue" MinorStep="1" Radius="1.5" TickPosition="GaugeTickPosition.Outside" Y="0.9" Margin="0">
-            <RadzenArcGaugeScaleValue Value=@Convert.ToDouble(crmData.Amount) ShowValue=true>
-                <Template Context="pointer">
-                    <h4>
-                        @crmData.Amount
-                    </h4>
-                </Template>
-            </RadzenArcGaugeScaleValue>
-        </RadzenArcGaugeScale>
-    </RadzenArcGauge> *@
+<div>
+    <MudPaper Class="p-4" MinHeight="305px" MaxHeight="305px">
+        <MudText Typo="Typo.subtitle1" Class="text-slate-600">Objectif mensuel</MudText>
+        <RadzenArcGauge Style="width: 100%; height: 225px;">
+            <RadzenArcGaugeScale Step="25" Min="0" Max="MaxValue" MinorStep="1" Radius="1.5" TickPosition="GaugeTickPosition.Outside" Y="0.9" Margin="0">
+                <RadzenArcGaugeScaleValue Value=@Convert.ToDouble(Progress) ShowValue=true>
+                    <Template Context="pointer">
+                        <h4>
+                            @Amount.ToString("F") €
+                        </h4>
+                    </Template>
+                </RadzenArcGaugeScaleValue>
+            </RadzenArcGaugeScale>
+        </RadzenArcGauge>
+    </MudPaper>
 </div>
 
 @code {
-    // [Parameter]
-    // public CRMData? crmData { get; set; }
+    [Parameter]
+    public decimal Amount { get; set; }
 
-    // [Parameter]
-    // public string title { get; set; }
+    [Parameter]
+    public int MaxValue { get; set; }
 
-    // [Parameter]
-    // public int maxValue { get; set; }
+    [Parameter]
+    public int Progress { get; set; }
 }

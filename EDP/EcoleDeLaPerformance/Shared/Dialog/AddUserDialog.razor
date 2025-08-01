@@ -140,7 +140,6 @@
                     Name = model.Name,
                     Entity = model.Entity,
                     StartFollowUp = DateOnly.FromDateTime(startDate.Value),
-                    EndFollowUp = DateOnly.FromDateTime(endDate.Value),
                 };
 
                 await userService.InsertUserAsync(newUser);

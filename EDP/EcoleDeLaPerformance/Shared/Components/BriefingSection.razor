@@ -12,17 +12,14 @@
                 <MudCardContent>
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
                         <MudIcon Icon="@Icons.Material.Filled.Bolt" Color="Color.Primary" Size="Size.Large" />
-                        <div>
-                            <MudText Typo="Typo.h6">Engagements</MudText>
-                            <MudText Typo="Typo.caption">Signature de la semaine</MudText>
-                        </div>
+                        <MudText Typo="Typo.h6">Engagements signature de la semaine</MudText>
                         <MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
                             <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
                         </MudTooltip>
                     </MudStack>
 
                     <MudStack Spacing="1">
-                        <MudTextField @bind-Value="newSignatureItem" Label="Nouvel engagement" Variant="Variant.Outlined"
+                        <MudTextField @bind-Value="newSignatureItem" Label="Nouvel engagement" PlaceHolder="Nom société / Chiffre d'affaire / Contrat / Périmètre" Variant="Variant.Outlined"
                                       Immediate="true" Adornment="Adornment.End"
                                       OnKeyDown="@((e) => HandleKey(e, AddSignatureItem))"
                                       AdornmentIcon="@Icons.Material.Filled.Add"
@@ -50,17 +47,14 @@
                 <MudCardContent>
                     <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
                         <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Success" Size="Size.Large" />
-                        <div>
-                            <MudText Typo="Typo.h6">Dossiers</MudText>
-                            <MudText Typo="Typo.caption">À checker</MudText>
-                        </div>
+                        <MudText Typo="Typo.h6">Dossiers à checker</MudText>
                         <MudTooltip Text="A faire avec le superviseur" Arrow="true" Placement="Placement.Right">
                             <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
                         </MudTooltip>
                     </MudStack>
 
                     <MudStack Spacing="1">
-                        <MudTextField @bind-Value="newCheckItem" Label="Nouveau dossier" Variant="Variant.Outlined"
+                        <MudTextField @bind-Value="newCheckItem" Label="Nouveau dossier" PlaceHolder="Nom société / Chiffre d'affaire / Contrat / Périmètre" Variant="Variant.Outlined"
                                       Immediate="true" Adornment="Adornment.End"
                                       OnKeyDown="@((e) => HandleKey(e, AddCheckItem))"
                                       AdornmentIcon="@Icons.Material.Filled.Add"

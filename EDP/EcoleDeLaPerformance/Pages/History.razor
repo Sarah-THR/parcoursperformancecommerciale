@@ -63,6 +63,6 @@
 
     private void RowClickEvent(TableRowClickEventArgs<TempClass> tableRowClickEventArgs)
     {
-        navigationManager.NavigateTo($"/details/{userInfo.Id}/{tableRowClickEventArgs.Item.planning.Id}");
+        navigationManager.NavigateTo($"/history/{userInfo.Id}/{tableRowClickEventArgs.Item.planning.Id}");
     }
 }

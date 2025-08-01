@@ -112,7 +112,6 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                     profile_picture_path = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     entity = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     start_follow_up = table.Column<DateOnly>(type: "date", nullable: true),
-                    end_follow_up = table.Column<DateOnly>(type: "date", nullable: true),
                     supervisor_id = table.Column<int>(type: "int", nullable: true),
                     director_id = table.Column<int>(type: "int", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),

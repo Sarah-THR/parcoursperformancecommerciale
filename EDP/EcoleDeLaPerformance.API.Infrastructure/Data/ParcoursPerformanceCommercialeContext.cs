@@ -318,7 +318,6 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
             entity.Property(e => e.Email)
                 .HasMaxLength(255)
                 .HasColumnName("email");
-            entity.Property(e => e.EndFollowUp).HasColumnName("end_follow_up");
             entity.Property(e => e.Entity)
                 .HasMaxLength(255)
                 .HasColumnName("entity");

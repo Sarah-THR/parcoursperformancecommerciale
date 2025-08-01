@@ -5,15 +5,12 @@
 
 <div class="px-6">
 	<MudPaper Class="p-4 mb-6">
-		<MudTabs @bind-ActivePanelIndex="_activeTab" Rounded="true" Centered="true" MinimumTabWidth="400px">
-			<MudTabPanel Text="Briefing">
+		<MudTabs @bind-ActivePanelIndex="_activeTab" Rounded="true" Centered="true" MinimumTabWidth="400px" ActiveTabClass="bg-primary bg-opacity-10">
+			<MudTabPanel Text="Briefing de la semaine">
 				<BriefingSection />
 			</MudTabPanel>
-			<MudTabPanel Text="Debriefing">
+			<MudTabPanel Text="Debriefing de la semaine">
 				<DebriefingSection />
-			</MudTabPanel>
-			<MudTabPanel Text="Suivi">
-				<TrainingTable />
 			</MudTabPanel>
 		</MudTabs>
 	</MudPaper>

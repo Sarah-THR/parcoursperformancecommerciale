@@ -44,9 +44,6 @@
                     <MudItem md="4" lg="4" sm="12">
                     <MudDatePicker Label="Date début suivi" @bind-Date="StartFollowUpDateTime" ReadOnly Disabled />
                     </MudItem>
-                    <MudItem md="4" lg="4" sm="12">
-                    <MudDatePicker Label="Date fin de suivi" @bind-Date="EndFollowUpDateTime" ReadOnly Disabled />
-                    </MudItem>
             </MudGrid>
         </MudForm>
     </DialogContent>
@@ -76,12 +73,7 @@
         get => model.StartFollowUp?.ToDateTime(TimeOnly.MinValue);
         set => model.StartFollowUp = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
     }
-    public DateTime? EndFollowUpDateTime
-    {
-        get => model.EndFollowUp?.ToDateTime(TimeOnly.MinValue);
-        set => model.EndFollowUp = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
-    }
-
+  
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
         model = studentInfo;

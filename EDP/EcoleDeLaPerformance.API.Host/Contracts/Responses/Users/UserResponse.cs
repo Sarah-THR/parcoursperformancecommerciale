@@ -21,8 +21,6 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Users
 
         public DateOnly? StartFollowUp { get; set; }
 
-        public DateOnly? EndFollowUp { get; set; }
-
         public int? SupervisorId { get; set; }
 
         public int? DirectorId { get; set; }

@@ -30,9 +30,6 @@
                     <MudItem md="6" lg="6" sm="12">
                         <MudDatePicker Label="Date début suivi" @bind-Date="StartFollowUpDateTime" For="@(() => StartFollowUpDateTime)" Disabled />
                     </MudItem>
-                    <MudItem md="6" lg="6" sm="12">
-                        <MudDatePicker Label="Date fin de suivi" @bind-Date="EndFollowUpDateTime" For="@(() => EndFollowUpDateTime)" Disabled />
-                    </MudItem>
                 </MudGrid>
             </MudCardContent>
         </MudCard>
@@ -65,12 +62,7 @@
         get => model.StartFollowUp?.ToDateTime(TimeOnly.MinValue);
         set => model.StartFollowUp = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
     }
-    public DateTime? EndFollowUpDateTime
-    {
-        get => model.EndFollowUp?.ToDateTime(TimeOnly.MinValue);
-        set => model.EndFollowUp = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
-    }
-
+    
     protected override void OnInitialized()
     {
         model = userInfo;

@@ -476,10 +476,6 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("email");
 
-                    b.Property<DateOnly?>("EndFollowUp")
-                        .HasColumnType("date")
-                        .HasColumnName("end_follow_up");
-
                     b.Property<string>("Entity")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")

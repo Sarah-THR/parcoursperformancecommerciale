@@ -18,26 +18,22 @@
             <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Color="Color.Info" />
             <MudText Typo="Typo.h6">Objectifs</MudText>
         </MudStack>
-        <MudGrid>
+        <MudGrid Class="align-items-center">
             <MudItem xs="12" md="4">
-                <MudText Typo="Typo.subtitle1" Class="text-slate-600">Objectif mensuel</MudText>
-                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">@monthGoal.ToString("F") €</MudText>
-                <MudProgressLinear Value="@monthlyTurnoverProgress" Color="Color.Primary" />
+                <EcoleDeLaPerformance.Ui.Shared.Component.Speedometer MaxValue="100" Amount="Convert.ToDecimal(monthGoal)" Progress="monthlyTurnoverProgress" />
             </MudItem>
             <MudItem xs="12" md="4">
-                <MudText Typo="Typo.subtitle1" Class="text-slate-600">Objectif trimestriel</MudText>
-                <MudText Typo="Typo.h5" Class="text-slate-800 font-bold">@trimestrialMonthGoal.ToString("F") €</MudText>
-                <MudProgressLinear Value="@trimestrialMonthlyTurnoverProgress" Color="Color.Secondary" />
+                <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contractData" Labels="@contractLabels" />
             </MudItem>
             <MudItem xs="12" md="4">
                 <MudGrid>
-                    <MudItem xs="6">
+                    <MudItem xs="12">
                         <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #fef2f2, #fee2e2);" MaxHeight="108px">
                             <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré</MudText>
                             <MudText Typo="Typo.h6" Class="text-red-700 font-bold">@turnover.ToString("F") €</MudText>
                         </MudPaper>
                     </MudItem>
-                    <MudItem xs="6">
+                    <MudItem xs="12">
                         <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #ecfdf5, #d1fae5);" MaxHeight="108px">
                             <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable</MudText>
                             <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@bonus.ToString("F") €</MudText>
@@ -45,23 +41,8 @@
                     </MudItem>
                 </MudGrid>
             </MudItem>
-        </MudGrid>
-    </MudPaper>
-
-    <MudPaper Elevation="1" Class="p-4 mb-6">
-        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-            <MudIcon Icon="@Icons.Material.Filled.TrendingUp" Color="Color.Error" />
-            <MudText Typo="Typo.h6">Chiffres du mois en cours</MudText>
-        </MudStack>
-        <MudGrid>
-            <MudItem xs="12" md="4">
-                <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contractData" Labels="@contractLabels" />
-            </MudItem>
             <MudItem xs="12" md="4">
                 <MetricCard Title="Rendez-vous à venir" Value="@nbAppointments.ToString()" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" Subtitle="RENDEZ-VOUS" />
-            </MudItem>
-            <MudItem xs="12" md="4">
-                <MetricCard Title="Heures de formation" Value="0h" Progress="0" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />
             </MudItem>
         </MudGrid>
     </MudPaper>
