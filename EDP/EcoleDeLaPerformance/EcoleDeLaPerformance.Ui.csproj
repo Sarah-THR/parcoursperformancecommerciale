@@ -16,16 +16,8 @@
     <None Remove="Pages\Profile.razor.css" />
     <None Remove="Pages\Utils.razor.css" />
     <None Remove="Shared\Component\Collapse.razor.css" />
-    <None Remove="Shared\Component\Divider.razor.css" />
-    <None Remove="Shared\Component\GoalsPaper.razor.css" />
-    <None Remove="Shared\Component\ManageUserTable.razor.css" />
-    <None Remove="Shared\Component\PDFViewer.razor.css" />
     <None Remove="Shared\Component\PeriodInfo.razor.css" />
-    <None Remove="Shared\Component\SearchBar.razor.css" />
-    <None Remove="Shared\Component\Select.razor.css" />
     <None Remove="Shared\Component\StudentDetails.razor.css" />
-    <None Remove="Shared\Component\Table.razor.css" />
-    <None Remove="Shared\Dialog\UpdateFileDialog.razor.css" />
     <None Remove="Shared\LandingPage.razor.css" />
     <None Remove="Shared\UnknowUser.razor.css" />
   </ItemGroup>
@@ -38,14 +30,6 @@
     <Content Include="Pages\Profile.razor.css" />
     <Content Include="Pages\Utils.razor.css" />
     <Content Include="Shared\Component\Collapse.razor.css" />
-    <Content Include="Shared\Component\Divider.razor.css" />
-    <Content Include="Shared\Component\GoalsPaper.razor.css" />
-    <Content Include="Shared\Component\ManageUserTable.razor.css" />
-    <Content Include="Shared\Component\PDFViewer.razor.css" />
-    <Content Include="Shared\Component\SearchBar.razor.css" />
-    <Content Include="Shared\Component\Select.razor.css" />
-    <Content Include="Shared\Component\Table.razor.css" />
-    <Content Include="Shared\Dialog\UpdateFileDialog.razor.css" />
     <Content Include="Shared\LandingPage.razor.css" />
     <Content Include="Shared\UnknowUser.razor.css" />
   </ItemGroup>
