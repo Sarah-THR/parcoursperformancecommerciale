@@ -21,10 +21,8 @@
     <None Remove="Shared\Component\ManageUserTable.razor.css" />
     <None Remove="Shared\Component\PDFViewer.razor.css" />
     <None Remove="Shared\Component\PeriodInfo.razor.css" />
-    <None Remove="Shared\Component\Planning.razor.css" />
     <None Remove="Shared\Component\SearchBar.razor.css" />
     <None Remove="Shared\Component\Select.razor.css" />
-    <None Remove="Shared\Component\Speedometer.razor.css" />
     <None Remove="Shared\Component\StudentDetails.razor.css" />
     <None Remove="Shared\Component\Table.razor.css" />
     <None Remove="Shared\Dialog\UpdateFileDialog.razor.css" />
@@ -44,10 +42,8 @@
     <Content Include="Shared\Component\GoalsPaper.razor.css" />
     <Content Include="Shared\Component\ManageUserTable.razor.css" />
     <Content Include="Shared\Component\PDFViewer.razor.css" />
-    <Content Include="Shared\Component\Planning.razor.css" />
     <Content Include="Shared\Component\SearchBar.razor.css" />
     <Content Include="Shared\Component\Select.razor.css" />
-    <Content Include="Shared\Component\Speedometer.razor.css" />
     <Content Include="Shared\Component\Table.razor.css" />
     <Content Include="Shared\Dialog\UpdateFileDialog.razor.css" />
     <Content Include="Shared\LandingPage.razor.css" />

@@ -15,43 +15,40 @@
 <div class="px-6">
     <MudPaper Elevation="1" Class="p-4 mb-6">
         <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-            <MudIcon Icon="@Icons.Material.Filled.CrisisAlert" Color="Color.Info" />
-            <MudText Typo="Typo.h6">Objectifs</MudText>
+            <MudIcon Icon="@Icons.Material.Filled.Dashboard" Color="Color.Info" />
+            <MudText Typo="Typo.h6">Tableau de bord</MudText>
         </MudStack>
         <MudGrid Class="align-items-center">
             <MudItem xs="12" md="4">
-                <EcoleDeLaPerformance.Ui.Shared.Component.Speedometer MaxValue="100" Amount="Convert.ToDecimal(monthGoal)" Progress="monthlyTurnoverProgress" />
+                <Speedometer MaxValue="100" Amount="Convert.ToDecimal(monthGoal)" Progress="monthlyTurnoverProgress" />
             </MudItem>
             <MudItem xs="12" md="4">
-                <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contractData" Labels="@contractLabels" />
+                <DonutCard Title="Contrats du mois" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contractData" Labels="@contractLabels" />
             </MudItem>
             <MudItem xs="12" md="4">
                 <MudGrid>
-                    <MudItem xs="12">
-                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #fef2f2, #fee2e2);" MaxHeight="108px">
-                            <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré</MudText>
+                    <MudItem xs="6">
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to bottom, #a4dffa, #ffffff);" MaxHeight="108px">
+                            <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré du mois</MudText>
                             <MudText Typo="Typo.h6" Class="text-red-700 font-bold">@turnover.ToString("F") €</MudText>
                         </MudPaper>
                     </MudItem>
-                    <MudItem xs="12">
-                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #ecfdf5, #d1fae5);" MaxHeight="108px">
-                            <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable</MudText>
+                    <MudItem xs="6">
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to bottom, #fee7ac, #ffffff);">
+                            <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable du mois</MudText>
                             <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@bonus.ToString("F") €</MudText>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12">
+                        <MudPaper Class="p-4 rounded-lg" MaxHeight="108px">
+                            <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Rendez-vous à venir ce mois-ci</MudText>
+                            <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@nbAppointments.ToString()</MudText>
                         </MudPaper>
                     </MudItem>
                 </MudGrid>
             </MudItem>
-            <MudItem xs="12" md="4">
-                <MetricCard Title="Rendez-vous à venir" Value="@nbAppointments.ToString()" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" Subtitle="RENDEZ-VOUS" />
-            </MudItem>
-            <MudItem xs="12" md="8">
-                <MudPaper Elevation="2" Class="p-4 mb-6">
-                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary" />
-                        <MudText Typo="Typo.h6">Semaine du @selectedPlanning.CreatedAt.AddDays(-((int)selectedPlanning.CreatedAt.DayOfWeek == 0 ? 6 : (int)selectedPlanning.CreatedAt.DayOfWeek - 1)).ToShortDateString()</MudText>
-                    </MudStack>
-                    
-                </MudPaper>
+            <MudItem xs="12">
+                <PlanningDetails User="userInfo" BaseDate="today" />
             </MudItem>
         </MudGrid>
     </MudPaper>
@@ -112,16 +109,10 @@
     DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
     List<Brief?> briefs = new();
     List<EcolePerformanceSm?> contracts = new();
-    Models.Planning selectedPlanning = new Models.Planning();
-    private string[] days = Array.Empty<string>();
-    DateOnly monday;
-    DateOnly friday;
+    Models.Planning planning;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        var daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
-        monday = today.AddDays(-daysSinceMonday);
-        friday = monday.AddDays(4);
         turnover = await userService.GetUserTurnoverAsync(userInfo.Name, firstMonthDay, lastMonthDay);
         bonus = await userService.GetUserBonusAsync(userInfo.Name, firstMonthDay, lastMonthDay);
         nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.Email, firstMonthDay, lastMonthDay);
@@ -133,13 +124,9 @@
                 (double)contracts.Count(c => c.Maintenance == "OUI"),
                 (double)contracts.Count(c => c.Sécurité == "OUI")
             };
-        if (userInfo.Plannings.Count != 0)
-        {
-            selectedPlanning = userInfo.Plannings.Where(p => p.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && p.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue)).FirstOrDefault();
-        }
-        else
-        {
-            selectedPlanning.CreatedAt = DateTime.Today;
-        }
+        var daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
+        var monday = today.AddDays(-daysSinceMonday);
+        var friday = monday.AddDays(4);
+        planning = userInfo.Plannings.Where(p => p.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && p.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue)).FirstOrDefault();
     }
 }

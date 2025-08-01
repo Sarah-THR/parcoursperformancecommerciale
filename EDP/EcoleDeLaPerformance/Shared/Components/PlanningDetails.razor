@@ -1,0 +1,91 @@
+﻿@using EcoleDeLaPerformance.Ui.Models
+
+<div>
+    <MudPaper Elevation="2" Class="p-4 mb-6">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+            <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary" />
+            <MudText Typo="Typo.h6">Semaine du @selectedPlanning.CreatedAt.AddDays(-((int)selectedPlanning.CreatedAt.DayOfWeek == 0 ? 6 : (int)selectedPlanning.CreatedAt.DayOfWeek - 1)).ToShortDateString()</MudText>
+        </MudStack>
+        <div>
+            <div class="drop-row my-2">
+                @foreach (var day in days)
+                {
+                    <div style="text-align:center; font-weight:bold;">
+                        @day
+                    </div>
+                }
+            </div>
+            @for (int row = 0; row < 2; row++)
+            {
+                <div class="drop-row">
+                    @for (int col = 0; col < 5; col++)
+                    {
+                        var planningKey = $"planning{row}{col}";
+                        var task = selectedPlanning.PlanningsTasks
+                        .FirstOrDefault(t => t.Identifier == planningKey);
+
+                        <MudPaper Class="ma-4 w-100 d-flex align-items-center justify-center" Style="height:80px; background: linear-gradient(to right, #fef2f2, #fee2e2);">
+                            @if (task is not null)
+                            {
+                                <MudText Typo="Typo.subtitle1" Class="ma-2">@task.Task.Title</MudText>
+                            }
+                        </MudPaper>
+                    }
+                </div>
+            }
+        </div>
+    </MudPaper>
+</div>
+
+@code {
+    [Parameter]
+    public User User { get; set; }
+
+    [Parameter]
+    public int? WeekId { get; set; }
+
+    [Parameter]
+    public DateOnly BaseDate { get; set; }
+
+    private string[] days = Array.Empty<string>();
+    Models.Planning selectedPlanning = new Models.Planning();
+    int daysSinceMonday;
+    DateOnly monday;
+    DateOnly friday;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        daysSinceMonday = ((int)BaseDate.DayOfWeek + 6) % 7;
+        monday = BaseDate.AddDays(-daysSinceMonday);
+        friday = monday.AddDays(4);
+        days = GetWeekDays();
+        if (User.Plannings.Count != 0)
+        {
+            if (WeekId != null)
+            {
+                selectedPlanning = User.Plannings.Where(p => p.Id == WeekId).FirstOrDefault();
+            }
+            else
+            {
+                selectedPlanning = User.Plannings.Where(p => p.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && p.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue)).FirstOrDefault();
+            }
+        }
+        else
+        {
+            selectedPlanning.CreatedAt = DateTime.Today;
+        }
+    }
+
+    private string[] GetWeekDays()
+    {
+        var culture = System.Globalization.CultureInfo.GetCultureInfo("fr-FR");
+
+        return Enumerable.Range(0, 5)
+                         .Select(offset =>
+                         {
+                             var dayName = monday.AddDays(offset).ToString("dddd", culture);
+                             return char.ToUpper(dayName[0]) + dayName.Substring(1);
+                         })
+                         .ToArray();
+    }
+}

@@ -81,40 +81,7 @@
             </MudItem>
             <MudItem xs="12">
                 <MudPaper Elevation="2" Class="p-4 mb-6">
-                    <MudPaper Elevation="2" Class="p-4 mb-6">
-                        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-                            <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary" />
-                            <MudText Typo="Typo.h6">Semaine du @selectedPlanning.CreatedAt.AddDays(-((int)selectedPlanning.CreatedAt.DayOfWeek == 0 ? 6 : (int)selectedPlanning.CreatedAt.DayOfWeek - 1)).ToShortDateString()</MudText>
-                        </MudStack>
-                        <div>
-                            <div class="drop-row my-2">
-                                @foreach (var day in days)
-                                {
-                                    <div style="text-align:center; font-weight:bold;">
-                                        @day
-                                    </div>
-                                }
-                            </div>
-                            @for (int row = 0; row < 2; row++)
-                            {
-                                <div class="drop-row">
-                                    @for (int col = 0; col < 5; col++)
-                                    {
-                                        var planningKey = $"planning{row}{col}";
-                                        var task = selectedPlanning.PlanningsTasks
-                                        .FirstOrDefault(t => t.Identifier == planningKey);
-
-                                        <MudPaper Class="ma-4 w-100 d-flex align-items-center justify-center" Style="height:70px; background: linear-gradient(to right, #fef2f2, #fee2e2);">
-                                            @if (task is not null)
-                                            {
-                                                <MudText Typo="Typo.subtitle1" Class="ma-2">@task.Task.Title</MudText>
-                                            }
-                                        </MudPaper>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    </MudPaper>
+                    <PlanningDetails User="commercial" WeekId="Convert.ToInt32(weekId)" BaseDate="baseDate"/>
                     <MudTabs @bind-ActivePanelIndex="_activeTab" Rounded="true" Centered="true" MinimumTabWidth="400px" ActiveTabClass="bg-primary bg-opacity-10">
                         <MudTabPanel Text="Briefing de la semaine">
                             <MudGrid Class="mt-4">
@@ -249,11 +216,9 @@
     public User userInfo => stateContainerService.UserInfo;
     decimal turnover = 0;
     decimal bonus = 0;
-    DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+    DateOnly baseDate = DateOnly.FromDateTime(DateTime.Today);
     List<TempClass> allContracts = new();
     User commercial = new User();
-    Models.Planning selectedPlanning = new Models.Planning();
-    private string[] days = Array.Empty<string>();
     int daysSinceMonday;
     DateOnly monday;
     DateOnly friday;
@@ -270,18 +235,10 @@
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
         commercial = await userService.GetUserByIdAsync(Convert.ToInt32(userId));
-        daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
-        monday = today.AddDays(-daysSinceMonday);
+        daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
+        monday = baseDate.AddDays(-daysSinceMonday);
         friday = monday.AddDays(4);
-        days = GetWeekDays();
-        if (commercial.Plannings.Count != 0)
-        {
-            selectedPlanning = commercial.Plannings.Where(p => p.Id == Convert.ToInt32(weekId)).FirstOrDefault();
-        }
-        else
-        {
-            selectedPlanning.CreatedAt = DateTime.Today;
-        }
+       
         briefs = await briefService.GetBriefByUserId(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
         debriefs = await debriefService.GetDebriefByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
 
@@ -308,8 +265,8 @@
             label = "Sécurité",
             contracts = allContractsRaw.Where(c => c.Sécurité == "OUI").ToList()
         });
-        var nbAppointmentsRealised = await userService.GetNbAppointmentsAsync(commercial.Email, monday, today);
-        var nbAppointmentsOnGoing = await userService.GetNbAppointmentsAsync(commercial.Email, today, friday);
+        var nbAppointmentsRealised = await userService.GetNbAppointmentsAsync(commercial.Email, monday, baseDate);
+        var nbAppointmentsOnGoing = await userService.GetNbAppointmentsAsync(commercial.Email, baseDate, friday);
         appointmentData = new double[] { nbAppointmentsOnGoing, nbAppointmentsRealised };
     }
 
