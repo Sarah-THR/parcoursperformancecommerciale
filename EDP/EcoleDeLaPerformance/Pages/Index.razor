@@ -44,6 +44,15 @@
             <MudItem xs="12" md="4">
                 <MetricCard Title="Rendez-vous à venir" Value="@nbAppointments.ToString()" Progress="100" Color="Color.Info" Icon="@Icons.Material.Filled.CalendarToday" Subtitle="RENDEZ-VOUS" />
             </MudItem>
+            <MudItem xs="12" md="8">
+                <MudPaper Elevation="2" Class="p-4 mb-6">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary" />
+                        <MudText Typo="Typo.h6">Semaine du @selectedPlanning.CreatedAt.AddDays(-((int)selectedPlanning.CreatedAt.DayOfWeek == 0 ? 6 : (int)selectedPlanning.CreatedAt.DayOfWeek - 1)).ToShortDateString()</MudText>
+                    </MudStack>
+                    
+                </MudPaper>
+            </MudItem>
         </MudGrid>
     </MudPaper>
 
@@ -103,9 +112,16 @@
     DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
     List<Brief?> briefs = new();
     List<EcolePerformanceSm?> contracts = new();
+    Models.Planning selectedPlanning = new Models.Planning();
+    private string[] days = Array.Empty<string>();
+    DateOnly monday;
+    DateOnly friday;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
+        var daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
+        monday = today.AddDays(-daysSinceMonday);
+        friday = monday.AddDays(4);
         turnover = await userService.GetUserTurnoverAsync(userInfo.Name, firstMonthDay, lastMonthDay);
         bonus = await userService.GetUserBonusAsync(userInfo.Name, firstMonthDay, lastMonthDay);
         nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.Email, firstMonthDay, lastMonthDay);
@@ -117,5 +133,13 @@
                 (double)contracts.Count(c => c.Maintenance == "OUI"),
                 (double)contracts.Count(c => c.Sécurité == "OUI")
             };
+        if (userInfo.Plannings.Count != 0)
+        {
+            selectedPlanning = userInfo.Plannings.Where(p => p.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && p.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue)).FirstOrDefault();
+        }
+        else
+        {
+            selectedPlanning.CreatedAt = DateTime.Today;
+        }
     }
 }
