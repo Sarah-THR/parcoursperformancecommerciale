@@ -3,7 +3,7 @@
     opacity: 0.9 !important;
 }
 
-::deep #divContainer{
+::deep #divContainer {
     background-image: url(../images/vector.png);
     background-size: contain;
     background-repeat: no-repeat;

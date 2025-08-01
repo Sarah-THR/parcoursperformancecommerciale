@@ -1,4 +1,4 @@
-﻿@page "/support/{categoryId}"
+﻿@page "/supports/{categoryId}"
 @using EcoleDeLaPerformance.Ui.Interfaces
 @using EcoleDeLaPerformance.Ui.Models
 @inject NavigationManager navigationManager
@@ -10,7 +10,7 @@
 
 <div class="px-6">
     <MudPaper Class="p-4 mb-6 align-content-center">
-        <MudButton OnClick='() => navigationManager.NavigateTo("/support")'
+        <MudButton OnClick='() => navigationManager.NavigateTo("/supports")'
                    Target="_blank"
                    Variant="Variant.Text"
                    StartIcon="@Icons.Material.Filled.ArrowBack"

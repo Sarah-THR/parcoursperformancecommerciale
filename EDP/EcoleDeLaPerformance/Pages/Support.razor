@@ -1,4 +1,4 @@
-﻿@page "/support"
+﻿@page "/supports"
 @using EcoleDeLaPerformance.Ui.Interfaces
 @using EcoleDeLaPerformance.Ui.Models
 @using EcoleDeLaPerformance.Ui.Services
@@ -8,7 +8,7 @@
 @inject IJSRuntime JSRuntime
 @inject ICategoryService categoryService
 
-<PageTitle>Support</PageTitle>
+<PageTitle>Supports</PageTitle>
 
 <div class="px-6">
     <MudPaper Class="p-4 mb-6 align-content-center" Height="800px" id="divContainer">
@@ -53,7 +53,7 @@
 
     async void OnItemClick(int itemId)
     {
-        navigationManager.NavigateTo($"/support/{itemId}");
+        navigationManager.NavigateTo($"/supports/{itemId}");
     }
 
     void OnELearningClick()

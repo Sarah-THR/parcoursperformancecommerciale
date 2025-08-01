@@ -14,7 +14,6 @@
     <None Remove="Pages\Planning.razor.css" />
     <None Remove="Pages\ManageContent.razor.css" />
     <None Remove="Pages\Profile.razor.css" />
-    <None Remove="Pages\Utils.razor.css" />
     <None Remove="Shared\Component\Collapse.razor.css" />
     <None Remove="Shared\Component\PeriodInfo.razor.css" />
     <None Remove="Shared\Component\StudentDetails.razor.css" />
@@ -28,7 +27,6 @@
     <Content Include="Pages\Planning.razor.css" />
     <Content Include="Pages\ManageContent.razor.css" />
     <Content Include="Pages\Profile.razor.css" />
-    <Content Include="Pages\Utils.razor.css" />
     <Content Include="Shared\Component\Collapse.razor.css" />
     <Content Include="Shared\LandingPage.razor.css" />
     <Content Include="Shared\UnknowUser.razor.css" />
