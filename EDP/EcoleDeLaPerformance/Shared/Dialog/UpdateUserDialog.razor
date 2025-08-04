@@ -34,30 +34,33 @@
                             }
                         </MudSelect>
                     </MudItem>
-                    <MudItem md="4" lg="4" sm="12">
-                        <MudSelect T="string" Label="Statut" Dense="true" @bind-Value="selectedGrade" Clearable Required RequiredError="Statut obligatoire !">
-                            @foreach (var grade in gradeList)
-                            {
-                                <MudSelectItem Value="@grade.Id.ToString()">@grade.Name</MudSelectItem>
-                            }
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem md="4" lg="4" sm="12">
-                        <MudSelect T="string" Label="Superviseur" Dense="true" TextChanged="() => SelectSupervisor(selectedSupervisor)" @bind-Value="selectedSupervisor" Clearable Required RequiredError="Manager obligatoire !">
-                            @{
-                                if (supervisorList != null && supervisorList.Count != 0)
+                    @if (roleList.Where(x => x.Id == Convert.ToInt32(selectedRole)).Select(x => x.Name).FirstOrDefault() == "Commercial")
+                    {
+                        <MudItem md="4" lg="4" sm="12">
+                            <MudSelect T="string" Label="Statut" Dense="true" @bind-Value="selectedGrade" Clearable Required RequiredError="Statut obligatoire !">
+                                @foreach (var grade in gradeList)
                                 {
-                                    foreach (var supervisor in supervisorList)
+                                    <MudSelectItem Value="@grade.Id.ToString()">@grade.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem md="4" lg="4" sm="12">
+                            <MudSelect T="string" Label="Superviseur" Dense="true" TextChanged="() => SelectSupervisor(selectedSupervisor)" @bind-Value="selectedSupervisor" Clearable Required RequiredError="Manager obligatoire !">
+                                @{
+                                    if (supervisorList != null && supervisorList.Count != 0)
                                     {
-                                        <MudSelectItem Value="@supervisor.Id.ToString()">@(supervisor.Name.ToUpper())</MudSelectItem>
+                                        foreach (var supervisor in supervisorList)
+                                        {
+                                            <MudSelectItem Value="@supervisor.Id.ToString()">@(supervisor.Name.ToUpper())</MudSelectItem>
+                                        }
                                     }
                                 }
-                            }
-                        </MudSelect>
-                    </MudItem>
-                    <MudItem md="4" lg="4" sm="12">
-                        <MudDatePicker Label="Date début suivi" @bind-Date="StartFollowUpDateTime" ReadOnly Disabled />
-                    </MudItem>
+                            </MudSelect>
+                        </MudItem>
+                        <MudItem md="4" lg="4" sm="12">
+                            <MudDatePicker Label="Date début suivi" @bind-Date="StartFollowUpDateTime" ReadOnly Disabled />
+                        </MudItem>
+                    }
                 </MudGrid>
             </MudForm>
         </DialogContent>
@@ -97,10 +100,10 @@
         model = studentInfo;
         if (studentInfo.Supervisor != null)
         {
-            selectedSupervisor = studentInfo.Supervisor.Name;
-            selectedGrade = studentInfo.Grade.Name;
-            selectedRole = studentInfo.Role.Name;
+            selectedSupervisor = studentInfo.Supervisor.Id.ToString();
+            selectedGrade = studentInfo.Grade.Id.ToString();
         }
+        selectedRole = studentInfo.Role.Id.ToString();
 
         usersList = await userService.GetUsersAsync();
         roleList = await roleService.GetRolesAsync();
@@ -128,11 +131,14 @@
                     Email = model.Email,
                     Name = model.Name,
                     Entity = model.Entity,
-                    SupervisorId = Convert.ToInt32(selectedSupervisor),
                     RoleId = Convert.ToInt32(selectedRole),
-                    GradeId = Convert.ToInt32(selectedGrade),
-                    StartFollowUp = DateOnly.FromDateTime(StartFollowUpDateTime.Value),
                 };
+                if (roleList.Where(x => x.Id == Convert.ToInt32(selectedRole)).Select(x => x.Name).FirstOrDefault() == "Commercial")
+                {
+                    newUser.SupervisorId = Convert.ToInt32(selectedSupervisor);
+                    newUser.GradeId = Convert.ToInt32(selectedGrade);
+                    newUser.StartFollowUp = DateOnly.FromDateTime(StartFollowUpDateTime.Value);
+                }
                 await userService.UpdateUserAsync(newUser);
                 snackbar.Add("Les informations de l'utilisateur ont bien été modifiées !", Severity.Success);
                 mudDialog.Close(DialogResult.Ok(true));
