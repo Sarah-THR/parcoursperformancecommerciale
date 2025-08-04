@@ -1,12 +1,9 @@
-using ApexCharts;
 using BlazorDownloadFile;
 using EcoleDeLaPerformance.Ui.Helper;
 using EcoleDeLaPerformance.Ui.Interfaces;
 using EcoleDeLaPerformance.Ui.Services;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using MudBlazor;
@@ -31,6 +28,7 @@ builder.Services.AddControllersWithViews()
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("SuperviseurOnly", policy => policy.RequireRole("Superviseur"));
     options.AddPolicy("AdminOrDirecteurPolicy", policy => policy.RequireRole("Admin", "Directeur"));
     options.AddPolicy("AdminOrCommercialPolicy", policy => policy.RequireRole("Admin", "Commercial"));
     options.AddPolicy("AdminOrSuperviseurOrDirecteurPolicy", policy => policy.RequireRole("Admin", "Superviseur", "Directeur"));

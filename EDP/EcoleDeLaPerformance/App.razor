@@ -1,5 +1,5 @@
 ﻿<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Program).Assembly">
+    <Router AppAssembly="@typeof(Program).Assembly" OnNavigateAsync="HandleNavigation">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
@@ -12,3 +12,21 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+@code {
+    [Inject] public AuthenticationStateProvider AuthProvider { get; set; }
+    [Inject] public NavigationManager Navigation { get; set; }
+
+    private async Task HandleNavigation(Microsoft.AspNetCore.Components.Routing.NavigationContext context)
+    {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            if (context.Path == "" && user.IsInRole("Superviseur"))
+            {
+                Navigation.NavigateTo("/commercials", true);
+            }
+        }
+    }
+}

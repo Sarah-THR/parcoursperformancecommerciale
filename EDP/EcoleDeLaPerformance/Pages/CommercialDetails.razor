@@ -10,6 +10,7 @@
 @inject IContractService contractService
 @inject IBriefService briefService
 @inject IDebriefService debriefService
+@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <div class="px-6">
     <MudPaper Elevation="1" Class="p-4 mb-6">

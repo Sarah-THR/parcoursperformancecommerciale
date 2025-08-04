@@ -1,0 +1,82 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@inject StateContainerService stateContainerService
+@inject NavigationManager navigationManager
+@inject IUserService userService
+@page "/commercials"
+@attribute [Authorize(Policy = "AdminOrSuperviseurOrDirecteurPolicy")]
+
+<div class="px-6">
+    <MudPaper Elevation="1" Class="p-4 mb-6">
+        <MudTable T="User" OnRowClick="RowClickEvent" Items="@filteredUserList" Dense="true" Hover="true" Filter="new Func<User, bool>(FilterFunc1)" HeaderClass="bg-primary bg-opacity-10" Elevation="0" RowClass="cursor-pointer">
+            <ToolBarContent>
+                <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                <MudSpacer />
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Prénom Nom</MudTh>
+                <MudTh>Statut</MudTh>
+                <MudTh>Superviseur</MudTh>
+                <MudTh>Entité/Site</MudTh>
+                <MudTh>CA généré</MudTh>
+                <MudTh>Variable</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Prénom Nom">@context.Name</MudTd>
+                <MudTd DataLabel="Statut">@context.Grade?.Name</MudTd>
+                <MudTd DataLabel="Superviseur">@context.Supervisor?.Name</MudTd>
+                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
+                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
+                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
+                               RowsPerPageString="Lignes par page"
+                               InfoFormat="{first_item}-{last_item} sur {all_items}"
+                               AllItemsText="Tous" />
+            </PagerContent>
+        </MudTable>
+    </MudPaper>
+</div>
+
+@code {
+    public User userInfo => stateContainerService.UserInfo;
+    List<User?> usersList = new List<User?>();
+    List<User?> filteredUserList = new List<User?>();
+    User selectedUser = new User();
+    private string searchString = "";
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        var users = await userService.GetUsersAsync();
+        usersList = users.Where(x => x.SupervisorId == userInfo.Id).ToList();
+        filteredUserList = usersList;
+    }
+
+    private bool FilterFunc1(User element) => FilterFunc(element, searchString);
+
+    private bool FilterFunc(User element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private async void RowClickEvent(TableRowClickEventArgs<User> tableRowClickEventArgs)
+    {
+        if (tableRowClickEventArgs != null)
+        {
+            selectedUser = tableRowClickEventArgs.Item;
+
+            var daysSinceMonday = ((int)DateTime.Now.DayOfWeek + 6) % 7;
+            var monday = DateTime.Now.AddDays(-daysSinceMonday);
+            var friday = monday.AddDays(4);
+
+            var planningId = selectedUser.Plannings.Where(x => x.CreatedAt >= monday && x.CreatedAt <= friday).Select(x => x.Id).FirstOrDefault();
+            navigationManager.NavigateTo($"/history/{selectedUser.Id}/{planningId}");
+        }
+    }
+}

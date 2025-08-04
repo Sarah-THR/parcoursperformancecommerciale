@@ -59,7 +59,7 @@
                                     </MudGrid>
                                 </MudPaper>
                                 <div class="d-flex">
-                                    <MudDrawer Elevation="0" Width="125px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
+                                    <MudDrawer Elevation="0" Width="128px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
                                         <MudNavMenu Class="p-2">
                                             <AuthorizedPolicyView Policy="AdminOrCommercialOrDirecteurPolicy">
                                                 <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">
@@ -85,6 +85,11 @@
                                             <MudNavLink Href="/supports" Icon="@Icons.Material.Outlined.AutoStories" Class="linkmenu">
                                                 Supports
                                             </MudNavLink>
+                                            <AuthorizedPolicyView Policy="AdminOrSuperviseurOrDirecteurPolicy">
+                                                <MudNavLink Href="/commercials" Icon="@Icons.Material.Outlined.Groups" Class="linkmenu">
+                                                    Gérer mon équipe
+                                                </MudNavLink>
+                                            </AuthorizedPolicyView>
                                             <AuthorizedPolicyView Policy="AdminOnly">
                                                 <MudNavLink Href="/users" Icon="@Icons.Material.Outlined.People" Class="linkmenu">
                                                     Utilisateurs
