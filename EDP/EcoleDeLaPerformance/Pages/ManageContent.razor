@@ -12,6 +12,7 @@
 @inject IDocumentService documentService
 @inject IJSRuntime JSRuntime
 @page "/managecontent"
+@attribute [Authorize(Policy = "AdminOnly")]
 
 <div class="px-6">
     <MudPaper Elevation="1" Class="p-4 mb-6">

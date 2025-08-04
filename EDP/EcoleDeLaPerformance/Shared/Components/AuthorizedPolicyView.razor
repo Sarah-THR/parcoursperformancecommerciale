@@ -1,0 +1,23 @@
+﻿@inject IAuthorizationService AuthorizationService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@if (isAuthorized)
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public string Policy { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool isAuthorized;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var result = await AuthorizationService.AuthorizeAsync(user, Policy);
+        isAuthorized = result.Succeeded;
+    }
+}

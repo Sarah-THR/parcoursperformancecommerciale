@@ -9,6 +9,7 @@
 @inject IBriefService briefService
 @inject IContractService contractService
 @page "/"
+@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <PageTitle>Tableau de bord</PageTitle>
 

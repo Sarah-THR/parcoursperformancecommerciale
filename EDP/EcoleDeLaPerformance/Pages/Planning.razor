@@ -9,6 +9,7 @@
 @inject IPlanningService planningService
 @inject ISnackbar snackbar
 @inject NavigationManager NavigationManager
+@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <PageTitle>Activitées</PageTitle>
 

@@ -9,6 +9,7 @@
 @inject IUserService userService
 @inject NavigationManager navigationManager
 @page "/history"
+@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <PageTitle>Historique</PageTitle>
 

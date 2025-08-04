@@ -1,15 +1,17 @@
+using ApexCharts;
+using BlazorDownloadFile;
+using EcoleDeLaPerformance.Ui.Helper;
 using EcoleDeLaPerformance.Ui.Interfaces;
 using EcoleDeLaPerformance.Ui.Services;
-using MudBlazor.Services;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using MudBlazor;
-using Microsoft.AspNetCore;
-using EcoleDeLaPerformance.Ui.Helper;
-using ApexCharts;
-using Microsoft.AspNetCore.Http.Features;
-using BlazorDownloadFile;
+using MudBlazor.Services;
+using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -28,7 +30,15 @@ builder.Services.AddControllersWithViews()
 
 builder.Services.AddAuthorization(options =>
 {
-    //options.FallbackPolicy = options.DefaultPolicy;
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("AdminOrDirecteurPolicy", policy => policy.RequireRole("Admin", "Directeur"));
+    options.AddPolicy("AdminOrCommercialPolicy", policy => policy.RequireRole("Admin", "Commercial"));
+    options.AddPolicy("AdminOrSuperviseurOrDirecteurPolicy", policy => policy.RequireRole("Admin", "Superviseur", "Directeur"));
+    options.AddPolicy("AdminOrCommercialOrDirecteurPolicy", policy => policy.RequireRole("Admin", "Commercial", "Directeur"));
+
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
 // Add services to the container.
@@ -92,6 +102,26 @@ catch (Exception e)
 }
 
 app.UseAuthentication();
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var email = context.User.Identity.Name;
+
+        using var scope = app.Services.CreateScope();
+        var userService = scope.ServiceProvider.GetRequiredService<IUserService>();
+        var user = await userService.GetUserByEmailAsync(email);
+
+        var identity = context.User.Identity as ClaimsIdentity;
+
+        if (identity != null && !identity.HasClaim(c => c.Type == ClaimTypes.Role))
+        {
+            identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.Name));
+        }
+    }
+
+    await next();
+});
 app.UseAuthorization();
 
 // Configure the HTTP request pipeline.

@@ -1,5 +1,6 @@
 ﻿@page "/brief"
 @using EcoleDeLaPerformance.Ui.Shared.Components;
+@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <PageTitle>Brief/Debrief</PageTitle>
 

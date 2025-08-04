@@ -9,6 +9,7 @@
 @inject ISnackbar Snackbar
 @inject NavigationManager NavigationManager
 @page "/users"
+@attribute [Authorize(Policy = "AdminOnly")]
 
 <div class="px-6">
     <MudPaper Elevation="1" Class="p-4 mb-6">
