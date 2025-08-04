@@ -5,58 +5,68 @@
 @using System.ComponentModel.DataAnnotations
 @inject ISnackbar snackbar
 @inject IUserService userService
+@inject IRoleService roleService
+@inject IGradeService gradeService
 @inject MailHelper mailHelper
 
-<MudDialog>
-    <DialogContent>
-        <MudForm @ref="form" Model="model">
-            <MudGrid>
-                <MudItem md="4" lg="4" sm="12">
-                    <MudTextField Label="Email" Immediate="true"
-                                  @bind-Value="model.Email" For="@(() => model.Email)" Validation="@(new EmailAddressAttribute() { ErrorMessage = "Veuillez saisir une adresse email valide" })" Required RequiredError="Email obligatoire !" TextChanged="() => HandleSearchChange(model.Email)" />
-                </MudItem>
-                <MudItem md="4" lg="4" sm="12">
-                    <MudTextField Label="Nom"
-                                  @bind-Value="model.Name" For="@(() => model.Name)" Required RequiredError="Prénom Nom obligatoire !" />
-                </MudItem>
-                <MudItem md="4" lg="4" sm="12">
-                    <MudTextField Label="Entité/Site"
-                                  @bind-Value="model.Entity" For="@(() => model.Entity)" Required RequiredError="Entité/Site obligatoire !" />
-                </MudItem>
-                <MudItem md="4" lg="4" sm="12">
-                    <MudSelect T="string" Label="Role" Dense="true" @bind-Value="selectedRole" Clearable Required RequiredError="Role obligatoire !">
-                        @foreach (var role in roleList)
-                        {
-                            <MudSelectItem Value="@role">@role</MudSelectItem>
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem md="4" lg="4" sm="12">
-                    <MudSelect T="string" Label="Manager" Dense="true" TextChanged="() => SelectSupervisor(selectedSupervisor)" @bind-Value="selectedSupervisor" Clearable Required RequiredError="Manager obligatoire !">
-                        @{
-                            if (supervisorList != null && supervisorList.Count != 0)
+@if (isInitialized)
+{
+    <MudDialog>
+        <DialogContent>
+            <MudForm @ref="form" Model="model">
+                <MudGrid>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudTextField Label="Email" Immediate="true"
+                                      @bind-Value="model.Email" For="@(() => model.Email)" Validation="@(new EmailAddressAttribute() { ErrorMessage = "Veuillez saisir une adresse email valide" })" Required RequiredError="Email obligatoire !" TextChanged="() => HandleSearchChange(model.Email)" />
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudTextField Label="Nom"
+                                      @bind-Value="model.Name" For="@(() => model.Name)" Required RequiredError="Prénom Nom obligatoire !" />
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudTextField Label="Entité/Site"
+                                      @bind-Value="model.Entity" For="@(() => model.Entity)" Required RequiredError="Entité/Site obligatoire !" />
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudSelect T="string" Label="Role" Dense="true" @bind-Value="selectedRole" Clearable Required RequiredError="Role obligatoire !">
+                            @foreach (var role in roleList)
                             {
-                                foreach (var supervisor in supervisorList)
+                                <MudSelectItem Value="@role.Id.ToString()">@role.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudSelect T="string" Label="Statut" Dense="true" @bind-Value="selectedGrade" Clearable Required RequiredError="Statut obligatoire !">
+                            @foreach (var grade in gradeList)
+                            {
+                                <MudSelectItem Value="@grade.Id.ToString()">@grade.Name</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudSelect T="string" Label="Superviseur" Dense="true" TextChanged="() => SelectSupervisor(selectedSupervisor)" @bind-Value="selectedSupervisor" Clearable Required RequiredError="Manager obligatoire !">
+                            @{
+                                if (supervisorList != null && supervisorList.Count != 0)
                                 {
-                                    <MudSelectItem Value="@(supervisor.ToUpper())" />
+                                    foreach (var supervisor in supervisorList)
+                                    {
+                                        <MudSelectItem Value="@supervisor.Id.ToString()">@(supervisor.Name.ToUpper())</MudSelectItem>
+                                    }
                                 }
                             }
-                        }
-                    </MudSelect>
-                </MudItem>
-                <MudItem md="4" lg="4" sm="12">
-                    <MudDatePicker Label="Date début suivi" @bind-Date="startDate" TextChanged="DatePickerTextChanged" Required RequiredError="Date obligatoire !" />
-                </MudItem>
-                <MudItem md="4" lg="4" sm="12">
-                    <MudDatePicker Label="Date fin de suivi" @bind-Date="endDate" For="@(() => endDate)" Disabled ReadOnly />
-                </MudItem>
-            </MudGrid>
-        </MudForm>
-    </DialogContent>
-    <DialogActions>
-        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Confirm">Valider</MudButton>
-    </DialogActions>
-</MudDialog>
+                        </MudSelect>
+                    </MudItem>
+                    <MudItem md="4" lg="4" sm="12">
+                        <MudDatePicker Label="Date début suivi" @bind-Date="startDate" Required RequiredError="Date obligatoire !" />
+                    </MudItem>
+                </MudGrid>
+            </MudForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Confirm">Valider</MudButton>
+        </DialogActions>
+    </MudDialog>
+}
 
 @code {
     [CascadingParameter] IMudDialogInstance mudDialog { get; set; }
@@ -67,36 +77,28 @@
     User model = new User();
     private MudForm form;
     public string? selectedRole { get; set; }
+    public string? selectedGrade { get; set; }
     public string? selectedSupervisor;
     DateTime? startDate = null;
-    public DateTime? endDate;
-    public List<string> roleList { get; } = new List<string> { "Commercial", "Directeur", "Superviseur" };
-    public List<string> supervisorList = new List<string>();
+    public List<Role> roleList;
+    public List<Grade> gradeList;
+    public List<User> supervisorList = new List<User>();
     public List<User> usersList = new List<User>();
+    private bool isInitialized { get; set; }
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
         usersList = await userService.GetUsersAsync();
-        supervisorList = usersList.Where(x => x.DeletedAt == null).Select(x => x.Name).ToList();
+        roleList = await roleService.GetRolesAsync();
+        gradeList = await gradeService.GetGradesAsync();
+        supervisorList = usersList.Where(x => x.DeletedAt == null && x.Role.Name == "Superviseur").ToList();
+        isInitialized = true;
     }
 
     private async System.Threading.Tasks.Task SelectSupervisor(string value)
     {
         selectedSupervisor = value;
         StateHasChanged();
-    }
-
-    private void DatePickerTextChanged(string value)
-    {
-        if (value == null || value.Length < 6)
-        {
-            endDate = null;
-        }
-        else
-        {
-            startDate = Convert.ToDateTime(value);
-            endDate = startDate?.AddMonths(6);
-        }
     }
 
     async System.Threading.Tasks.Task HandleSearchChange(string value)
@@ -133,12 +135,14 @@
             await form.Validate();
             if (form.IsValid)
             {
-                User? supervisor = usersList.Where(x => (x.Name.ToUpper()) == selectedSupervisor).First();
                 User newUser = new User()
                 {
                     Email = model.Email,
                     Name = model.Name,
                     Entity = model.Entity,
+                    SupervisorId = Convert.ToInt32(selectedSupervisor),
+                    RoleId = Convert.ToInt32(selectedRole),
+                    GradeId = Convert.ToInt32(selectedGrade),
                     StartFollowUp = DateOnly.FromDateTime(startDate.Value),
                 };
 

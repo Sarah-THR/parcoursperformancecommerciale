@@ -31,7 +31,9 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.UserUC.Commands
             user.Entity = command.user.Entity;
             user.ProfilePicturePath = command.user.ProfilePicturePath;
             user.Email = command.user.Email;
-            user.Supervisor = command.user.Supervisor;
+            user.SupervisorId = command.user.SupervisorId;
+            user.RoleId = command.user.RoleId;
+            user.GradeId = command.user.GradeId;
             user.DeletedAt = command.user.DeletedAt;
             return await _userWriteRepository.UpdateUserAsync(user);
         }
