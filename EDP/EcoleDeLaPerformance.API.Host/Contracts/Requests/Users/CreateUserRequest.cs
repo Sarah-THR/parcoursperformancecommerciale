@@ -12,6 +12,8 @@
 
         public DateOnly? StartFollowUp { get; set; }
 
+        public int? RoleId { get; set; }
+
         public int? SupervisorId { get; set; }
 
         public int? DirectorId { get; set; }

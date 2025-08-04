@@ -14,6 +14,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
         public async Task<User?> GetUserByEmailAsync(string userEmail)
         {
             return await _parcoursPerformanceCommercialeContext.Users
+                .Include(u => u.Role)
                 .Include(u => u.Grade)
                 .Include(u => u.Supervisor)
                 .Include(u => u.Director)
@@ -34,6 +35,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
         {
             return await _parcoursPerformanceCommercialeContext.Users
                 .Include(u => u.Grade)
+                .Include(u => u.Role)
                 .Include(u => u.Supervisor)
                 .Include(u => u.Director)
                 .Include(u => u.UsersFormations)
@@ -53,6 +55,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
         {
             return await _parcoursPerformanceCommercialeContext.Users
                 .Include(u => u.Grade)
+                .Include(u => u.Role)
                 .Include(u => u.Supervisor)
                 .Include(u => u.Director)
                 .Include(u => u.UsersFormations)

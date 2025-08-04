@@ -51,6 +51,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure._Helpers
             services.AddScoped<IDocumentReadRepository, DocumentReadRepository>();
             services.AddScoped<IDebitAccountReadRepository, DebitAccountReadRepository>();
             services.AddScoped<IContractReadRepository, ContractReadRepository>();
+            services.AddScoped<IRoleReadRepository, RoleReadRepository>();
         }
     }
 }

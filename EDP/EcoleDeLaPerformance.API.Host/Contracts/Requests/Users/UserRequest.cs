@@ -17,6 +17,8 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Requests.Users
 
         public int? SupervisorId { get; set; }
 
+        public int? RoleId { get; set; }
+
         public int? DirectorId { get; set; }
 
         public DateTime CreatedAt { get; set; }

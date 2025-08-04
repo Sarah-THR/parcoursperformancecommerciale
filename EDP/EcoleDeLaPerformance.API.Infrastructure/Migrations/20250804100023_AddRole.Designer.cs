@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
 {
     [DbContext(typeof(ParcoursPerformanceCommercialeContext))]
-    [Migration("20250729075923_PreprodCreate")]
-    partial class PreprodCreate
+    [Migration("20250804100023_AddRole")]
+    partial class AddRole
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,19 +41,16 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                         .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("FilesToCheck")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("files_to_check");
 
                     b.Property<string>("Note")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("note");
 
                     b.Property<string>("SignatureCommitment")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("signature_commitment");
@@ -119,13 +116,11 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BusinessInProgress")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("business_in_progress");
 
                     b.Property<string>("CompletedBusiness")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("completed_business");
@@ -378,6 +373,39 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                     b.ToTable("plannings_tasks", (string)null);
                 });
 
+            modelBuilder.Entity("EcoleDeLaPerformance.API.Core.Domain.Entities.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.HasKey("Id")
+                        .HasName("PK__roles__3213E83F8BFA154D");
+
+                    b.ToTable("roles", (string)null);
+                });
+
             modelBuilder.Entity("EcoleDeLaPerformance.API.Core.Domain.Entities.Status", b =>
                 {
                     b.Property<int>("Id")
@@ -499,6 +527,9 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("profile_picture_path");
 
+                    b.Property<int?>("RoleId")
+                        .HasColumnType("int");
+
                     b.Property<DateOnly?>("StartFollowUp")
                         .HasColumnType("date")
                         .HasColumnName("start_follow_up");
@@ -519,6 +550,8 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                     b.HasIndex("DirectorId");
 
                     b.HasIndex("GradeId");
+
+                    b.HasIndex("RoleId");
 
                     b.HasIndex("SupervisorId");
 
@@ -669,6 +702,12 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("FK_users_grade");
 
+                    b.HasOne("EcoleDeLaPerformance.API.Core.Domain.Entities.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("FK_users_role");
+
                     b.HasOne("EcoleDeLaPerformance.API.Core.Domain.Entities.User", "Supervisor")
                         .WithMany("InverseSupervisor")
                         .HasForeignKey("SupervisorId")
@@ -677,6 +716,8 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                     b.Navigation("Director");
 
                     b.Navigation("Grade");
+
+                    b.Navigation("Role");
 
                     b.Navigation("Supervisor");
                 });
@@ -752,6 +793,11 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
             modelBuilder.Entity("EcoleDeLaPerformance.API.Core.Domain.Entities.Planning", b =>
                 {
                     b.Navigation("PlanningsTasks");
+                });
+
+            modelBuilder.Entity("EcoleDeLaPerformance.API.Core.Domain.Entities.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("EcoleDeLaPerformance.API.Core.Domain.Entities.Status", b =>

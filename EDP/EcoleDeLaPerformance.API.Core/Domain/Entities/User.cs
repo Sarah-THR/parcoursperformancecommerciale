@@ -26,6 +26,8 @@ public partial class User
 
     public int? GradeId { get; set; }
 
+    public int? RoleId { get; set; }
+
     public virtual ICollection<Brief> Briefs { get; set; } = new List<Brief>();
 
     public virtual ICollection<Debrief> Debriefs { get; set; } = new List<Debrief>();
@@ -35,6 +37,8 @@ public partial class User
     public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
 
     public virtual Grade? Grade { get; set; }
+
+    public virtual Role? Role { get; set; }
 
     public virtual ICollection<User> InverseDirector { get; set; } = new List<User>();
 

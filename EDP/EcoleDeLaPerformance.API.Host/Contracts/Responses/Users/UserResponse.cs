@@ -3,6 +3,7 @@ using EcoleDeLaPerformance.API.Host.Contracts.Responses.Debriefs;
 using EcoleDeLaPerformance.API.Host.Contracts.Responses.Documents;
 using EcoleDeLaPerformance.API.Host.Contracts.Responses.Grades;
 using EcoleDeLaPerformance.API.Host.Contracts.Responses.Plannings;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Roles;
 using EcoleDeLaPerformance.API.Host.Contracts.Responses.UsersFormations;
 
 namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Users
@@ -25,6 +26,8 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Users
 
         public int? DirectorId { get; set; }
 
+        public int? RoleId { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
@@ -42,6 +45,8 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Users
         public virtual ICollection<DocumentResponse>? Documents { get; set; } = new List<DocumentResponse>();
 
         public virtual GradeResponse? Grade { get; set; }
+
+        public virtual RoleResponse? Role { get; set; }
 
         public virtual ICollection<UserResponse>? InverseDirector { get; set; } = new List<UserResponse>();
 

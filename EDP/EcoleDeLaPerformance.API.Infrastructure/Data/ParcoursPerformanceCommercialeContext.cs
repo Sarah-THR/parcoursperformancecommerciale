@@ -40,6 +40,8 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
 
     public virtual DbSet<UsersFormation> UsersFormations { get; set; }
 
+    public virtual DbSet<Role> Roles { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb; Database=ParcoursPerformanceCommerciale; Integrated Security=True; TrustServerCertificate=True;");
@@ -280,6 +282,24 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
                 .HasColumnName("updated_at");
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__roles__3213E83F8BFA154D");
+
+            entity.ToTable("roles");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Name)
+                .HasMaxLength(255)
+                .HasColumnName("name");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("updated_at");
+        });
+
         modelBuilder.Entity<Core.Domain.Entities.Task>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__tasks__3213E83FB9325923");
@@ -342,6 +362,11 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
                 .HasForeignKey(d => d.GradeId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK_users_grade");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Users)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_users_role");
 
             entity.HasOne(d => d.Supervisor).WithMany(p => p.InverseSupervisor)
                 .HasForeignKey(d => d.SupervisorId)
