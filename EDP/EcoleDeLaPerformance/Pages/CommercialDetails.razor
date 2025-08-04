@@ -19,7 +19,7 @@
                    Variant="Variant.Text"
                    StartIcon="@Icons.Material.Filled.ArrowBack"
                    Color="Color.Primary"
-                   Style="text-transform:none" 
+                   Style="text-transform:none"
                    Class="mb-6">
             Retour
         </MudButton>
@@ -82,7 +82,7 @@
             </MudItem>
             <MudItem xs="12">
                 <MudPaper Elevation="2" Class="p-4 mb-6">
-                    <PlanningDetails User="commercial" WeekId="Convert.ToInt32(weekId)" BaseDate="baseDate"/>
+                    <PlanningDetails User="commercial" WeekId="Convert.ToInt32(weekId)" BaseDate="baseDate" />
                     <MudTabs @bind-ActivePanelIndex="_activeTab" Rounded="true" Centered="true" MinimumTabWidth="400px" ActiveTabClass="bg-primary bg-opacity-10">
                         <MudTabPanel Text="Briefing de la semaine">
                             <MudGrid Class="mt-4">
@@ -239,7 +239,7 @@
         daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
         monday = baseDate.AddDays(-daysSinceMonday);
         friday = monday.AddDays(4);
-       
+
         briefs = await briefService.GetBriefByUserId(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
         debriefs = await debriefService.GetDebriefByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
 
@@ -301,7 +301,7 @@
             return Color.Warning;
 
         if (realised < goal)
-            return Color.Success; 
+            return Color.Success;
 
         return Color.Error;
     }
@@ -320,15 +320,8 @@
         return Icons.Material.Filled.Cancel;
     }
 
-    private void GoBack()
+    private async void GoBack()
     {
-        if (userInfo.Role.Name != "Superviseur")
-        {
-            navigationManager.NavigateTo("/history");
-        }
-        else
-        {
-            navigationManager.NavigateTo("/commercials");
-        }
+        await JS.InvokeVoidAsync("history.back");
     }
 }
