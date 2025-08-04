@@ -11,7 +11,5 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Grades
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
-
-        public virtual ICollection<UserResponse> Users { get; set; } = new List<UserResponse>();
     }
 }

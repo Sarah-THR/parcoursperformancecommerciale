@@ -10,11 +10,11 @@
 @inject IContractService contractService
 @inject IBriefService briefService
 @inject IDebriefService debriefService
-@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
+@inject IJSRuntime JS
 
 <div class="px-6">
     <MudPaper Elevation="1" Class="p-4 mb-6">
-        <MudButton OnClick='() => navigationManager.NavigateTo("/history")'
+        <MudButton OnClick='GoBack'
                    Target="_blank"
                    Variant="Variant.Text"
                    StartIcon="@Icons.Material.Filled.ArrowBack"
@@ -26,9 +26,9 @@
         <MudGrid>
             <MudItem xs="12" md="6" Class="d-flex">
                 <MudAvatar Size="Size.Large">
-                    @if (userInfo.ProfilePicturePath != null)
+                    @if (commercial.ProfilePicturePath != null)
                     {
-                        <MudImage Src="@userInfo.ProfilePicturePath"></MudImage>
+                        <MudImage Src="@commercial.ProfilePicturePath"></MudImage>
                     }
                     else
                     {
@@ -318,5 +318,17 @@
             return Icons.Material.Filled.ArrowOutward;
 
         return Icons.Material.Filled.Cancel;
+    }
+
+    private void GoBack()
+    {
+        if (userInfo.Role.Name != "Superviseur")
+        {
+            navigationManager.NavigateTo("/history");
+        }
+        else
+        {
+            navigationManager.NavigateTo("/commercials");
+        }
     }
 }

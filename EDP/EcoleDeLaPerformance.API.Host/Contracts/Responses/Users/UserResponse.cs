@@ -48,10 +48,6 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Users
 
         public virtual RoleResponse? Role { get; set; }
 
-        public virtual ICollection<UserResponse>? InverseDirector { get; set; } = new List<UserResponse>();
-
-        public virtual ICollection<UserResponse>? InverseSupervisor { get; set; } = new List<UserResponse>();
-
         public virtual ICollection<PlanningResponse>? Plannings { get; set; } = new List<PlanningResponse>();
 
         public virtual UserResponse? Supervisor { get; set; }

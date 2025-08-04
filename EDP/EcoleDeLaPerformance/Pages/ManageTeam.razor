@@ -9,74 +9,113 @@
 
 <div class="px-6">
     <MudPaper Elevation="1" Class="p-4 mb-6">
-        <MudTable T="User" OnRowClick="RowClickEvent" Items="@filteredUserList" Dense="true" Hover="true" Filter="new Func<User, bool>(FilterFunc1)" HeaderClass="bg-primary bg-opacity-10" Elevation="0" RowClass="cursor-pointer">
+        <MudTable T="UserWithFinance" OnRowClick="RowClickEvent" Items="@userWithFinanceList" Dense="true" Hover="true"
+                  Filter="new Func<UserWithFinance, bool>(FilterFunc1)" HeaderClass="bg-primary bg-opacity-10" Elevation="0" RowClass="cursor-pointer">
+
             <ToolBarContent>
-                <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
                 <MudSpacer />
             </ToolBarContent>
+
             <HeaderContent>
                 <MudTh>Prénom Nom</MudTh>
                 <MudTh>Statut</MudTh>
                 <MudTh>Superviseur</MudTh>
                 <MudTh>Entité/Site</MudTh>
-                <MudTh>CA généré</MudTh>
-                <MudTh>Variable</MudTh>
+                <MudTh>CA généré ce mois-ci</MudTh>
+                <MudTh>Variable mois actuel</MudTh>
             </HeaderContent>
+
             <RowTemplate>
-                <MudTd DataLabel="Prénom Nom">@context.Name</MudTd>
-                <MudTd DataLabel="Statut">@context.Grade?.Name</MudTd>
-                <MudTd DataLabel="Superviseur">@context.Supervisor?.Name</MudTd>
-                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
-                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
-                <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
+                <MudTd DataLabel="Prénom Nom">@context.User.Name</MudTd>
+                <MudTd DataLabel="Statut">@context.User.Grade?.Name</MudTd>
+                <MudTd DataLabel="Superviseur">@context.User.Supervisor?.Name</MudTd>
+                <MudTd DataLabel="Entité/Site">@context.User.Entity</MudTd>
+                <MudTd DataLabel="CA généré ce mois-ci">@context.Turnover.ToString("C")</MudTd>
+                <MudTd DataLabel="Variable mois actuel">@context.Bonus.ToString("C")</MudTd>
             </RowTemplate>
+
             <PagerContent>
                 <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
                                RowsPerPageString="Lignes par page"
                                InfoFormat="{first_item}-{last_item} sur {all_items}"
                                AllItemsText="Tous" />
             </PagerContent>
+
         </MudTable>
+
     </MudPaper>
 </div>
 
 @code {
     public User userInfo => stateContainerService.UserInfo;
-    List<User?> usersList = new List<User?>();
     List<User?> filteredUserList = new List<User?>();
     User selectedUser = new User();
     private string searchString = "";
+    List<UserWithFinance> userWithFinanceList = new();
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
         var users = await userService.GetUsersAsync();
-        usersList = users.Where(x => x.SupervisorId == userInfo.Id).ToList();
-        filteredUserList = usersList;
+        List<User> filteredUsers;
+        if (userInfo.Role.Name == "Superviseur")
+        {
+            filteredUsers = users.Where(x => x.SupervisorId == userInfo.Id).ToList();
+        }
+        else
+        {
+            filteredUsers = users;
+        }
+
+        DateOnly firstMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
+        DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
+
+        var tasks = filteredUsers.Select(async user =>
+        {
+            var turnover = await userService.GetUserTurnoverAsync(user.Name, firstMonthDay, lastMonthDay);
+            var bonus = await userService.GetUserBonusAsync(user.Name, firstMonthDay, lastMonthDay);
+
+            return new UserWithFinance
+            {
+                User = user,
+                Turnover = turnover,
+                Bonus = bonus
+            };
+        });
+
+        userWithFinanceList = (await System.Threading.Tasks.Task.WhenAll(tasks)).ToList();
+
+        filteredUserList = filteredUsers;
     }
 
-    private bool FilterFunc1(User element) => FilterFunc(element, searchString);
+    private bool FilterFunc1(UserWithFinance element) => FilterFunc(element, searchString);
 
-    private bool FilterFunc(User element, string searchString)
+    private bool FilterFunc(UserWithFinance element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (element.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (element.User.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         return false;
     }
 
-    private async void RowClickEvent(TableRowClickEventArgs<User> tableRowClickEventArgs)
+    private async void RowClickEvent(TableRowClickEventArgs<UserWithFinance> tableRowClickEventArgs)
     {
         if (tableRowClickEventArgs != null)
         {
-            selectedUser = tableRowClickEventArgs.Item;
+            selectedUser = tableRowClickEventArgs.Item.User;
 
-            var daysSinceMonday = ((int)DateTime.Now.DayOfWeek + 6) % 7;
-            var monday = DateTime.Now.AddDays(-daysSinceMonday);
-            var friday = monday.AddDays(4);
-
-            var planningId = selectedUser.Plannings.Where(x => x.CreatedAt >= monday && x.CreatedAt <= friday).Select(x => x.Id).FirstOrDefault();
+            var planningId = selectedUser.Plannings.OrderByDescending(x => x.CreatedAt).Select(x => x.Id).FirstOrDefault();
             navigationManager.NavigateTo($"/history/{selectedUser.Id}/{planningId}");
         }
     }
+
+    public class UserWithFinance
+    {
+        public User User { get; set; }
+        public decimal Turnover { get; set; }
+        public decimal Bonus { get; set; }
+    }
+
 }
