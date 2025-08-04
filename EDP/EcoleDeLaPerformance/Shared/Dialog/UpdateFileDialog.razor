@@ -1,0 +1,108 @@
+﻿﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@inject IDocumentService documentService
+@inject ISnackbar snackbar
+@inject IDialogService dialog
+
+<MudDialog Style="Width: 600px">
+    <DialogContent>
+        <MudForm @ref="form" Model="model">
+            <MudTextField @bind-Value="document.Title" Label="Document actuel" Variant="Variant.Outlined" Class="mt-4" ReadOnly />
+
+            <MudTextField @bind-Value="title" Label="Modifier le titre" Variant="Variant.Outlined" Class="mt-4" />
+
+            <MudSelect T="string" Label="Modifier la catégorie" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" @bind-Value="selectedClassId" Class="mt-4">
+                @foreach (var category in categoriesList)
+                {
+                    <MudSelectItem Value="@category.Id.ToString()">@category.Title</MudSelectItem>
+                }
+            </MudSelect>
+
+            <UploadFiles filesUploadList="FilesList" filesList="filesUploadList" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Annuler</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="Confirm">Modifier</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IMudDialogInstance mudDialog { get; set; }
+
+    [Parameter]
+    public User userInfo { get; set; }
+
+    [Parameter]
+    public List<Category> categoriesList { get; set; }
+
+    [Parameter]
+    public Document document { get; set; }
+
+    [Parameter]
+    public string selectedClassId { get; set; }
+
+    private MudForm form;
+    Document model = new Document();
+    public string title { get; set; }
+    public List<IBrowserFile> filesUploadList = new();
+    private long maxFileSize = 1234567890;
+
+    protected override void OnInitialized()
+    {
+        model = document;
+    }
+
+    async void FilesList(List<IBrowserFile> value)
+    {
+        filesUploadList = value;
+    }
+
+    public async void Confirm()
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                model.Title = title;
+            }
+
+            model.CategoryId = int.Parse(selectedClassId);
+            model.UpdatedAt = DateTime.Now;
+
+            if (filesUploadList.Count != 0)
+            {
+                foreach (var file in filesUploadList)
+                {
+                    string fileName = $"{Guid.NewGuid()}.pdf";
+
+                    string wwwrootPath = Path.Combine(Environment.CurrentDirectory, "wwwroot", "documents");
+
+                    if (!Directory.Exists(wwwrootPath))
+                        Directory.CreateDirectory(wwwrootPath);
+
+                    string filePath = Path.Combine(wwwrootPath, fileName);
+
+                    await using FileStream fs = new(filePath, FileMode.Create);
+                    await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+                    model.ContentPath = $"/documents/{fileName}";
+
+                }
+            }
+            await documentService.UpdateDocumentAsync(model);
+            snackbar.Add("Document modifié avec succès", MudBlazor.Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add($"Erreur lors de l'enregistrement du document : {ex.Message}", Severity.Error);
+            SentrySdk.CaptureException(ex);
+        }
+        filesUploadList.Clear();
+        StateHasChanged();
+        mudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => mudDialog.Cancel();
+}

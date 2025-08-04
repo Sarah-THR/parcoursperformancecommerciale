@@ -1,0 +1,48 @@
+﻿@inject ISnackbar snackbar
+
+<div class="mt-8">
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFile" Accept=".pdf">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.CloudUpload">
+                Insérer un document
+            </MudButton>
+        </ActivatorContent>
+    </MudFileUpload>
+
+    @if (filesList != null)
+    {
+        <MudList T="string">
+            @foreach (var file in filesList)
+            {
+                <MudListItem @key="@file">
+                    @file.Name
+                    <MudIconButton Icon="@Icons.Material.Filled.Clear" aria-label="clear" OnClick="() => Clear(file)" Color="Color.Secondary"/>
+                </MudListItem>
+            }
+        </MudList>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public List<IBrowserFile>? filesList { get; set; }
+
+    [Parameter]
+    public EventCallback<List<IBrowserFile>> filesUploadList { get; set; }
+
+    private void UploadFile(IBrowserFile file)
+    {
+        filesList.Clear();
+        filesList.Add(file);
+        filesUploadList.InvokeAsync(filesList);
+    }
+
+    private async Task Clear(IBrowserFile file)
+    {
+        filesList.Remove(file);
+        filesUploadList.InvokeAsync(filesList);
+    }
+}

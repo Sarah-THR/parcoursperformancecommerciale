@@ -70,14 +70,10 @@
     {
         var categories = await categoryService.GetCategoriesAsync();
         category = categories.Where(x => x.Id == Convert.ToInt32(categoryId)).FirstOrDefault();
-        var allDocuments = await documentService.GetDocuments();
-        if(allDocuments.Count != 0)
+        if(category.Documents.Count != 0)
         {
-            documents = allDocuments.Where(x => x.CategoryId == Convert.ToInt32(categoryId)).ToList();
-            if(documents != null)
-            {
-                selectedDocument = documents[0];
-            }
+            documents = category.Documents.ToList();
+            selectedDocument = documents[0];
         }
         isInitialized = true;
     }
