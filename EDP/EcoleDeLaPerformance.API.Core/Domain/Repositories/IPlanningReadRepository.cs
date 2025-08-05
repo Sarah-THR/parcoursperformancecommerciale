@@ -5,5 +5,6 @@ namespace EcoleDeLaPerformance.API.Core.Domain.Repositories
     public interface IPlanningReadRepository
     {
         Task<Planning?> GetPlanningByUserAsync(DateTime startDateWeek, DateTime endDateWeek, int userId);
+        Task<Planning?> GetPlanningByIdAsync(int id);
     }
 }

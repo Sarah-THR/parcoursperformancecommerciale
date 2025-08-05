@@ -86,7 +86,7 @@
                     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="2">
                         <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleLeft" aria-label="previous" Color="Color.Primary" Size="Size.Large" OnClick="PreviousWeek" Disabled="@(!canGoToPreviousWeek)" />
                         <MudStack Style="width:100%">
-                            <PlanningDetails User="commercial" WeekId="Convert.ToInt32(weekId)" BaseDate="baseDate" />
+                            <PlanningDetails User="commercial" WeekId="currentPlanningId" BaseDate="baseDate" @key="currentPlanningId" />
                             <MudTabs @bind-ActivePanelIndex="_activeTab" Rounded="true" Centered="true" MinimumTabWidth="400px" ActiveTabClass="bg-primary bg-opacity-10">
                                 <MudTabPanel Text="Briefing de la semaine">
                                     <MudGrid Class="mt-4">
@@ -240,6 +240,7 @@
     DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
     bool canGoToPreviousWeek = true;
     bool canGoToNextWeek = true;
+    int currentPlanningId;
 
     double[] rentalData = new[] { 5.0 };
     double[] purchaseData = new[] { 2.0 };
@@ -247,57 +248,30 @@
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
+        currentPlanningId = Convert.ToInt32(weekId);
+
         commercial = await userService.GetUserByIdAsync(Convert.ToInt32(userId));
 
         turnover = await userService.GetUserTurnoverAsync(commercial.Name, firstMonthDay, lastMonthDay);
         bonus = await userService.GetUserBonusAsync(commercial.Name, firstMonthDay, lastMonthDay);
 
-        TempClass temp = new TempClass();
         var allContractsRaw = contractService.GetContractsByPeriod(commercial.Name, firstMonthDay, lastMonthDay);
-        allContracts = new List<TempClass>();
-
-        allContracts.Add(new TempClass
-        {
-            label = "Sauvegarde",
-            contracts = allContractsRaw.Where(c => c.Sauvegarde == "OUI").ToList()
-        });
-
-        allContracts.Add(new TempClass
-        {
-            label = "Maintenance",
-            contracts = allContractsRaw.Where(c => c.Maintenance == "OUI").ToList()
-        });
-
-        allContracts.Add(new TempClass
-        {
-            label = "Sécurité",
-            contracts = allContractsRaw.Where(c => c.Sécurité == "OUI").ToList()
-        });
+        allContracts = new List<TempClass>
+    {
+        new() { label = "Sauvegarde", contracts = allContractsRaw.Where(c => c.Sauvegarde == "OUI").ToList() },
+        new() { label = "Maintenance", contracts = allContractsRaw.Where(c => c.Maintenance == "OUI").ToList() },
+        new() { label = "Sécurité", contracts = allContractsRaw.Where(c => c.Sécurité == "OUI").ToList() }
+    };
 
         daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
         monday = baseDate.AddDays(-daysSinceMonday);
         friday = monday.AddDays(4);
 
-        var previousMonday = monday.AddDays(-7);
-        var previousFriday = friday.AddDays(-7);
-
-        var previousBriefs = await briefService.GetBriefByUserId(previousMonday.ToDateTime(TimeOnly.MinValue), previousFriday.ToDateTime(TimeOnly.MinValue), commercial.Id);
-        var previousDebriefs = await debriefService.GetDebriefByUserAsync(previousMonday.ToDateTime(TimeOnly.MinValue), previousFriday.ToDateTime(TimeOnly.MinValue), commercial.Id);
-
-        canGoToPreviousWeek = (previousBriefs.Any() || previousDebriefs.Any());
-
-        var nextMonday = monday.AddDays(7);
-        var nextFriday = friday.AddDays(7);
-
-        var nextBriefs = await briefService.GetBriefByUserId(previousMonday.ToDateTime(TimeOnly.MinValue), previousFriday.ToDateTime(TimeOnly.MinValue), commercial.Id);
-        var nextDebriefs = await debriefService.GetDebriefByUserAsync(previousMonday.ToDateTime(TimeOnly.MinValue), previousFriday.ToDateTime(TimeOnly.MinValue), commercial.Id);
-
-        canGoToNextWeek = (previousBriefs.Any() || previousDebriefs.Any());
-
-        LoadWeek();
+        await LoadWeekAsync();
     }
 
-    public async void LoadWeek()
+
+    private async System.Threading.Tasks.Task LoadWeekAsync()
     {
         briefs = await briefService.GetBriefByUserId(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
         debriefs = await debriefService.GetDebriefByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
@@ -306,21 +280,34 @@
         var nbAppointmentsOnGoing = await userService.GetNbAppointmentsAsync(commercial.Email, baseDate, friday);
         appointmentData = new double[] { nbAppointmentsOnGoing, nbAppointmentsRealised };
 
+        var previousWeek = await planningService.GetPlanningByUserAsync(
+            monday.AddDays(-7).ToDateTime(TimeOnly.MinValue),
+            friday.AddDays(-7).ToDateTime(TimeOnly.MinValue),
+            commercial.Id
+        );
+        canGoToPreviousWeek = previousWeek != null;
+
+        var nextWeek = await planningService.GetPlanningByUserAsync(
+            monday.AddDays(7).ToDateTime(TimeOnly.MinValue),
+            friday.AddDays(7).ToDateTime(TimeOnly.MinValue),
+            commercial.Id
+        );
+        canGoToNextWeek = nextWeek != null;
+
+        StateHasChanged();
     }
+
 
     public async void PreviousWeek()
     {
         baseDate = baseDate.AddDays(-7);
-
-        daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
         monday = baseDate.AddDays(-daysSinceMonday);
         friday = monday.AddDays(4);
-
         var week = await planningService.GetPlanningByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), Convert.ToInt32(userId));
-        if(week != null)
+        if (week != null)
         {
-            weekId = week.Id.ToString();
-            LoadWeek();
+            currentPlanningId = week.Id;
+            await LoadWeekAsync();
         }
         StateHasChanged();
     }
@@ -328,16 +315,14 @@
     public async void NextWeek()
     {
         baseDate = baseDate.AddDays(7);
-
-        daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
         monday = baseDate.AddDays(-daysSinceMonday);
         friday = monday.AddDays(4);
-
         var week = await planningService.GetPlanningByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), Convert.ToInt32(userId));
         if (week != null)
         {
-            weekId = week.Id.ToString();
-            LoadWeek();
+            baseDate = DateOnly.FromDateTime(week.CreatedAt);
+            currentPlanningId = week.Id;
+            await LoadWeekAsync();
         }
         StateHasChanged();
     }

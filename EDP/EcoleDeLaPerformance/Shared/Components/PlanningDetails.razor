@@ -53,7 +53,7 @@
     DateOnly monday;
     DateOnly friday;
 
-    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    protected override async System.Threading.Tasks.Task OnParametersSetAsync()
     {
         daysSinceMonday = ((int)BaseDate.DayOfWeek + 6) % 7;
         monday = BaseDate.AddDays(-daysSinceMonday);

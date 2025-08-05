@@ -24,5 +24,16 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 
             return result;
         }
+
+        public async Task<Planning?> GetPlanningByIdAsync(int id)
+        {
+            var result = await _parcoursPerformanceCommercialeContext.Plannings
+                .Include(x => x.PlanningsTasks)
+                .ThenInclude(x => x.Task)
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            return result;
+        }
     }
 }

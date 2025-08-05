@@ -26,6 +26,18 @@ namespace EcoleDeLaPerformance.Ui.Services
                 _ => throw new Exception($"Une erreur est survenue lors de la récupération des plannings : {await response.Content.ReadAsStringAsync()}"),
             };
         }
+        public async Task<Planning?> GetPlanningByIdAsync(int id)
+        {
+            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/plannings/{id}");
+
+            return response.StatusCode switch
+            {
+                HttpStatusCode.OK => string.IsNullOrWhiteSpace(await response.Content.ReadAsStringAsync()) ? null : await response.Content.ReadFromJsonAsync<Planning?>(),
+                HttpStatusCode.NoContent => null,
+                _ => throw new Exception($"Une erreur est survenue lors de la récupération des plannings : {await response.Content.ReadAsStringAsync()}"),
+            };
+        }
+
         public async Task<Planning?> InsertPlanningAsync(Planning planning)
         {
             using HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(planning), new MediaTypeHeaderValue("application/json"));
