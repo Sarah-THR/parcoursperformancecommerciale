@@ -191,6 +191,10 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.Grade).WithMany(p => p.Formations)
+                .HasForeignKey(d => d.GradeId)
+                .HasConstraintName("FK_formations_grade");
         });
 
         modelBuilder.Entity<Grade>(entity =>

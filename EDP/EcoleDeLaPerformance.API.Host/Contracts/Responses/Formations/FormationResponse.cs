@@ -1,5 +1,4 @@
-﻿using EcoleDeLaPerformance.API.Core.Domain.Entities;
-using EcoleDeLaPerformance.API.Host.Contracts.Responses.UsersFormations;
+﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Grades;
 
 namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Formations
 {
@@ -12,5 +11,9 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Formations
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
+
+        public int GradeId { get; set; }
+
+        public GradeResponse Grade { get; set; }
     }
 }

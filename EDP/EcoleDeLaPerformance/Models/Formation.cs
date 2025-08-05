@@ -10,5 +10,9 @@ public partial class Formation
 
     public DateTime UpdatedAt { get; set; }
 
+    public int GradeId { get; set; }
+
+    public Grade Grade { get; set; }
+
     public virtual ICollection<UsersFormation> UsersFormations { get; set; } = new List<UsersFormation>();
 }

@@ -14,7 +14,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 
         public async Task<List<Formation?>> GetFormationsAsync()
         {
-            var result = await _parcoursPerformanceCommercialeContext.Formations.ToListAsync();
+            var result = await _parcoursPerformanceCommercialeContext.Formations.Include(x => x.Grade).ToListAsync();
 
             return result;
         }
