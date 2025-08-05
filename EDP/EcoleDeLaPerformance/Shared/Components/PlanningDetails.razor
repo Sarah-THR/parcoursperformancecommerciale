@@ -61,7 +61,7 @@
         days = GetWeekDays();
         if (User.Plannings.Count != 0)
         {
-            if (WeekId != null)
+            if (WeekId != null && WeekId != 0)
             {
                 selectedPlanning = User.Plannings.Where(p => p.Id == WeekId).FirstOrDefault();
             }

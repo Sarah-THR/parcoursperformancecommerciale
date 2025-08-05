@@ -54,6 +54,10 @@
     User selectedUser = new User();
     private string searchString = "";
     List<UserWithFinance> userWithFinanceList = new();
+    DateOnly baseDate = DateOnly.FromDateTime(DateTime.Today);
+    int daysSinceMonday;
+    DateOnly monday;
+    DateOnly friday;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
@@ -105,8 +109,10 @@
         if (tableRowClickEventArgs != null)
         {
             selectedUser = tableRowClickEventArgs.Item.User;
-
-            var planningId = selectedUser.Plannings.OrderByDescending(x => x.CreatedAt).Select(x => x.Id).FirstOrDefault();
+            daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
+            monday = baseDate.AddDays(-daysSinceMonday);
+            friday = monday.AddDays(4);
+            var planningId = selectedUser.Plannings.Where(x => x.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && x.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue)).Select(x => x.Id).FirstOrDefault();
             navigationManager.NavigateTo($"/history/{selectedUser.Id}/{planningId}");
         }
     }
