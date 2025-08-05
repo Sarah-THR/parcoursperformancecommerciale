@@ -8,50 +8,78 @@
 @attribute [Authorize(Policy = "AdminOrSuperviseurOrDirecteurPolicy")]
 
 <div class="px-6">
-    <MudPaper Elevation="1" Class="p-4 mb-6">
-        <MudTable T="UserWithFinance" OnRowClick="RowClickEvent" Items="@userWithFinanceList" Dense="true" Hover="true"
-                  Filter="new Func<UserWithFinance, bool>(FilterFunc1)" HeaderClass="bg-primary bg-opacity-10" Elevation="0" RowClass="cursor-pointer">
+    @if (isInitialized)
+    {
+        <MudPaper Elevation="1" Class="p-4 mb-6">
+            <MudTable T="UserWithFinance" OnRowClick="RowClickEvent" Items="@userWithFinanceList" Dense="true" Hover="true"
+                      Filter="new Func<UserWithFinance, bool>(FilterFunc1)" HeaderClass="bg-primary bg-opacity-10" Elevation="0" RowClass="cursor-pointer">
 
-            <ToolBarContent>
-                <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start"
-                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                <MudSpacer />
-            </ToolBarContent>
+                <ToolBarContent>
+                    <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    <MudSpacer />
+                </ToolBarContent>
 
-            <HeaderContent>
-                <MudTh>Prénom Nom</MudTh>
-                <MudTh>Statut</MudTh>
-                <MudTh>Superviseur</MudTh>
-                <MudTh>Entité/Site</MudTh>
-                <MudTh>CA généré ce mois-ci</MudTh>
-                <MudTh>Variable mois actuel</MudTh>
-            </HeaderContent>
+                <HeaderContent>
+                    <MudTh>
+                        <MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<UserWithFinance, object>(x => x.User.Name)">
+                            Prénom Nom
+                        </MudTableSortLabel>
+                    </MudTh>
+                    <MudTh>
+                        <MudSelect T="string" Label="Statut" @bind-SelectedValues="selectedGrades" Variant="Variant.Text" Dense MultiSelection="true" AdornmentColor="Color.Primary" Adornment="Adornment.End">
+                            @foreach (var grade in gradesList)
+                            {
+                                <MudSelectItem Value="@grade">@grade</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTh>
+                    <MudTh>Superviseur</MudTh>
+                    <MudTh>
+                        <MudSelect T="string" Label="Entité/Site" @bind-SelectedValues="selectedEntity" Variant="Variant.Text" Dense MultiSelection="true" AdornmentColor="Color.Primary" Adornment="Adornment.End">
+                            @foreach (var entity in entitiesList)
+                            {
+                                <MudSelectItem Value="@entity">@entity</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </MudTh>
+                    <MudTh>CA généré ce mois-ci</MudTh>
+                    <MudTh>Variable mois actuel</MudTh>
+                </HeaderContent>
 
-            <RowTemplate>
-                <MudTd DataLabel="Prénom Nom">@context.User.Name</MudTd>
-                <MudTd DataLabel="Statut">@context.User.Grade?.Name</MudTd>
-                <MudTd DataLabel="Superviseur">@context.User.Supervisor?.Name</MudTd>
-                <MudTd DataLabel="Entité/Site">@context.User.Entity</MudTd>
-                <MudTd DataLabel="CA généré ce mois-ci">@context.Turnover.ToString("C")</MudTd>
-                <MudTd DataLabel="Variable mois actuel">@context.Bonus.ToString("C")</MudTd>
-            </RowTemplate>
+                <RowTemplate>
+                    <MudTd DataLabel="Prénom Nom">@context.User.Name</MudTd>
+                    <MudTd DataLabel="Statut">@context.User.Grade?.Name</MudTd>
+                    <MudTd DataLabel="Superviseur">@context.User.Supervisor?.Name</MudTd>
+                    <MudTd DataLabel="Entité/Site">
+                        @context.User.Entity
+                    </MudTd>
+                    <MudTd DataLabel="CA généré ce mois-ci">@context.Turnover.ToString("C")</MudTd>
+                    <MudTd DataLabel="Variable mois actuel">@context.Bonus.ToString("C")</MudTd>
+                </RowTemplate>
 
-            <PagerContent>
-                <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
-                               RowsPerPageString="Lignes par page"
-                               InfoFormat="{first_item}-{last_item} sur {all_items}"
-                               AllItemsText="Tous" />
-            </PagerContent>
+                <PagerContent>
+                    <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100, int.MaxValue }"
+                                   RowsPerPageString="Lignes par page"
+                                   InfoFormat="{first_item}-{last_item} sur {all_items}"
+                                   AllItemsText="Tous" />
+                </PagerContent>
 
-        </MudTable>
+            </MudTable>
 
-    </MudPaper>
+        </MudPaper>
+    }
 </div>
 
 @code {
+    private bool isInitialized { get; set; }
     public User userInfo => stateContainerService.UserInfo;
     List<User?> filteredUserList = new List<User?>();
     User selectedUser = new User();
+    private IEnumerable<string> selectedEntity { get; set; } = new HashSet<string>();
+    private IEnumerable<string> selectedGrades { get; set; } = new HashSet<string>();
+    List<string> entitiesList;
+    List<string> gradesList;
     private string searchString = "";
     List<UserWithFinance> userWithFinanceList = new();
     DateOnly baseDate = DateOnly.FromDateTime(DateTime.Today);
@@ -62,15 +90,18 @@
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
         var users = await userService.GetUsersAsync();
+
         List<User> filteredUsers;
         if (userInfo.Role.Name == "Superviseur")
         {
-            filteredUsers = users.Where(x => x.SupervisorId == userInfo.Id).ToList();
+            filteredUsers = users.Where(x => x.SupervisorId == userInfo.Id && x.DeletedAt == null).ToList();
         }
         else
         {
-            filteredUsers = users;
+            filteredUsers = users.Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null).ToList();
         }
+        entitiesList = filteredUsers.Select(u => u.Entity).Where(e => !string.IsNullOrWhiteSpace(e)).Distinct().ToList();
+        gradesList = filteredUsers.Select(u => u.Grade?.Name).Where(e => !string.IsNullOrWhiteSpace(e)).Distinct().ToList();
 
         DateOnly firstMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
         DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
@@ -91,17 +122,23 @@
         userWithFinanceList = (await System.Threading.Tasks.Task.WhenAll(tasks)).ToList();
 
         filteredUserList = filteredUsers;
+        isInitialized = true;
     }
 
     private bool FilterFunc1(UserWithFinance element) => FilterFunc(element, searchString);
 
     private bool FilterFunc(UserWithFinance element, string searchString)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
-            return true;
-        if (element.User.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        return false;
+        bool matchesSearch = string.IsNullOrWhiteSpace(searchString)
+        || element.User.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
+
+        bool matchesEntity = selectedEntity.Count() == 0
+            || selectedEntity.Contains(element.User.Entity);
+
+        bool matchesGrade = selectedGrades.Count() == 0
+            || selectedGrades.Contains(element.User.Grade?.Name);
+
+        return matchesSearch && matchesEntity && matchesGrade;
     }
 
     private async void RowClickEvent(TableRowClickEventArgs<UserWithFinance> tableRowClickEventArgs)
