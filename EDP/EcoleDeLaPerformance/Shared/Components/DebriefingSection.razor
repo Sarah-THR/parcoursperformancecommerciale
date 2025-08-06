@@ -25,17 +25,20 @@
                                       Immediate="true" Adornment="Adornment.End"
                                       OnKeyDown="@((e) => HandleKey(e, AddCaseClosedItem))"
                                       AdornmentIcon="@Icons.Material.Filled.Add"
-                                      OnAdornmentClick="AddCaseClosedItem" />
+                                      OnAdornmentClick="AddCaseClosedItem" ReadOnly="@(debrief?.IsDraft == false)" />
 
                         <MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
                             @foreach (var (item, index) in (caseClosedItems ?? new List<string>()).Select((val, i) => (val, i)))
                             {
                                 <MudListItem>
                                     <MudText Typo="Typo.body2">@item</MudText>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                   Color="Color.Error"
-                                                   OnClick="@(() => RemoveItem("caseClosed", index))"
-                                                   Class="ml-auto" />
+                                    @if (debrief?.IsDraft == true || debrief?.IsDraft == null)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="@(() => RemoveItem("caseClosed", index))"
+                                                       Class="ml-auto" />
+                                    }
                                 </MudListItem>
                             }
                         </MudList>
@@ -62,17 +65,20 @@
                                       Immediate="true" Adornment="Adornment.End"
                                       OnKeyDown="@((e) => HandleKey(e, AddOngoingCaseItem))"
                                       AdornmentIcon="@Icons.Material.Filled.Add"
-                                      OnAdornmentClick="AddOngoingCaseItem" />
+                                      OnAdornmentClick="AddOngoingCaseItem" ReadOnly="@(debrief?.IsDraft == false)" />
 
                         <MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
                             @foreach (var (item, index) in (ongoingCaseItems ?? new List<string>()).Select((val, i) => (val, i)))
                             {
                                 <MudListItem>
                                     <MudText Typo="Typo.body2">@item</MudText>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                   Color="Color.Error"
-                                                   OnClick="@(() => RemoveItem("ongoingCase", index))"
-                                                   Class="ml-auto" />
+                                    @if (debrief?.IsDraft == true || debrief?.IsDraft == null)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="@(() => RemoveItem("ongoingCase", index))"
+                                                       Class="ml-auto" />
+                                    }
                                 </MudListItem>
                             }
                         </MudList>
@@ -194,6 +200,7 @@
             debriefToSave.IsDraft = isDraft;
 
             await debriefService.UpdateDebriefAsync(debriefToSave);
+            debrief = debriefToSave;
         }
         else
         {

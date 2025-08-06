@@ -23,17 +23,20 @@
                                       Immediate="true" Adornment="Adornment.End"
                                       OnKeyDown="@((e) => HandleKey(e, AddSignatureItem))"
                                       AdornmentIcon="@Icons.Material.Filled.Add"
-                                      OnAdornmentClick="AddSignatureItem" />
+                                      OnAdornmentClick="AddSignatureItem" ReadOnly="@(brief?.IsDraft == false)" />
 
                         <MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
                             @foreach (var (item, index) in (signatureItems ?? new List<string>()).Select((val, i) => (val, i)))
                             {
                                 <MudListItem>
                                     <MudText Typo="Typo.body2">@item</MudText>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                   Color="Color.Error"
-                                                   OnClick="@(() => RemoveItem("signature", index))"
-                                                   Class="ml-auto" />
+                                    @if (brief?.IsDraft == true || brief?.IsDraft == null)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="@(() => RemoveItem("signature", index))"
+                                                       Class="ml-auto" />
+                                    }
                                 </MudListItem>
                             }
                         </MudList>
@@ -58,17 +61,20 @@
                                       Immediate="true" Adornment="Adornment.End"
                                       OnKeyDown="@((e) => HandleKey(e, AddCheckItem))"
                                       AdornmentIcon="@Icons.Material.Filled.Add"
-                                      OnAdornmentClick="AddCheckItem" />
+                                      OnAdornmentClick="AddCheckItem" ReadOnly="@(brief?.IsDraft == false)" />
 
                         <MudList Class="mt-2" Dense="true" Style="max-height: 250px; overflow-y: auto;" T="string">
                             @foreach (var (item, index) in (checkItems ?? new List<string>()).Select((val, i) => (val, i)))
                             {
                                 <MudListItem>
                                     <MudText Typo="Typo.body2">@item</MudText>
-                                    <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
-                                                   Color="Color.Error"
-                                                   OnClick="@(() => RemoveItem("check", index))"
-                                                   Class="ml-auto" />
+                                    @if (brief?.IsDraft == true || brief?.IsDraft == null)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small"
+                                                       Color="Color.Error"
+                                                       OnClick="@(() => RemoveItem("check", index))"
+                                                       Class="ml-auto" />
+                                    }
                                 </MudListItem>
                             }
                         </MudList>
@@ -105,7 +111,7 @@
                     <MudText Typo="Typo.subtitle2" Class="mb-1">Notes</MudText>
                     <MudTextField T="string" @bind-Value="@notes" Variant="Variant.Outlined"
                                   Placeholder="Ajoutez vos notes..."
-                                  Lines="5" />
+                                  Lines="5" ReadOnly="@(brief?.IsDraft == false)" />
                 </MudCardContent>
             </MudCard>
         </MudItem>
@@ -176,6 +182,7 @@
             briefToSave.IsDraft = isDraft;
 
             await briefService.UpdateBriefAsync(briefToSave);
+            brief = briefToSave;
         }
         else
         {
