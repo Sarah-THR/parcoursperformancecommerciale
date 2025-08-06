@@ -99,7 +99,7 @@
                                                 </MudNavLink>
                                             </AuthorizedPolicyView>
                                             <MudText Class="p-4">
-                                                v.@version
+                                                V.@version
                                             </MudText>
                                         </MudNavMenu>
                                     </MudDrawer>
@@ -142,7 +142,9 @@
 
     protected override void OnInitialized()
     {
-        version = GetType().Assembly.GetName().Version.ToString();
+        var fullVersion = GetType().Assembly.GetName().Version;
+
+        version = string.Format("{0}.{1}.{2}", fullVersion.Major, fullVersion.Minor, fullVersion.Build);
         open = true;
         base.OnInitialized();
     }
