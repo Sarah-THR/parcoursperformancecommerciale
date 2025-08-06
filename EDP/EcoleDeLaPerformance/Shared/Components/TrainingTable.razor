@@ -118,7 +118,7 @@
 
     private Dictionary<int, string> statusPerRow = new();
 
-    private void OnStatusChanged(string newStatusId, FormationWithUserData context)
+    private async void OnStatusChanged(string newStatusId, FormationWithUserData context)
     {
         if (string.IsNullOrWhiteSpace(newStatusId))
             return;
@@ -129,10 +129,21 @@
         if (selectedStatus != null)
         {
             if (context.UserFormation == null)
-                context.UserFormation = new UsersFormation();
-
-            context.UserFormation.StatusId = selectedStatus.Id;
-            usersFormationService.UpdateUsersFormationAsync(context.UserFormation);
+            {
+                var newUsersFormation = new UsersFormation()
+                {
+                    UserId = User.Id,
+                    FormationId = context.Formation.Id,
+                    StatusId = selectedStatus.Id,
+                    IsValidated = true,
+                };
+                context.UserFormation = await usersFormationService.InsertUsersFormationAsync(newUsersFormation);
+            }
+            else
+            {
+                context.UserFormation.StatusId = selectedStatus.Id;
+                usersFormationService.UpdateUsersFormationAsync(context.UserFormation);
+            }
         }
     }
 
