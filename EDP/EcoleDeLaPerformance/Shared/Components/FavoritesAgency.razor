@@ -1,5 +1,8 @@
 ﻿@using EcoleDeLaPerformance.Ui.Interfaces
-@inject IAgencyService agencyService
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
+@inject IFavoritesAgencyService favoritesAgencyService
+@inject StateContainerService stateContainerService
 
 <div class="px-6 my-6">
     <MudPaper Elevation="1" Class="p-4 mb-6">
@@ -9,7 +12,7 @@
         </MudStack>
         <MudGrid Class="mt-6">
             <MudItem xs="12" md="4">
-                <MudSelect T="string" MultiSelection="true" Clearable SelectAll="true" SelectAllText="Selectionner toutes les agences" @bind-Value="value" @bind-SelectedValues="options" Label="Agences" AdornmentIcon="@Icons.Material.Filled.Search">
+                <MudSelect SelectAll="true" SelectAllText="Selectionner toutes les agences" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="Agences" AdornmentIcon="@Icons.Material.Filled.Search">
                     @foreach (var agency in agencies)
                     {
                         <MudSelectItem Value="@agency">@agency</MudSelectItem>
@@ -26,7 +29,7 @@
                 }
             </MudItem>
             <MudItem xs="12" Class="my-6 d-flex justify-content-center">
-                <MudButton Variant="Variant.Filled" Color="Color.Secondary">Confirmer</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="() => SaveSelectedAgenciesAsync(options.ToList())">Confirmer</MudButton>
             </MudItem>
         </MudGrid>
 
@@ -34,16 +37,32 @@
 </div>
 
 @code {
+    public User userInfo => stateContainerService.UserInfo;
     private string value { get; set; }
     private IEnumerable<string> options { get; set; }
+    private bool multiselectionTextChoice;
+
     List<string> agencies;
 
     protected override void OnInitialized()
     {
-        agencies = agencyService.GetAgenciesAAD();
+        agencies = favoritesAgencyService.GetAgenciesAAD();
     }
 
-    void Closed(string value)
+    private async System.Threading.Tasks.Task SaveSelectedAgenciesAsync(List<string> selectedAgencies)
+    {
+        foreach (var agency in selectedAgencies)
+        {
+            var newAgency = new Models.FavoritesAgency()
+            {
+                UserId = userInfo.Id,
+                AgencyName = agency,
+            };
+            await favoritesAgencyService.InsertFavoritesAgencyAsync(newAgency);
+        }
+    }
+
+    async void Closed(string value)
     {
         options = options.Where(x => x != value);
         StateHasChanged();

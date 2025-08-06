@@ -48,6 +48,8 @@ public partial class User
 
     public virtual ICollection<Planning> Plannings { get; set; } = new List<Planning>();
 
+    public virtual ICollection<FavoritesAgency> FavoritesAgencies { get; set; } = new List<FavoritesAgency>();
+
     public virtual User? Supervisor { get; set; }
 
     public virtual ICollection<UsersFormation> UsersFormations { get; set; } = new List<UsersFormation>();

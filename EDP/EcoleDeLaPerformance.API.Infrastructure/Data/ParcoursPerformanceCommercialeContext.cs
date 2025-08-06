@@ -42,6 +42,8 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<FavoritesAgency> FavoritesAgencies { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb; Database=ParcoursPerformanceCommerciale; Integrated Security=True; TrustServerCertificate=True;");
@@ -426,6 +428,29 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_users_formations_user");
+        });
+
+        modelBuilder.Entity<FavoritesAgency>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__favorites_agencies__3213E83F971B5BFD");
+
+            entity.ToTable("favorites_agencies");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.AgencyName)
+                .HasMaxLength(255)
+                .HasColumnName("agency_name");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("updated_at");
+
+            entity.HasOne(d => d.User).WithMany(p => p.FavoritesAgencies)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_favorites_agencies_user");
         });
 
         OnModelCreatingPartial(modelBuilder);
