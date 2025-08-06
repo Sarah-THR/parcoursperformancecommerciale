@@ -1,10 +1,34 @@
-﻿<MudDialog>
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@inject IUsersFormationService usersFormationService
+
+<MudDialog Style="width: 600px">
     <DialogContent>
         <MudExRichTextEdit @ref="@Editor"
                            ReadOnly="@_readOnly"
                            Height="444"
                            Class="m-2"
-                           Placeholder="Laisser un commentaire" >
+                           Placeholder="Laisser un commentaire"
+                           HideToolbarWhenReadOnly
+                           Value="@UsersFormation?.Comment"
+                           ValueChanged="ChangeComment">
+            <ToolbarContent>
+                <select class="ql-header">
+                    <option selected=""></option>
+                    <option value="1"></option>
+                    <option value="2"></option>
+                    <option value="3"></option>
+                    <option value="4"></option>
+                    <option value="5"></option>
+                </select>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                    <select class="ql-color"></select>
+                </span>
+            </ToolbarContent>
         </MudExRichTextEdit>
     </DialogContent>
     <DialogActions>
@@ -16,9 +40,23 @@
     [CascadingParameter]
     private IMudDialogInstance MudDialog { get; set; }
 
-    private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    [Parameter]
+    public UsersFormation? UsersFormation { get; set; }
+
+    public void ChangeComment(string comment)
+    {
+        UsersFormation.Comment = comment;
+
+    }
+
+    private void Submit()
+    {
+        usersFormationService.UpdateUsersFormationAsync(UsersFormation);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
 
     private void Cancel() => MudDialog.Cancel();
     bool _readOnly = false;
     MudExRichTextEdit Editor;
+
 }

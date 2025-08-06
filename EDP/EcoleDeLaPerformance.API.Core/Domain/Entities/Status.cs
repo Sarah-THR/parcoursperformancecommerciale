@@ -1,4 +1,6 @@
-﻿namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
 
 public partial class Status
 {
@@ -10,5 +12,6 @@ public partial class Status
 
     public DateTime UpdatedAt { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<UsersFormation> UsersFormations { get; set; } = new List<UsersFormation>();
 }

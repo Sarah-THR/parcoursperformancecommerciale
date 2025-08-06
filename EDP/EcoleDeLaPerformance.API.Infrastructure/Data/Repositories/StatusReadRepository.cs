@@ -14,9 +14,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 
         public async Task<List<Status?>> GetStatusesAsync()
         {
-            var result = await _parcoursPerformanceCommercialeContext.Statuses.ToListAsync();
-
-            return result;
+            return await _parcoursPerformanceCommercialeContext.Statuses.ToListAsync();
         }
     }
 }

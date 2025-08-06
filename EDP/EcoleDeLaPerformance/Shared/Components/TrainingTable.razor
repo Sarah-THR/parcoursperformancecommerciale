@@ -1,81 +1,160 @@
-﻿@using EcoleDeLaPerformance.Ui.Shared.Dialog
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Shared.Dialog
 @using MudBlazor
+@inject IUsersFormationService usersFormationService
+@inject IStatusService statusService
 @inject IDialogService DialogService
 
-<MudContainer MaxWidth = "MaxWidth.Large" Class="py-6 px-4 mt-5" >
-    <MudPaper Elevation="4" Class="overflow-hidden">
-        <MudTable Items="trainingData" Elevation="0" Bordered="false" HeaderClass="bg-primary bg-opacity-10">
-            <HeaderContent>
-                <MudTh Class="fw-bold fs-6">Formation</MudTh>
-                <MudTh Class="fw-bold fs-6">Check</MudTh>
-                <MudTh Class="fw-bold fs-6">Évaluation</MudTh>
-                <MudTh Class="fw-bold fs-6">Commentaires</MudTh>
-                <MudTh Class="fw-bold fs-6">Statut</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd>
-                    <MudStack Row Spacing="2">
-                            <MudText Typo="Typo.subtitle2">@context.Name</MudText>
-                    </MudStack>
-                </MudTd>
-                <MudTd>
-                    <MudCheckBox @bind-Value="@context.Completed" ReadOnly="true" Color="Color.Primary" />
-                </MudTd>
-                <MudTd>
-                    @GetEvaluationBadge(context.Evaluation)
-                </MudTd>
-                <MudTd>
-                    <MudButton Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Filled.Visibility" Color="Color.Error" @onclick="OpenCommentDialogAsync">
-                        Visualiser
-                    </MudButton>
-                </MudTd>
-                <MudTd>
-                    @GetStatusBadge(context.Status)
-                </MudTd>
-            </RowTemplate>
-        </MudTable>
-    </MudPaper>
-</MudContainer>
+@if (isInitialized)
+{
+    <MudContainer MaxWidth="MaxWidth.Large" Class="py-6 px-4 mt-5">
+        <MudPaper Elevation="4" Class="overflow-hidden">
+            <MudTable Items="DisplayFormations" Elevation="0" Bordered="false" HeaderClass="bg-primary bg-opacity-10">
+                <HeaderContent>
+                    <MudTh Class="fw-bold fs-6">Formation</MudTh>
+                    <MudTh Class="fw-bold fs-6">Check</MudTh>
+                    <MudTh Class="fw-bold fs-6">Commentaires</MudTh>
+                    <MudTh Class="fw-bold fs-6">Statut</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>
+                        <MudText Typo="Typo.subtitle2">@context.Formation.Name</MudText>
+                    </MudTd>
+                    <MudTd>
+                        <MudCheckBox Value="context.UserFormation?.IsValidated ?? false" Color="Color.Primary" ValueChanged="HandleCheckBoxChanged(context)" ReadOnly="context.UserFormation?.IsValidated ?? false" />
+                    </MudTd>
+                    <MudTd>
+                        @if (context.UserFormation is not null)
+                        {
+                            <MudButton Variant="Variant.Outlined" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.Visibility"
+                                       Color="Color.Error"
+                                       @onclick="() => OpenCommentDialogAsync(context.UserFormation)">
+                                Visualiser
+                            </MudButton>
+                        }
+                        else
+                        {
+                            <MudText Color="Color.Tertiary">Aucun commentaire</MudText>
+                        }
+                    </MudTd>
+                    <MudTd>
+                        @if (context.UserFormation is not null && context.UserFormation.StatusId is not null)
+                        {
+                            @GetStatusBadge(statuses.Where(x => x.Id == context.UserFormation?.StatusId).Select(x => x.Name).FirstOrDefault())
+                        }
+                        else
+                        {
+                            <MudSelect T="string" Label="Statut" Value="@(statusPerRow.ContainsKey(context.Formation.Id) ? statusPerRow[context.Formation.Id] : null)" ValueChanged="@(id => OnStatusChanged(id, context))">
+                                @foreach (var status in statuses)
+                                {
+                                    <MudSelectItem Value="@status.Id.ToString()">@status.Name</MudSelectItem>
+                                }
+                            </MudSelect>
+                        }
+                    </MudTd>
+                </RowTemplate>
+
+            </MudTable>
+
+        </MudPaper>
+    </MudContainer>
+}
 
 @code {
-    public class TrainingItem
+    [Parameter]
+    public List<Models.Formation> Formations { get; set; }
+
+    [Parameter]
+    public List<UsersFormation> UsersFormations { get; set; }
+
+    [Parameter]
+    public User User { get; set; }
+
+    bool isValidated = false;
+    List<Status> statuses;
+    private bool isInitialized { get; set; }
+
+    public class FormationWithUserData
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public bool Completed { get; set; }
-        public string Evaluation { get; set; }
-        public string Status { get; set; } 
-        public string Icon { get; set; }   
+        public Formation Formation { get; set; }
+        public UsersFormation UserFormation { get; set; }
+    }
+    private List<FormationWithUserData> DisplayFormations = new();
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        statuses = await statusService.GetStatusesAsync();
+        isInitialized = true;
     }
 
-    private List<TrainingItem> trainingData = new()
+    protected override async void OnParametersSet()
     {
-        new() { Id = "1", Name = "Pitch ta boite", Completed = true, Evaluation = "excellent", Status = "completed", Icon = Icons.Material.Filled.TrendingUp },
-        new() { Id = "2", Name = "Prise de rendez-vous", Completed = true, Evaluation = "good", Status = "retake", Icon = Icons.Material.Filled.Group },
-        new() { Id = "3", Name = "Cycle de vente", Completed = true, Evaluation = "needs-improvement", Status = "retake", Icon = Icons.Material.Filled.MenuBook },
-        new() { Id = "4", Name = "Recommandation", Completed = false, Evaluation = null, Status = "pending", Icon = Icons.Material.Filled.Message },
-    };
+        DisplayFormations = Formations.Select(f =>
+            new FormationWithUserData
+            {
+                Formation = f,
+                UserFormation = UsersFormations.FirstOrDefault(uf => uf.FormationId == f.Id)
+            }).ToList();
 
-    private RenderFragment GetEvaluationBadge(string eval) => eval switch
-    {
-        "excellent" => @<MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.Check" />,
-        "good" => @<MudIcon Color="Color.Warning" Icon="@Icons.Material.Filled.StackedLineChart" />,
-        "needs-improvement" => @<MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Clear" />,
-        _ => @<MudText Typo="Typo.caption" Color="Color.Secondary">Non évalué</MudText>
-    };
+    }
 
     private RenderFragment GetStatusBadge(string status) => status switch
     {
-        "completed" => @<MudChip T="string" Color="Color.Success" Variant="Variant.Text">Formation suivante</MudChip>,
-        "retake" => @<MudChip T="string" Color="Color.Error" Variant="Variant.Text">À repasser</MudChip>,
-        "pending" => @<MudChip T="string" Color="Color.Warning" Variant="Variant.Text">En attente</MudChip>,
+        "Validée" => @<MudChip T="string" Color="Color.Success" Variant="Variant.Text">Formation suivante</MudChip>,
+        "À repasser" => @<MudChip T="string" Color="Color.Error" Variant="Variant.Text">À repasser</MudChip>,
+        "En attente" => @<MudChip T="string" Color="Color.Warning" Variant="Variant.Text">En attente</MudChip>,
         _ => null
     };
 
-    private Task OpenCommentDialogAsync()
+    private async System.Threading.Tasks.Task OpenCommentDialogAsync(UsersFormation uf)
     {
+        var parameters = new DialogParameters { ["UsersFormation"] = uf };
         var options = new DialogOptions { CloseOnEscapeKey = true };
 
-        return DialogService.ShowAsync<CommentDialog>("Details du suivi", options);
+        await DialogService.ShowAsync<CommentDialog>("Détails du suivi", parameters, options);
+    }
+
+    private Dictionary<int, string> statusPerRow = new();
+
+    private void OnStatusChanged(string newStatusId, FormationWithUserData context)
+    {
+        if (string.IsNullOrWhiteSpace(newStatusId))
+            return;
+
+        statusPerRow[context.Formation.Id] = newStatusId;
+
+        var selectedStatus = statuses.FirstOrDefault(s => s.Id.ToString() == newStatusId);
+        if (selectedStatus != null)
+        {
+            if (context.UserFormation == null)
+                context.UserFormation = new UsersFormation();
+
+            context.UserFormation.StatusId = selectedStatus.Id;
+            usersFormationService.UpdateUsersFormationAsync(context.UserFormation);
+        }
+    }
+
+    private EventCallback<bool> HandleCheckBoxChanged(FormationWithUserData contextItem)
+    {
+        return EventCallback.Factory.Create<bool>(this, async newValue =>
+        {
+            if (contextItem.UserFormation == null)
+            {
+                var newUsersFormation = new UsersFormation()
+                {
+                    UserId = User.Id,
+                    FormationId = contextItem.Formation.Id,
+                    IsValidated = true,
+                };
+                contextItem.UserFormation = await usersFormationService.InsertUsersFormationAsync(newUsersFormation);
+            }
+            else
+            {
+                contextItem.UserFormation.IsValidated = false;
+                usersFormationService.UpdateUsersFormationAsync(contextItem.UserFormation);
+            }
+        });
     }
 }

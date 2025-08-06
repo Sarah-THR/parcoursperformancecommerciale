@@ -18,7 +18,7 @@ namespace EcoleDeLaPerformance.Ui.Services
         public async Task<UsersFormation?> InsertUsersFormationAsync(UsersFormation usersFormation)
         {
             using HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(usersFormation), new MediaTypeHeaderValue("application/json"));
-            var response = await new HttpClient().PostAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/usersFormation", httpContent);
+            var response = await new HttpClient().PostAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/usersFormations", httpContent);
 
 
             return (response.StatusCode == HttpStatusCode.OK) ? (await response.Content.ReadFromJsonAsync<UsersFormation?>())! :
@@ -29,7 +29,7 @@ namespace EcoleDeLaPerformance.Ui.Services
         public async System.Threading.Tasks.Task UpdateUsersFormationAsync(UsersFormation usersFormation)
         {
             using HttpContent httpContent = new StringContent(JsonConvert.SerializeObject(usersFormation), new MediaTypeHeaderValue("application/json"));
-            var response = await new HttpClient().PutAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/usersFormation", httpContent);
+            var response = await new HttpClient().PutAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/usersFormations", httpContent);
 
             switch (response.StatusCode)
             {

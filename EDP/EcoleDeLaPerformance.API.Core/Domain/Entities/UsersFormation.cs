@@ -1,4 +1,7 @@
-﻿namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
+namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
 
 public partial class UsersFormation
 {
@@ -12,7 +15,7 @@ public partial class UsersFormation
 
     public bool IsValidated { get; set; }
 
-    public string Comment { get; set; } = null!;
+    public string? Comment { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -28,5 +31,6 @@ public partial class UsersFormation
 
     public virtual Status? Status { get; set; }
 
+    [JsonIgnore]
     public virtual User User { get; set; } = null!;
 }

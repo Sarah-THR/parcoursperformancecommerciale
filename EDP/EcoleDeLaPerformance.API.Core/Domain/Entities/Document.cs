@@ -1,4 +1,6 @@
-﻿namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace EcoleDeLaPerformance.API.Core.Domain.Entities;
 
 public partial class Document
 {
@@ -20,5 +22,6 @@ public partial class Document
 
     public virtual User User { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual ICollection<UsersFormation> UsersFormations { get; set; } = new List<UsersFormation>();
 }

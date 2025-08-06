@@ -12,7 +12,7 @@
 
         public bool IsValidated { get; set; }
 
-        public string Comment { get; set; } = null!;
+        public string? Comment { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

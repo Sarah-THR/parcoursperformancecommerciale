@@ -61,6 +61,8 @@ builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IGradeService, GradeService>();
+builder.Services.AddScoped<IFormationService, FormationService>();
+builder.Services.AddScoped<IUsersFormationService, UsersFormationService>();
 builder.Services.AddScoped<StateContainerService>();
 builder.Services.AddScoped<CRMService>();
 builder.Services.AddScoped<MailHelper>();

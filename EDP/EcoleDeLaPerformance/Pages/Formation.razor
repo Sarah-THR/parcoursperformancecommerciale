@@ -1,5 +1,11 @@
 ﻿@page "/formation"
+@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
 @using EcoleDeLaPerformance.Ui.Shared.Components
+@inject StateContainerService stateContainerService
+@inject IFormationService formationService
+@inject IUsersFormationService usersFormationService
 @attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <PageTitle>Suivi de formation</PageTitle>
@@ -12,15 +18,23 @@
         </MudStack>
         <MudGrid Class="align-items-center">
             <MudItem xs="12" md="9">
-                <TrainingTable />
+                <TrainingTable UsersFormations="userInfo.UsersFormations.ToList()" Formations="formations" User="userInfo"/>
             </MudItem>
             <MudItem xs="12" md="3">
-                <MetricCard Title="Heures de formation" Value="0h" Progress="0" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS"/>
+                <MetricCard Title="Heures de formation" Value="0h" Progress="0" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />
             </MudItem>
         </MudGrid>
     </MudPaper>
 </div>
 
 @code {
+    public User userInfo => stateContainerService.UserInfo;
+    List<Models.Formation> formations = new();
+    List<UsersFormation> usersFormations = new();
 
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        var allFormations = await formationService.GetFormationsAsync();
+        formations = allFormations.Where(x => x.Grade.Name == userInfo.Grade.Name).ToList();
+    }
 }

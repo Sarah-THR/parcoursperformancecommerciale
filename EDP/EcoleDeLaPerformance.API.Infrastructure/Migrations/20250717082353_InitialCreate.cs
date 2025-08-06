@@ -243,7 +243,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
                     status_id = table.Column<int>(type: "int", nullable: true),
                     evaluation_id = table.Column<int>(type: "int", nullable: true),
                     is_validated = table.Column<bool>(type: "bit", nullable: false),
-                    comment = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    comment = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "(getdate())"),
                     document_id = table.Column<int>(type: "int", nullable: true)
