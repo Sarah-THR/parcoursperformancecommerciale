@@ -7,7 +7,7 @@
             <MudText Typo="Typo.h2" Color="Color.Secondary">Bienvenue,</MudText>
             <MudText Typo="Typo.h2" Color="Color.Secondary">Sélectionner vos agences favorites</MudText>
         </MudStack>
-        <MudGrid Class="align-items-center mt-6">
+        <MudGrid Class="mt-6">
             <MudItem xs="12" md="4">
                 <MudSelect T="string" MultiSelection="true" Clearable SelectAll="true" SelectAllText="Selectionner toutes les agences" @bind-Value="value" @bind-SelectedValues="options" Label="Agences" AdornmentIcon="@Icons.Material.Filled.Search">
                     @foreach (var agency in agencies)
