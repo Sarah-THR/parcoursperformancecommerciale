@@ -4,6 +4,7 @@ using EcoleDeLaPerformance.API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
 {
     [DbContext(typeof(ParcoursPerformanceCommercialeContext))]
-    partial class ParcoursPerformanceCommercialeContextModelSnapshot : ModelSnapshot
+    [Migration("20250806095016_AddDraft")]
+    partial class AddDraft
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -12,6 +12,8 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Debriefs
 
         public int UserId { get; set; }
 
+        public bool IsDraft { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }

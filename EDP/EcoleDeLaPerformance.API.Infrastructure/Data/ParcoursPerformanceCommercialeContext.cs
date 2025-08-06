@@ -56,6 +56,7 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
             entity.ToTable("briefs");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsDraft).HasColumnName("is_draft");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("created_at");
@@ -104,6 +105,7 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
             entity.ToTable("debriefs");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsDraft).HasColumnName("is_draft");
             entity.Property(e => e.BusinessInProgress)
                 .HasMaxLength(255)
                 .HasColumnName("business_in_progress");

@@ -110,8 +110,8 @@
             </MudCard>
         </MudItem>
         <MudItem xs="12" md="12" Class="d-flex justify-content-center">
-            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.SaveAs" Class="ma-4">Brouillon</MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Save" Class="ma-4" OnClick="() => SaveBrief()">Enregistrer</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.SaveAs" Class="ma-4" OnClick="() => SaveBrief(true)">Brouillon</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Save" Class="ma-4" OnClick="() => SaveBrief(false)">Enregistrer</MudButton>
         </MudItem>
     </MudGrid>
 </div>
@@ -149,7 +149,7 @@
         nbAppointments = await userService.GetNbAppointmentsAsync(userInfo.Email, monday, friday);
     }
 
-    private async System.Threading.Tasks.Task SaveBrief()
+    private async System.Threading.Tasks.Task SaveBrief(bool isDraft)
     {
         Brief briefToSave;
 
@@ -173,6 +173,7 @@
             briefToSave.Note = noteValue;
             briefToSave.SignatureCommitment = signatureCommitment;
             briefToSave.FilesToCheck = filesToCheck;
+            briefToSave.IsDraft = isDraft;
 
             await briefService.UpdateBriefAsync(briefToSave);
         }
@@ -183,7 +184,8 @@
                 Note = noteValue,
                 UserId = userInfo.Id,
                 SignatureCommitment = signatureCommitment,
-                FilesToCheck = filesToCheck
+                FilesToCheck = filesToCheck,
+                IsDraft = isDraft,
             };
 
             brief = await briefService.InsertBriefAsync(newBrief);

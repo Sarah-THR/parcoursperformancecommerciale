@@ -62,7 +62,7 @@
                     <MudText Typo="Typo.h6">Engagement de signature de la semaine</MudText>
                 </MudStack>
                 <MudList Dense="true" T="string" Disabled>
-                    @foreach (var brief in briefs)
+                    @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
                     {
                         @foreach (string signatureCommitment in (brief?.SignatureCommitment ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
                         {
@@ -80,7 +80,7 @@
                     <MudText Typo="Typo.h6">Dossiers à checker</MudText>
                 </MudStack>
                 <MudList Dense="true" T="string" Disabled>
-                    @foreach (var brief in briefs)
+                    @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
                     {
                         @foreach (string filesToCheck in (brief?.FilesToCheck ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
                         {
