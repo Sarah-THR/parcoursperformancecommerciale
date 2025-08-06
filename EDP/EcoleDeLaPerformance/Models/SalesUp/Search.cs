@@ -1,5 +1,4 @@
-﻿using EcoleDeLaPerformance.Ui.Shared.Component;
-using EcoleDeLaPerformance.Ui.Shared.Components;
+﻿using EcoleDeLaPerformance.Ui.Shared.Components;
 using System.Text.Json.Serialization;
 
 namespace EcoleDeLaPerformance.Ui.Models.SalesUp

@@ -25,6 +25,20 @@
                     {
                         <UnknowUser />
                     }
+                    else if (stateContainerService.UserInfo.IsFirstConnection)
+                    {
+                        <MudPaper Elevation="0" Class="px-6 py-2 border-bottom" Style="background-color: white;">
+                            <MudGrid Class="align-items-center" Justify="Justify.SpaceBetween">
+                                <MudItem xs="12" md="6">
+                                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                                        <MudImage Src="/images/Logo.png" Width="150" />
+                                        <MudText Class="text-slate-800 fw-bold pt-1">Parcours Performance Commerciale</MudText>
+                                    </MudStack>
+                                </MudItem>
+                            </MudGrid>
+                        </MudPaper>
+                        <FavoritesAgency />
+                    }
                     else
                     {
                         <CascadingValue Value="@stateContainerService.UserInfo">

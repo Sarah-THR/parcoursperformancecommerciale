@@ -63,6 +63,7 @@ builder.Services.AddScoped<IStatusService, StatusService>();
 builder.Services.AddScoped<IGradeService, GradeService>();
 builder.Services.AddScoped<IFormationService, FormationService>();
 builder.Services.AddScoped<IUsersFormationService, UsersFormationService>();
+builder.Services.AddScoped<IAgencyService, AgencyService>();
 builder.Services.AddScoped<StateContainerService>();
 builder.Services.AddScoped<CRMService>();
 builder.Services.AddScoped<MailHelper>();

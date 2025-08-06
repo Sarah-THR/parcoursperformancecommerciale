@@ -18,6 +18,8 @@ public partial class User
 
     public int? DirectorId { get; set; }
 
+    public bool? IsFirstConnection { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }

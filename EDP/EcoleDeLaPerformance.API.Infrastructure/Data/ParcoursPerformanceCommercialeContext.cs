@@ -336,6 +336,7 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
             entity.HasIndex(e => e.Email, "UQ__users__AB6E616424F4F6E3").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.IsFirstConnection).HasColumnName("is_first_connection");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnName("created_at");

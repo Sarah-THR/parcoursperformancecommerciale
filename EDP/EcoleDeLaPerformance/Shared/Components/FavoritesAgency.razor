@@ -1,0 +1,51 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@inject IAgencyService agencyService
+
+<div class="px-6 my-6">
+    <MudPaper Elevation="1" Class="p-4 mb-6">
+        <MudStack AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+            <MudText Typo="Typo.h6" Color="Color.Secondary">Bienvenue,</MudText>
+            <MudText Typo="Typo.h6" Color="Color.Secondary">Sélectionner vos agences favorites</MudText>
+        </MudStack>
+        <MudGrid Class="align-items-center mt-6">
+            <MudItem xs="12" md="4">
+                <MudSelect T="string" MultiSelection="true" Clearable SelectAll="true" SelectAllText="Selectionner toutes les agences" @bind-Value="value" @bind-SelectedValues="options" Label="Agences" AdornmentIcon="@Icons.Material.Filled.Search">
+                    @foreach (var agency in agencies)
+                    {
+                        <MudSelectItem Value="@agency">@agency</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            <MudItem xs="12" md="8" Style="max-height:400px; overflow:auto">
+                @if (options != null)
+                {
+                    @foreach (var option in options)
+                    {
+                        <MudChip T="string" Color="Color.Default" OnClose="() => Closed(option)" Value="option" IconColor="Color.Secondary">@option</MudChip>
+                    }
+                }
+            </MudItem>
+            <MudItem xs="12" Class="my-6 d-flex justify-content-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Secondary">Confirmer</MudButton>
+            </MudItem>
+        </MudGrid>
+
+    </MudPaper>
+</div>
+
+@code {
+    private string value { get; set; }
+    private IEnumerable<string> options { get; set; }
+    List<string> agencies;
+
+    protected override void OnInitialized()
+    {
+        agencies = agencyService.GetAgenciesAAD();
+    }
+
+    void Closed(string value)
+    {
+        options = options.Where(x => x != value);
+        StateHasChanged();
+    }
+}

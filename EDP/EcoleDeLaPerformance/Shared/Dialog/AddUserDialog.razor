@@ -144,6 +144,7 @@
                     Name = model.Name,
                     Entity = model.Entity,
                     RoleId = Convert.ToInt32(selectedRole),
+                    IsFirstConnection = true,
                 };
                 if (roleList.Where(x => x.Id == Convert.ToInt32(selectedRole)).Select(x => x.Name).FirstOrDefault() == "Commercial")
                 {
