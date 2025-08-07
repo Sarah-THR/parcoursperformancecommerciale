@@ -2,6 +2,7 @@
 @using EcoleDeLaPerformance.Ui.Models
 @using EcoleDeLaPerformance.Ui.Services
 @inject IFavoritesAgencyService favoritesAgencyService
+@inject IUserService userService
 @inject StateContainerService stateContainerService
 
 <div class="px-6 my-6">
@@ -60,6 +61,8 @@
             };
             await favoritesAgencyService.InsertFavoritesAgencyAsync(newAgency);
         }
+        stateContainerService.UserInfo.IsFirstConnection = false;
+        await userService.UpdateUserAsync(stateContainerService.UserInfo);
     }
 
     async void Closed(string value)
