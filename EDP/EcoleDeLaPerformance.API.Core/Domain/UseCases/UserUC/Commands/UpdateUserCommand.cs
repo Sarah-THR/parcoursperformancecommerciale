@@ -35,6 +35,7 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.UserUC.Commands
             user.RoleId = command.user.RoleId;
             user.GradeId = command.user.GradeId;
             user.DeletedAt = command.user.DeletedAt;
+            user.IsFirstConnection = command.user.IsFirstConnection;
             return await _userWriteRepository.UpdateUserAsync(user);
         }
     }
