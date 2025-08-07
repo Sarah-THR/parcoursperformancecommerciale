@@ -199,6 +199,10 @@ public partial class ParcoursPerformanceCommercialeContext : DbContext
             entity.HasOne(d => d.Grade).WithMany(p => p.Formations)
                 .HasForeignKey(d => d.GradeId)
                 .HasConstraintName("FK_formations_grade");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.Formations)
+                .HasForeignKey(d => d.RoleId)
+                .HasConstraintName("FK_formations_role");
         });
 
         modelBuilder.Entity<Grade>(entity =>

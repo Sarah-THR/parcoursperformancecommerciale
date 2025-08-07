@@ -5,22 +5,28 @@
 namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class addformationsgrade : Migration
+    public partial class AddFormationRole : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<int>(
-                name: "GradeId",
+                name: "RoleId",
                 table: "formations",
                 type: "int",
-                nullable: true);
+                nullable: true,
+                defaultValue: 0);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_formations_RoleId",
+                table: "formations",
+                column: "RoleId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_formations_grade",
+                name: "FK_formations_role",
                 table: "formations",
-                column: "GradeId",
-                principalTable: "grades",
+                column: "RoleId",
+                principalTable: "roles",
                 principalColumn: "id");
         }
 
@@ -28,19 +34,16 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_formations_grade",
+                name: "FK_formations_role",
+                table: "formations");
+
+            migrationBuilder.DropIndex(
+                name: "IX_formations_RoleId",
                 table: "formations");
 
             migrationBuilder.DropColumn(
-                name: "GradeId",
+                name: "RoleId",
                 table: "formations");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_formations_grade",
-                table: "formations",
-                column: "GradeId",
-                principalTable: "grades",
-                principalColumn: "id");
         }
     }
 }

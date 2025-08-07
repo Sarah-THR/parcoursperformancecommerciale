@@ -35,6 +35,6 @@
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
         var allFormations = await formationService.GetFormationsAsync();
-        formations = allFormations.Where(x => x.Grade.Name == userInfo.Grade.Name).ToList();
+        formations = allFormations.Where(x => x.Grade?.Name == userInfo.Grade?.Name || x.Role?.Name == userInfo?.Role.Name).ToList();
     }
 }

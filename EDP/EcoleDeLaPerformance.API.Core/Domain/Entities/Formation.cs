@@ -12,9 +12,13 @@ public partial class Formation
 
     public DateTime UpdatedAt { get; set; }
 
-    public int GradeId { get; set; }
+    public int? GradeId { get; set; }
 
     public Grade Grade { get; set; }
+
+    public int? RoleId { get; set; }
+
+    public Role Role { get; set; }
 
     [JsonIgnore]
     public virtual ICollection<UsersFormation> UsersFormations { get; set; } = new List<UsersFormation>();

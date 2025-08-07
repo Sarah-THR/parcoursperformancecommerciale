@@ -1,4 +1,5 @@
 ﻿using EcoleDeLaPerformance.API.Host.Contracts.Responses.Grades;
+using EcoleDeLaPerformance.API.Host.Contracts.Responses.Roles;
 
 namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Formations
 {
@@ -12,8 +13,13 @@ namespace EcoleDeLaPerformance.API.Host.Contracts.Responses.Formations
 
         public DateTime UpdatedAt { get; set; }
 
-        public int GradeId { get; set; }
+        public int? GradeId { get; set; }
 
-        public GradeResponse Grade { get; set; }
+        public GradeResponse? Grade { get; set; }
+
+        public int? RoleId { get; set; }
+
+        public RoleResponse? Role { get; set; }
+
     }
 }

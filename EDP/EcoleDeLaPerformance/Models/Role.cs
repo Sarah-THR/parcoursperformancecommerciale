@@ -11,5 +11,7 @@
         public DateTime UpdatedAt { get; set; }
 
         public virtual List<User> Users { get; set; } = new List<User>();
+
+        public virtual List<Formation> Formations { get; set; } = new List<Formation>();
     }
 }

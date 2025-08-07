@@ -8,7 +8,9 @@
 
         public DateTime UpdatedAt { get; set; }
 
-        public int GradeId { get; set; }
+        public int? GradeId { get; set; }
+
+        public int? RoleId { get; set; }
 
     }
 }
