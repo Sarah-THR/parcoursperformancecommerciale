@@ -12,9 +12,9 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
             _parcoursPerformanceCommercialeContext = parcoursPerformanceCommercialeContext;
         }
 
-        public async Task<List<FavoritesAgency?>> GetFavoritesAgenciesAsync()
+        public async Task<List<FavoritesAgency?>> GetFavoritesAgenciesAsync(int userId)
         {
-            return await _parcoursPerformanceCommercialeContext.FavoritesAgencies.ToListAsync();
+            return await _parcoursPerformanceCommercialeContext.FavoritesAgencies.Where(x => x.UserId == userId).ToListAsync();
         }
     }
 }

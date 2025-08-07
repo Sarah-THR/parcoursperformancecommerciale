@@ -10,6 +10,7 @@ namespace EcoleDeLaPerformance.API.Host.Automapper
         public FavoritesAgencyProfile()
         {
             CreateMap<FavoritesAgency, FavoritesAgencyResponse>();
+            CreateMap<FavoritesAgencyByUserIdRequest, FavoritesAgencyResponse>();
             CreateMap<FavoritesAgencyRequest, FavoritesAgency>();
         }
     }

@@ -4,6 +4,6 @@ namespace EcoleDeLaPerformance.API.Core.Domain.Repositories
 {
     public interface IFavoritesAgencyReadRepository
     {
-        Task<List<FavoritesAgency?>> GetFavoritesAgenciesAsync();
+        Task<List<FavoritesAgency?>> GetFavoritesAgenciesAsync(int userId);
     }
 }

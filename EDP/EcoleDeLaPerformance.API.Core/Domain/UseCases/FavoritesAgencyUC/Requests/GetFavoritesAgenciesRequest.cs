@@ -6,6 +6,7 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.FavoritesAgencyUC.Reques
 {
     public class GetFavoritesAgenciesRequest : IRequest<IEnumerable<FavoritesAgency>>
     {
+        public int UserId { get; set; } = default!;
     }
 
     public class GetFavoritesAgenciesRequestHandler : IRequestHandler<GetFavoritesAgenciesRequest, IEnumerable<FavoritesAgency>>
@@ -19,7 +20,7 @@ namespace EcoleDeLaPerformance.API.Core.Domain.UseCases.FavoritesAgencyUC.Reques
 
         public async Task<IEnumerable<FavoritesAgency>> Handle(GetFavoritesAgenciesRequest request, CancellationToken cancellationToken)
         {
-            return await _favoritesAgencyReadRepository.GetFavoritesAgenciesAsync();
+            return await _favoritesAgencyReadRepository.GetFavoritesAgenciesAsync(request.UserId);
         }
     }
 }

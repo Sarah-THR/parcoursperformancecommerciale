@@ -4,6 +4,7 @@
 @inject StateContainerService stateContainerService
 @inject NavigationManager navigationManager
 @inject IUserService userService
+@inject IFavoritesAgencyService favoritesAgencyService
 @page "/commercials"
 @attribute [Authorize(Policy = "AdminOrSuperviseurOrDirecteurPolicy")]
 
@@ -92,9 +93,11 @@
         var users = await userService.GetUsersAsync();
 
         List<User> filteredUsers;
-        if (userInfo.Role.Name == "Superviseur")
+        if (userInfo.Role.Name == "Directeur" || userInfo.Role.Name == "Superviseur")
         {
-            filteredUsers = users.Where(x => x.SupervisorId == userInfo.Id && x.DeletedAt == null).ToList();
+            var favoritesAgencies = await favoritesAgencyService.GetFavoritesAgencyAsync(userInfo.Id);
+            var agencyNames = favoritesAgencies.Select(a => a.AgencyName).Distinct().ToList();
+            filteredUsers = users.Where(x => (x.DirectorId == userInfo.Id || agencyNames.Contains(x.Entity)) && x.DeletedAt == null).ToList();
         }
         else
         {

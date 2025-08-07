@@ -25,9 +25,9 @@ namespace EcoleDeLaPerformance.Ui.Services
                                                                .Distinct()
                                                                .OrderBy(c => c).ToList() ?? new List<string>();
         }
-        public async Task<List<FavoritesAgency?>> GetFavoritesAgencyAsync()
+        public async Task<List<FavoritesAgency?>> GetFavoritesAgencyAsync(int userId)
         {
-            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/favoritesagency");
+            var response = await new HttpClient().GetAsync($"{_configuration.GetValue<string>("EDPApiUrl")}api/favoritesagency?UserId={userId}");
 
             return response.StatusCode switch
             {

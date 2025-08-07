@@ -1,4 +1,5 @@
 ﻿using EcoleDeLaPerformance.API.Core.Domain.UseCases.FavoritesAgencyUC.Requests;
+using EcoleDeLaPerformance.API.Host.Contracts.Requests.FavoritesAgencies;
 using EcoleDeLaPerformance.API.Host.Contracts.Responses.FavoritesAgencies;
 using FastEndpoints;
 using MediatR;
@@ -8,25 +9,30 @@ using IMapper = AutoMapper.IMapper;
 namespace EcoleDeLaPerformance.API.Host.Endpoints.FavoritesAgencies
 {
     [HttpGet("favoritesagency"), AllowAnonymous]
-    public class GetFavoritesAgenciesEndpoint : EndpointWithoutRequest<IEnumerable<FavoritesAgencyResponse>>
+    public class GetFavoritesAgenciesEndpoint : Endpoint<FavoritesAgencyByUserIdRequest, IEnumerable<FavoritesAgencyResponse>>
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-
         public GetFavoritesAgenciesEndpoint(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
             _mediator = mediator;
         }
-
-        public override async Task HandleAsync(CancellationToken ct)
+        public override async Task HandleAsync(FavoritesAgencyByUserIdRequest req, CancellationToken ct)
         {
-            var result = _mapper.Map<IEnumerable<FavoritesAgencyResponse>>(await _mediator.Send(new GetFavoritesAgenciesRequest(), ct));
+            try
+            {
+                var results = await _mediator.Send(new GetFavoritesAgenciesRequest
+                {
+                    UserId = req.UserId,
+                }, ct);
 
-            if (result == null)
-                await SendNoContentAsync(ct);
-            else
-                await SendOkAsync(result, ct);
+                await SendOkAsync(_mapper.Map<IEnumerable<FavoritesAgencyResponse>>(results), ct);
+            }
+            catch (ArgumentNullException)
+            {
+                await SendErrorsAsync(cancellation: ct);
+            }
         }
     }
 }
