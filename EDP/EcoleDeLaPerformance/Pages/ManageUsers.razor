@@ -28,7 +28,7 @@
                 <MudTh>Role</MudTh>
                 <MudTh>Statut</MudTh>
                 <MudTh>Entité/Site</MudTh>
-                <MudTh>Superviseur</MudTh>
+                <MudTh>Directeur</MudTh>
                 <MudTh>Date début de suivi</MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
@@ -37,7 +37,7 @@
                 <MudTd DataLabel="Role">@context.Role?.Name</MudTd>
                 <MudTd DataLabel="Statut">@context.Grade?.Name</MudTd>
                 <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
-                <MudTd DataLabel="Superviseur">@context.Supervisor?.Name</MudTd>
+                <MudTd DataLabel="Directeur">@context.Director?.Name</MudTd>
                 <MudTd DataLabel="Date début de suivi">@context.StartFollowUp</MudTd>
                 <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Delete" aria-label="delete" Color="Color.Secondary" OnClick="() => DeleteUser(context)"/></MudTd>
             </RowTemplate>
@@ -58,7 +58,7 @@
                 <MudTh>Role</MudTh>
                 <MudTh>Statut</MudTh>
                 <MudTh>Entité/Site</MudTh>
-                <MudTh>Superviseur</MudTh>
+                <MudTh>Directeur</MudTh>
                 <MudTh>Date début de suivi</MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
@@ -67,7 +67,7 @@
                 <MudTd DataLabel="Role">@context.Role?.Name</MudTd>
                 <MudTd DataLabel="Statut">@context.Grade?.Name</MudTd>
                 <MudTd DataLabel="Entité/Site">@context.Entity</MudTd>
-                <MudTd DataLabel="Superviseur">@context.Supervisor?.Name</MudTd>
+                <MudTd DataLabel="Directeur">@context.Director?.Name</MudTd>
                 <MudTd DataLabel="Date début de suivi">@context.StartFollowUp</MudTd>
                 <MudTd DataLabel=""><MudIconButton Icon="@Icons.Material.Filled.Cached" aria-label="recycle" Color="Color.Success" OnClick="() => RecycleUser(context)" /></MudTd>
             </RowTemplate>

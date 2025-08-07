@@ -24,8 +24,8 @@
                                       @bind-Value="model.Entity" For="@(() => model.Entity)" Required RequiredError="Entité/Site obligatoire !" />
                     </MudItem>
                     <MudItem md="6" lg="6" sm="12">
-                        <MudTextField Label="Superviseur"
-                                      @bind-Value="supervisorName" For="@(() => supervisorName)" Disabled />
+                        <MudTextField Label="Directeur"
+                                      @bind-Value="directorName" For="@(() => directorName)" Disabled />
                     </MudItem>
                     <MudItem md="6" lg="6" sm="12">
                         <MudDatePicker Label="Date début suivi" @bind-Date="StartFollowUpDateTime" For="@(() => StartFollowUpDateTime)" Disabled />
@@ -45,15 +45,15 @@
     private MudForm form;
     User model = new User();
 
-    string supervisorName
+    string directorName
     {
-        get => model.Supervisor?.Name ?? string.Empty;
+        get => model.Director?.Name ?? string.Empty;
         set
         {
-            if (model.Supervisor != null)
-                model.Supervisor.Name = value;
+            if (model.Director != null)
+                model.Director.Name = value;
             else if (!string.IsNullOrWhiteSpace(value))
-                model.Supervisor = new User { Name = value };
+                model.Director = new User { Name = value };
         }
     }
 

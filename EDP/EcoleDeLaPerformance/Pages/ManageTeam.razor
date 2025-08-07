@@ -34,7 +34,7 @@
                             }
                         </MudSelect>
                     </MudTh>
-                    <MudTh>Superviseur</MudTh>
+                    <MudTh>Directeur</MudTh>
                     <MudTh>
                         <MudSelect T="string" Label="Entité/Site" @bind-SelectedValues="selectedEntity" Variant="Variant.Text" Dense MultiSelection="true" AdornmentColor="Color.Primary" Adornment="Adornment.End">
                             @foreach (var entity in entitiesList)
@@ -50,7 +50,7 @@
                 <RowTemplate>
                     <MudTd DataLabel="Prénom Nom">@context.User.Name</MudTd>
                     <MudTd DataLabel="Statut">@context.User.Grade?.Name</MudTd>
-                    <MudTd DataLabel="Superviseur">@context.User.Supervisor?.Name</MudTd>
+                    <MudTd DataLabel="Directeur">@context.User.Director?.Name</MudTd>
                     <MudTd DataLabel="Entité/Site">
                         @context.User.Entity
                     </MudTd>

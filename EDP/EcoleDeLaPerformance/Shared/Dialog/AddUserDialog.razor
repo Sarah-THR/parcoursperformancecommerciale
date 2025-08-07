@@ -38,7 +38,7 @@
                     @if (roleList.Where(x => x.Id == Convert.ToInt32(selectedRole)).Select(x => x.Name).FirstOrDefault() == "Commercial")
                     {
                         <MudItem md="4" lg="4" sm="12">
-                            <MudSelect T="string" Label="Statut" Dense="true" @bind-Value="selectedGrade" Clearable Required RequiredError="Statut obligatoire !">
+                            <MudSelect T="string" Label="Statut" Dense="true" @bind-Value="selectedGrade" Clearable Required RequiredError="Grade obligatoire !">
                                 @foreach (var grade in gradeList)
                                 {
                                     <MudSelectItem Value="@grade.Id.ToString()">@grade.Name</MudSelectItem>
@@ -46,13 +46,13 @@
                             </MudSelect>
                         </MudItem>
                         <MudItem md="4" lg="4" sm="12">
-                            <MudSelect T="string" Label="Superviseur" Dense="true" TextChanged="() => SelectSupervisor(selectedSupervisor)" @bind-Value="selectedSupervisor" Clearable Required RequiredError="Manager obligatoire !">
+                            <MudSelect T="string" Label="Directeur" Dense="true" TextChanged="() => SelectDirector(selectedDirector)" @bind-Value="selectedDirector" Clearable Required RequiredError="Directeur obligatoire !">
                                 @{
-                                    if (supervisorList != null && supervisorList.Count != 0)
+                                    if (directorList != null && directorList.Count != 0)
                                     {
-                                        foreach (var supervisor in supervisorList)
+                                        foreach (var director in directorList)
                                         {
-                                            <MudSelectItem Value="@supervisor.Id.ToString()">@(supervisor.Name.ToUpper())</MudSelectItem>
+                                            <MudSelectItem Value="@director.Id.ToString()">@(director.Name.ToUpper())</MudSelectItem>
                                         }
                                     }
                                 }
@@ -81,11 +81,11 @@
     private MudForm form;
     public string? selectedRole { get; set; }
     public string? selectedGrade { get; set; }
-    public string? selectedSupervisor;
+    public string? selectedDirector;
     DateTime? startDate = null;
     public List<Role> roleList;
     public List<Grade> gradeList;
-    public List<User> supervisorList = new List<User>();
+    public List<User> directorList = new List<User>();
     public List<User> usersList = new List<User>();
     private bool isInitialized { get; set; }
 
@@ -94,13 +94,13 @@
         usersList = await userService.GetUsersAsync();
         roleList = await roleService.GetRolesAsync();
         gradeList = await gradeService.GetGradesAsync();
-        supervisorList = usersList.Where(x => x.DeletedAt == null && x.Role.Name == "Superviseur").ToList();
+        directorList = usersList.Where(x => x.DeletedAt == null && x.Role.Name == "Directeur").ToList();
         isInitialized = true;
     }
 
-    private async System.Threading.Tasks.Task SelectSupervisor(string value)
+    private async System.Threading.Tasks.Task SelectDirector(string value)
     {
-        selectedSupervisor = value;
+        selectedDirector = value;
         StateHasChanged();
     }
 
@@ -148,7 +148,7 @@
                 };
                 if (roleList.Where(x => x.Id == Convert.ToInt32(selectedRole)).Select(x => x.Name).FirstOrDefault() == "Commercial")
                 {
-                    newUser.SupervisorId = Convert.ToInt32(selectedSupervisor);
+                    newUser.DirectorId = Convert.ToInt32(selectedDirector);
                     newUser.GradeId = Convert.ToInt32(selectedGrade);
                     newUser.StartFollowUp = DateOnly.FromDateTime(startDate.Value);
                 }
