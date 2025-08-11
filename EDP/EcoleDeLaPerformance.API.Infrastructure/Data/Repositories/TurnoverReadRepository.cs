@@ -46,7 +46,8 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 
         public async Task<decimal> GetMonthGoalByUserAsync(string name, DateTime goalsDate)
         {
-            string connectionString = "Server=XFISRVSQL002; Database=XEFI_MSCRM;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
+            //string connectionString = "Server=XFISRVSQL002; Database=XEFI_MSCRM;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
+            string connectionString = "Server=XFISRVCRM005; Database=XEFI_MSCRM;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 await connection.OpenAsync();
