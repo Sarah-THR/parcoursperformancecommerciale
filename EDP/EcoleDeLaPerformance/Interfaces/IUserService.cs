@@ -12,7 +12,7 @@ namespace EcoleDeLaPerformance.Ui.Interfaces
         System.Threading.Tasks.Task UpdateUserAsync(User user);
         Task<decimal> GetUserBonusAsync(string name, DateOnly startDate, DateOnly endDate);
         Task<decimal> GetUserTurnoverAsync(string email, DateOnly beginningDate, DateOnly endingDate);
-
+        Task<decimal> GetUserMonthGoalAsync(string name, DateOnly monthDate);
         //Task<int> GetNbOpenAccountsAsync(string name);
 
         //int GetNbOpenAccountsByPeriod(string name, DateOnly periodFirstDay, DateOnly periodLastDay);

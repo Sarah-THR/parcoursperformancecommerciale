@@ -181,6 +181,36 @@ namespace EcoleDeLaPerformance.Ui.Services
                 throw;
             }
         }
+
+        public async Task<decimal> GetUserMonthGoalAsync(string name, DateOnly monthDate)
+        {
+            try
+            {
+                var apiUrl = _configuration.GetValue<string>("EDPApiUrl");
+                var queryString = $"?name={Uri.EscapeDataString(name)}&goalsDate={monthDate}";
+
+                var response = await new HttpClient().GetAsync($"{apiUrl}api/monthGoal{queryString}");
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var turnover = await response.Content.ReadFromJsonAsync<decimal>();
+                    return turnover;
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    throw new Exception("Le nom du commercial, la date du mois sont obligatoires.");
+                }
+                else
+                {
+                    throw new Exception($"Une erreur est survenue lors de l'objectif : {await response.Content.ReadAsStringAsync()}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors de la récupération de l'objectif : {ex.Message}");
+                throw;
+            }
+        }
         //public async Task<int> GetNbOpenAccountsAsync(string name)
         //{
         //    try

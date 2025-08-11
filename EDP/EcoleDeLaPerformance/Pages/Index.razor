@@ -8,101 +8,103 @@
 @inject IUserService userService
 @inject IBriefService briefService
 @inject IContractService contractService
+@inject IPlanningService planningService
 @page "/"
 @attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <PageTitle>Tableau de bord</PageTitle>
 
-<div class="px-6 mb-6">
-    <MudPaper Elevation="1" Class="p-4 mb-6">
-        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-            <MudIcon Icon="@Icons.Material.Filled.Dashboard" Color="Color.Info" />
-            <MudText Typo="Typo.h6">Tableau de bord</MudText>
-        </MudStack>
-        <MudGrid Class="align-items-center">
-            <MudItem xs="12" md="4">
-                <Speedometer MaxValue="100" Amount="Convert.ToDecimal(monthGoal)" Progress="monthlyTurnoverProgress" />
+@if (isInitialized)
+{
+    <div class="px-6 mb-6">
+        <MudPaper Elevation="1" Class="p-4 mb-6">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                <MudIcon Icon="@Icons.Material.Filled.Dashboard" Color="Color.Info" />
+                <MudText Typo="Typo.h6">Tableau de bord</MudText>
+            </MudStack>
+            <MudGrid Class="align-items-center">
+                <MudItem xs="12" md="4">
+                    <Speedometer MaxValue="100" Amount="Convert.ToDecimal(monthGoal)" Progress="monthlyTurnoverProgress" />
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <DonutCard Title="Contrats du mois" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contractData" Labels="@contractLabels" />
+                </MudItem>
+                <MudItem xs="12" md="4">
+                    <MudGrid>
+                        <MudItem xs="6">
+                            <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to bottom, #a4dffa, #ffffff);" MaxHeight="108px">
+                                <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré du mois</MudText>
+                                <MudText Typo="Typo.h6" Class="text-red-700 font-bold">@turnover.ToString("F") €</MudText>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="6">
+                            <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to bottom, #fee7ac, #ffffff);">
+                                <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable du mois</MudText>
+                                <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@bonus.ToString("F") €</MudText>
+                            </MudPaper>
+                        </MudItem>
+                        <MudItem xs="12">
+                            <MudPaper Class="p-4 rounded-lg" MaxHeight="108px">
+                                <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Rendez-vous à venir ce mois-ci</MudText>
+                                <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@nbAppointments.ToString()</MudText>
+                            </MudPaper>
+                        </MudItem>
+                    </MudGrid>
+                </MudItem>
+                <MudItem xs="12">
+                    <PlanningDetails User="userInfo" BaseDate="today" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+
+        <MudGrid>
+            <MudItem xs="12" lg="6">
+                <MudPaper Elevation="1" Class="p-4">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.TrackChanges" Color="Color.Warning" />
+                        <MudText Typo="Typo.h6">Engagement de signature de la semaine</MudText>
+                    </MudStack>
+                    <MudList Dense="true" T="string" Disabled>
+                        @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
+                        {
+                            @foreach (string signatureCommitment in (brief?.SignatureCommitment ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                <EngagementItem Text="@signatureCommitment" />
+                            }
+                        }
+                    </MudList>
+                </MudPaper>
             </MudItem>
-            <MudItem xs="12" md="4">
-                <DonutCard Title="Contrats du mois" Icon="@Icons.Material.Filled.Description" IconColor="Color.Error" Data="@contractData" Labels="@contractLabels" />
-            </MudItem>
-            <MudItem xs="12" md="4">
-                <MudGrid>
-                    <MudItem xs="6">
-                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to bottom, #a4dffa, #ffffff);" MaxHeight="108px">
-                            <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré du mois</MudText>
-                            <MudText Typo="Typo.h6" Class="text-red-700 font-bold">@turnover.ToString("F") €</MudText>
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to bottom, #fee7ac, #ffffff);">
-                            <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable du mois</MudText>
-                            <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@bonus.ToString("F") €</MudText>
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem xs="12">
-                        <MudPaper Class="p-4 rounded-lg" MaxHeight="108px">
-                            <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Rendez-vous à venir ce mois-ci</MudText>
-                            <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@nbAppointments.ToString()</MudText>
-                        </MudPaper>
-                    </MudItem>
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="12">
-                <PlanningDetails User="userInfo" BaseDate="today" />
+
+            <MudItem xs="12" lg="6">
+                <MudPaper Elevation="1" Class="p-4">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                        <MudIcon Icon="@Icons.Material.Filled.AssignmentTurnedIn" Color="Color.Secondary" />
+                        <MudText Typo="Typo.h6">Dossiers à checker</MudText>
+                    </MudStack>
+                    <MudList Dense="true" T="string" Disabled>
+                        @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
+                        {
+                            @foreach (string filesToCheck in (brief?.FilesToCheck ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                <FileItem Text="@filesToCheck" />
+                            }
+                        }
+                    </MudList>
+                </MudPaper>
             </MudItem>
         </MudGrid>
-    </MudPaper>
-
-    <MudGrid>
-        <MudItem xs="12" lg="6">
-            <MudPaper Elevation="1" Class="p-4">
-                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-                    <MudIcon Icon="@Icons.Material.Filled.TrackChanges" Color="Color.Warning" />
-                    <MudText Typo="Typo.h6">Engagement de signature de la semaine</MudText>
-                </MudStack>
-                <MudList Dense="true" T="string" Disabled>
-                    @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
-                    {
-                        @foreach (string signatureCommitment in (brief?.SignatureCommitment ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            <EngagementItem Text="@signatureCommitment" />
-                        }
-                    }
-                </MudList>
-            </MudPaper>
-        </MudItem>
-
-        <MudItem xs="12" lg="6">
-            <MudPaper Elevation="1" Class="p-4">
-                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-                    <MudIcon Icon="@Icons.Material.Filled.AssignmentTurnedIn" Color="Color.Secondary" />
-                    <MudText Typo="Typo.h6">Dossiers à checker</MudText>
-                </MudStack>
-                <MudList Dense="true" T="string" Disabled>
-                    @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
-                    {
-                        @foreach (string filesToCheck in (brief?.FilesToCheck ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
-                        {
-                            <FileItem Text="@filesToCheck" />
-                        }
-                    }
-                </MudList>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-</div>
+    </div>
+}
 
 @code {
     public User userInfo => stateContainerService.UserInfo;
     double[] contractData;
     string[] contractLabels = new[] { "Sauvegarde", "Maintenance", "Sécurité" };
     decimal trimestrialTurnover = 0;
-    decimal trimestrialMonthGoal = 0;
-    int trimestrialMonthlyTurnoverProgress => trimestrialMonthGoal == 0 ? 0 : (int)Math.Round((trimestrialTurnover / trimestrialMonthGoal) * 100);
     decimal turnover = 0;
     decimal monthGoal = 0;
-    int monthlyTurnoverProgress => monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
+    int monthlyTurnoverProgress = 0;
     decimal bonus = 0;
     decimal nbAppointments = 0;
     DateOnly today = DateOnly.FromDateTime(DateTime.Today);
@@ -111,6 +113,7 @@
     List<Brief?> briefs = new();
     List<EcolePerformanceSm?> contracts = new();
     Models.Planning planning;
+    private bool isInitialized { get; set; }
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
@@ -128,6 +131,23 @@
         var daysSinceMonday = ((int)today.DayOfWeek + 6) % 7;
         var monday = today.AddDays(-daysSinceMonday);
         var friday = monday.AddDays(4);
-        planning = userInfo.Plannings.Where(p => p.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && p.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue)).FirstOrDefault();
+
+        planning = await planningService.GetPlanningByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), userInfo.Id);
+        var existingPlanning = userInfo.Plannings.FirstOrDefault(p => p.Id == planning?.Id);
+
+        if (existingPlanning != null)
+        {
+            existingPlanning.CreatedAt = planning.CreatedAt;
+            existingPlanning.PlanningsTasks = planning.PlanningsTasks;
+        }
+        else if (planning != null)
+        {
+            userInfo.Plannings.Add(planning);
+        };
+
+        stateContainerService.UserInfo = userInfo;
+        monthGoal = await userService.GetUserMonthGoalAsync(userInfo.Name, firstMonthDay);
+        monthlyTurnoverProgress = monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
+        isInitialized = true;
     }
 }

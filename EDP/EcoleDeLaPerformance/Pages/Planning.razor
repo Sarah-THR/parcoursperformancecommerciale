@@ -129,6 +129,7 @@
                 UserId = userInfo.Id,
             };
             planning = await planningService.InsertPlanningAsync(newPlanning);
+           
         }
         PlanningsTask planningsTask = new PlanningsTask
             {
@@ -138,7 +139,7 @@
                 Identifier = dropItem.Item.Identifier,
             };
 
-        planningsTaskService.InsertPlanningsTaskAsync(planningsTask);
+        await planningsTaskService.InsertPlanningsTaskAsync(planningsTask);
     }
 
     private string[] GetWeekDays()
