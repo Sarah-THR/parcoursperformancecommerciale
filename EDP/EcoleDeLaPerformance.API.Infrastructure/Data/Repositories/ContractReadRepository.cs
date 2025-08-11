@@ -27,7 +27,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 
         public async Task<List<VenteOneShot>> GetContractSaleByUserNameAsync(string commercial)
         {
-            //string connectionString = "Server=XFISRVSQL004; Database=BI;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
+            //string connectionString = "Server=XFISRVSQL002; Database=BI;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
             string connectionString = "Server=XFISRVSQLPREPROD; Database=BI;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -60,7 +60,7 @@ namespace EcoleDeLaPerformance.API.Infrastructure.Data.Repositories
 
         public async Task<List<NexleaseContract>> GetContractNexleaseByUserNameAsync(string commercial)
         {
-            //string connectionString = "Server=XFISRVSQL004; Database=BI;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
+            //string connectionString = "Server=XFISRVSQL002; Database=BI;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
             string connectionString = "Server=XFISRVSQLPREPROD; Database=BI;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
