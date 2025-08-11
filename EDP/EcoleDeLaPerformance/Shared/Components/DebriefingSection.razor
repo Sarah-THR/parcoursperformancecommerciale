@@ -132,8 +132,11 @@
         </MudItem>
 
         <MudItem xs="12" md="12" Class="d-flex justify-content-center">
+            @if (debrief?.IsDraft == true || debrief?.IsDraft == null)
+            {
             <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Filled.SaveAs" Class="ma-4" OnClick="() => SaveBrief(true)">Brouillon</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Save" Class="ma-4" OnClick="() => SaveBrief(false)">Enregistrer</MudButton>
+            }
         </MudItem>
     </MudGrid>
 </div>
