@@ -42,28 +42,7 @@
             <MudFlexBreak />
 
             <MudItem xs="12" md="6">
-                <MudTable Items="allContracts" Elevation="1" Bordered="false" HeaderClass="bg-primary bg-opacity-10">
-                    <HeaderContent>
-                        <MudTh Class="fw-bold fs-6">A faire</MudTh>
-                        <MudTh Class="fw-bold fs-6">Objectif mensuel</MudTh>
-                        <MudTh Class="fw-bold fs-6">Compte rendu mensuel</MudTh>
-                        <MudTh Class="fw-bold fs-6">Indicateur</MudTh>
-                    </HeaderContent>
-                    <RowTemplate>
-                        <MudTd>
-                            <MudText Typo="Typo.subtitle2">@context.label</MudText>
-                        </MudTd>
-                        <MudTd>
-                            <MudText Typo="Typo.subtitle2">@context.contracts.Count()</MudText>
-                        </MudTd>
-                        <MudTd>
-                            <MudText Typo="Typo.subtitle2">@context.contracts.Count()</MudText>
-                        </MudTd>
-                        <MudTd>
-                            <MudText Typo="Typo.subtitle2">@GetIndicatorIcon(context.contracts.Count(), context.contracts.Count())</MudText>
-                        </MudTd>
-                    </RowTemplate>
-                </MudTable>
+                <Speedometer MaxValue="100" Amount="Convert.ToDecimal(monthGoal)" Progress="monthlyTurnoverProgress" />
             </MudItem>
             <MudItem xs="12" md="6">
                 <MudGrid>
@@ -241,7 +220,8 @@
     bool canGoToPreviousWeek = true;
     bool canGoToNextWeek = true;
     int currentPlanningId;
-
+    decimal monthGoal = 0;
+    int monthlyTurnoverProgress = 0;
     double[] rentalData;
     double[] purchaseData;
     double[] contratData;
@@ -262,6 +242,9 @@
                 new() { label = "Maintenance", contracts = allContractsRaw.Where(c => c.Maintenance == "OUI").ToList() },
                 new() { label = "Sécurité", contracts = allContractsRaw.Where(c => c.Sécurité == "OUI").ToList() }
             };
+
+        monthGoal = await userService.GetUserMonthGoalAsync(userInfo.Name, firstMonthDay);
+        monthlyTurnoverProgress = monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
 
         daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
         monday = baseDate.AddDays(-daysSinceMonday);

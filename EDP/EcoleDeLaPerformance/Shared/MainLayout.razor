@@ -174,7 +174,7 @@
                 {
                     try
                     {
-                        stateContainerService.UserInfo = await userService.GetUserByEmailAsync("b.sterin@xefi.fr");
+                        stateContainerService.UserInfo = await userService.GetUserByEmailAsync(authState.User.Identity.Name);
 
                         if (stateContainerService.UserInfo == null)
                         {
