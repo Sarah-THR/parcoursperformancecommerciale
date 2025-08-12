@@ -99,26 +99,27 @@ namespace EcoleDeLaPerformance.Ui.Services
             }
         }
 
-        public User? GetUserAAD(string email)
+        public List<User?> GetUserAAD(string name)
         {
+            var result = new List<User>();
+
             using DirectorySearcher dirsearcher = new(Domain.GetDirectoryEntry(),
-                                                          $"(&(objectClass=user)(mail=*{email}*))",
+                                                          $"(&(objectClass=user)(displayName=*{name}*))",
                                                           new string[] { "displayName", "givenName", "mail", "company" });
 
-            var user = dirsearcher.FindOne();
-            if (user != null)
+            var users = dirsearcher.FindAll();
+
+            foreach (SearchResult user in users)
             {
-                return new User()
+                result.Add(new User
                 {
                     Name = user.GetPropertyValue("displayName"),
                     Email = user.GetPropertyValue("mail"),
                     Entity = user.GetPropertyValue("company"),
-                };
+                });
             }
-            else
-            {
-                return new User();
-            }
+
+            return result;
         }
 
         #region APICRM

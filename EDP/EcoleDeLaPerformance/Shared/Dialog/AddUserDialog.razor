@@ -16,12 +16,13 @@
             <MudForm @ref="form" Model="model">
                 <MudGrid>
                     <MudItem md="4" lg="4" sm="12">
-                        <MudTextField Label="Email" Immediate="true"
-                                      @bind-Value="model.Email" For="@(() => model.Email)" Validation="@(new EmailAddressAttribute() { ErrorMessage = "Veuillez saisir une adresse email valide" })" Required RequiredError="Email obligatoire !" TextChanged="() => HandleSearchChange(model.Email)" />
+                        <MudTextField Label="Email"
+                                      @bind-Value="model.Email" For="@(() => model.Email)" Validation="@(new EmailAddressAttribute() { ErrorMessage = "Veuillez saisir une adresse email valide" })" Required RequiredError="Email obligatoire !" />
                     </MudItem>
                     <MudItem md="4" lg="4" sm="12">
-                        <MudTextField Label="Nom"
-                                      @bind-Value="model.Name" For="@(() => model.Name)" Required RequiredError="Prénom Nom obligatoire !" />
+                        @* <MudTextField Label="Nom" Immediate="true" @bind-Value="model.Name" For="@(() => model.Name)" Required RequiredError="Prénom Nom obligatoire !" TextChanged="() => HandleSearchChange(model.Name)" /> *@
+                        <MudAutocomplete T="string" Label="Nom" @bind-Value="model.Name" SearchFunc="@HandleSearchChange" TextChanged="OnNameSelected"
+                                         ResetValueOnEmptyText="true" SelectValueOnTab="true" Clearable />
                     </MudItem>
                     <MudItem md="4" lg="4" sm="12">
                         <MudTextField Label="Entité/Site"
@@ -87,6 +88,7 @@
     public List<Grade> gradeList;
     public List<User> directorList = new List<User>();
     public List<User> usersList = new List<User>();
+    public List<User> usersName = new List<User>();
     private bool isInitialized { get; set; }
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
@@ -104,30 +106,28 @@
         StateHasChanged();
     }
 
-    async System.Threading.Tasks.Task HandleSearchChange(string value)
+    private async System.Threading.Tasks.Task<IEnumerable<string>> HandleSearchChange(string value, CancellationToken token)
     {
-        try
+        if (string.IsNullOrWhiteSpace(value))
+            return Enumerable.Empty<string>();
+
+        usersName = userService.GetUserAAD(value);
+
+        return usersName.Select(x => x.Name).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private void OnNameSelected(string selectedName)
+    {
+        var user = usersName.FirstOrDefault(u => u.Name == selectedName);
+        if (user != null)
         {
-            if (!string.IsNullOrEmpty(value))
-            {
-                var user = userService.GetUserAAD(model.Email);
-                if (user != null)
-                {
-                    model.Name = user.Name;
-                    model.Entity = user.Entity;
-                }
-            }
-            else
-            {
-                model.Name = null;
-                model.Entity = null;
-            }
-            StateHasChanged();
+            model.Email = user.Email;
+            model.Entity = user.Entity;
         }
-        catch (Exception ex)
+        else
         {
-            snackbar.Add($"Erreur lors de la recherche d'un utilisateur: {ex.Message}", Severity.Error);
-            SentrySdk.CaptureException(ex);
+            model.Email = null;
+            model.Entity = null;
         }
     }
 
