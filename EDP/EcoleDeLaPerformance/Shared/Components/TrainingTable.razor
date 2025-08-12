@@ -22,7 +22,7 @@
                         <MudText Typo="Typo.subtitle2">@context.Formation.Name</MudText>
                     </MudTd>
                     <MudTd>
-                        <MudCheckBox Value="context.UserFormation?.IsValidated ?? false" Color="Color.Primary" ValueChanged="HandleCheckBoxChanged(context)" ReadOnly="context.UserFormation?.IsValidated ?? false" />
+                        <MudCheckBox Value="context.UserFormation?.IsValidated ?? false" Color="Color.Primary" ValueChanged="HandleCheckBoxChanged(context)" ReadOnly='User.Role.Name == "Commercial"' />
                     </MudTd>
                     <MudTd>
                         @if (context.UserFormation is not null)
@@ -44,9 +44,13 @@
                         {
                             @GetStatusBadge(statuses.Where(x => x.Id == context.UserFormation?.StatusId).Select(x => x.Name).FirstOrDefault())
                         }
+                        else if (User.Role.Name == "Commercial")
+                        {
+                            @GetStatusBadge("En attente")
+                        }
                         else
                         {
-                            <MudSelect T="string" Label="Statut" Value="@(statusPerRow.ContainsKey(context.Formation.Id) ? statusPerRow[context.Formation.Id] : null)" ValueChanged="@(id => OnStatusChanged(id, context))">
+                            <MudSelect T="string" Label="Statut" Value="@(statusPerRow.ContainsKey(context.Formation.Id) ? statusPerRow[context.Formation.Id] : null)" ValueChanged="@(id => OnStatusChanged(id, context))" Disabled='User.Role.Name == "Commercial"'>
                                 @foreach (var status in statuses)
                                 {
                                     <MudSelectItem Value="@status.Id.ToString()">@status.Name</MudSelectItem>

@@ -4,6 +4,7 @@
 @inject StateContainerService stateContainerService
 @inject IUserService userService
 @inject IDebriefService debriefService
+@inject IContractService contractService
 
 <div>
     <MudGrid Class="mt-6">
@@ -96,13 +97,13 @@
                     </MudStack>
                     <MudGrid>
                         <MudItem xs="12" md="4">
-                            <DonutCard Title="Location" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@rentalData" Number="5" />
+                            <DonutCard Title="Location" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@rentalData" Number="@(rentalData != null && rentalData.Length > 0 ? Convert.ToInt32(rentalData[0]) : 0)" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <DonutCard Title="Achats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@purchaseData" Number="2" />
+                            <DonutCard Title="Achats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@purchaseData" Number="@(purchaseData != null && purchaseData.Length > 0 ? Convert.ToInt32(purchaseData[0]) : 0)" />
                         </MudItem>
                         <MudItem xs="12" md="4">
-                            <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@contratData" Number="2" />
+                            <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@contratData" Number="@(contratData != null && contratData.Length > 0 ? Convert.ToInt32(contratData[0]) : 0)" />
                         </MudItem>
                     </MudGrid>
                 </MudCardContent>
@@ -154,9 +155,9 @@
     Debrief? debrief = new();
     double[] appointmentData;
 
-    double[] rentalData = new[] { 5.0 };
-    double[] purchaseData = new[] { 2.0 };
-    double[] contratData = new[] { 2.0 };
+    double[] rentalData;
+    double[] purchaseData;
+    double[] contratData;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
@@ -172,6 +173,10 @@
         ongoingCaseItems = !string.IsNullOrWhiteSpace(debrief?.BusinessInProgress)
             ? debrief.BusinessInProgress.Split('\n', StringSplitOptions.RemoveEmptyEntries).ToList()
             : new List<string>();
+
+        rentalData = new double[] { (double)contractService.GetNbContractsNexleaseByUser(userInfo.Name, monday, friday) };
+        purchaseData = new double[] { (double)contractService.GetNbContractsSaleByUser(userInfo.Name, monday, friday) };
+        contratData = new double[] { (double)contractService.GetNbContractsByUser(userInfo.Name, monday, friday) };
 
         var nbAppointmentsRealised = await userService.GetNbAppointmentsAsync(userInfo.Email, monday, today);
         var nbAppointmentsOnGoing = await userService.GetNbAppointmentsAsync(userInfo.Email, today, friday);

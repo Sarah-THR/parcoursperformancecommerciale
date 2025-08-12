@@ -1,6 +1,8 @@
 ﻿@using EcoleDeLaPerformance.Ui.Interfaces
 @using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Services
 @inject IUsersFormationService usersFormationService
+@inject StateContainerService stateContainerService
 
 <MudDialog Style="width: 600px">
     <DialogContent>
@@ -32,8 +34,11 @@
         </MudExRichTextEdit>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Annuler</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Sauvegarder</MudButton>
+        @if (userInfo.Role.Name != "Commercial")
+        {
+            <MudButton OnClick="Cancel">Annuler</MudButton>
+            <MudButton Color="Color.Primary" OnClick="Submit">Sauvegarder</MudButton>
+        }
     </DialogActions>
 </MudDialog>
 @code {
@@ -42,6 +47,8 @@
 
     [Parameter]
     public UsersFormation? UsersFormation { get; set; }
+
+    public User userInfo => stateContainerService.UserInfo;
 
     public void ChangeComment(string comment)
     {
