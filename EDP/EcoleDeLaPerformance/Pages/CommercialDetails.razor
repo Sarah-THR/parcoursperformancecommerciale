@@ -243,11 +243,16 @@
                 new() { label = "Sécurité", contracts = allContractsRaw.Where(c => c.Sécurité == "OUI").ToList() }
             };
 
-        monthGoal = await userService.GetUserMonthGoalAsync(userInfo.Name, firstMonthDay);
+        monthGoal = await userService.GetUserMonthGoalAsync(commercial.Name, firstMonthDay);
         monthlyTurnoverProgress = monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
-        
-        var week = userInfo.Plannings.FirstOrDefault(x => x.Id == Convert.ToInt32(weekId));
-        var createdAtDate = week.CreatedAt.Date;
+
+        var week = commercial.Plannings.FirstOrDefault(x => x.Id == Convert.ToInt32(weekId));
+        var createdAtDate = DateTime.Now;
+        if(week != null)
+        {
+            createdAtDate = week.CreatedAt.Date;
+
+        }
 
         daysSinceMonday = ((int)createdAtDate.DayOfWeek + 6) % 7;
 
