@@ -35,6 +35,7 @@
     <PackageReference Include="Blazor-ApexCharts" Version="6.0.1" />
     <PackageReference Include="Blazor.Bootstrap" Version="3.4.0" />
     <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
+    <PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.2.4" />
     <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.7.4" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.18" />

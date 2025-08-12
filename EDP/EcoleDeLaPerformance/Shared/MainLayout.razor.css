@@ -2,6 +2,7 @@
     margin-top: 1rem;
     display: flex !important;
     justify-content: center !important;
+    padding-right: 0.5rem;
     flex-wrap: wrap !important;
 }
 
@@ -17,4 +18,12 @@
     overflow-y: auto;
     background-color: white;
     z-index: 1000;
+}
+
+::deep .mud-nav-link .mud-nav-link-text {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+    margin-inline-start: 0;
+    letter-spacing: 0;
 }

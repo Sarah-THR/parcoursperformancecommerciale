@@ -37,12 +37,7 @@
                     </MudTh>
                     <MudTh>Directeur</MudTh>
                     <MudTh>
-                        <MudSelect T="string" Label="Entité/Site" @bind-SelectedValues="selectedEntity" Variant="Variant.Text" Dense MultiSelection="true" AdornmentColor="Color.Primary" Adornment="Adornment.End">
-                            @foreach (var entity in entitiesList)
-                            {
-                                <MudSelectItem Value="@entity">@entity</MudSelectItem>
-                            }
-                        </MudSelect>
+                        <MudSelectExtended MultiSelection="true" @bind-SelectedValues="selectedEntity" ItemCollection="entitiesList" SearchBox="true" SearchBoxAutoFocus="true" T="string" Label="Entité/Site" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Text" SearchBoxClearable="true" Clearable/>
                     </MudTh>
                     <MudTh>CA généré ce mois-ci</MudTh>
                     <MudTh>Variable mois actuel</MudTh>

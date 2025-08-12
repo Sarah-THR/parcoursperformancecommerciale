@@ -191,8 +191,15 @@
 
                         string filePath = Path.Combine(wwwrootPath, fileName);
 
-                        await using FileStream fs = new(filePath, FileMode.Create);
-                        await file.OpenReadStream().CopyToAsync(fs);
+                        try
+                        {
+                            await using FileStream fs = new(filePath, FileMode.Create);
+                            await file.OpenReadStream(50 * 1024 * 1024).CopyToAsync(fs);
+                        }
+                        catch (Exception ex)
+                        {
+                            Snackbar.Add("Le fichier est trop volumineux. Limite : 50 Mo.", Severity.Error);
+                        }
 
                         newDocument.ContentPath = $"/documents/{fileName}";
                         var createdDocument = await documentService.CreateDocumentAsync(newDocument);

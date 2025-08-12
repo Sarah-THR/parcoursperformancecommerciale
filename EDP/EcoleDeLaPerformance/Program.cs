@@ -8,6 +8,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using MudBlazor;
 using MudBlazor.Services;
+using MudExtensions.Services;
 using System.Security.Claims;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOrCommercialPolicy", policy => policy.RequireRole("Admin", "Commercial"));
     options.AddPolicy("AdminOrSuperviseurOrDirecteurPolicy", policy => policy.RequireRole("Admin", "Superviseur", "Directeur"));
     options.AddPolicy("AdminOrCommercialOrDirecteurPolicy", policy => policy.RequireRole("Admin", "Commercial", "Directeur"));
+    options.AddPolicy("CommercialOrDirecteurPolicy", policy => policy.RequireRole("Commercial", "Directeur"));
 
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
@@ -48,6 +50,7 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.VisibleStateDuration = 5000;
 });
 builder.Services.AddMudServices();
+builder.Services.AddMudExtensions();
 builder.Services.AddMudBlazorDialog();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBriefService, BriefService>();

@@ -23,9 +23,12 @@
 
         if (user.Identity?.IsAuthenticated ?? false)
         {
-            if (context.Path == "" && user.IsInRole("Superviseur"))
+            if (context.Path == "")
             {
-                Navigation.NavigateTo("/commercials", true);
+                if (user.IsInRole("Superviseur") || user.IsInRole("Admin"))
+                {
+                    Navigation.NavigateTo("/commercials", true);
+                }
             }
         }
     }

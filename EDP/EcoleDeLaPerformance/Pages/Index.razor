@@ -10,7 +10,7 @@
 @inject IContractService contractService
 @inject IPlanningService planningService
 @page "/"
-@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
+@attribute [Authorize(Policy = "CommercialOrDirecteurPolicy")]
 
 <PageTitle>Tableau de bord</PageTitle>
 

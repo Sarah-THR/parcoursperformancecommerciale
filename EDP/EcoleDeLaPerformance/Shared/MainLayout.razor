@@ -75,7 +75,7 @@
                                 <div class="d-flex">
                                     <MudDrawer Elevation="0" Width="128px" Class="drawer-fixed border-end" Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent">
                                         <MudNavMenu Class="p-2">
-                                            <AuthorizedPolicyView Policy="AdminOrCommercialOrDirecteurPolicy">
+                                            <AuthorizedPolicyView Policy="CommercialOrDirecteurPolicy">
                                                 <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" Class="linkmenu">
                                                     Accueil
                                                 </MudNavLink>
@@ -84,6 +84,11 @@
                                                 </MudNavLink>
                                                 <MudNavLink Href="/brief" Icon="@Icons.Material.Outlined.Message" Class="linkmenu">
                                                     Brief/Debrief
+                                                </MudNavLink>
+                                            </AuthorizedPolicyView>
+                                            <AuthorizedPolicyView Policy="AdminOrSuperviseurOrDirecteurPolicy">
+                                                <MudNavLink Href="/commercials" Icon="@Icons.Material.Outlined.Groups" Class="linkmenu">
+                                                    Gérer mon équipe
                                                 </MudNavLink>
                                             </AuthorizedPolicyView>
                                             <AuthorizedPolicyView Policy="AdminOrCommercialOrDirecteurPolicy">
@@ -96,20 +101,15 @@
                                                     Historique
                                                 </MudNavLink>
                                             </AuthorizedPolicyView>
-                                            <AuthorizedPolicyView Policy="AdminOrSuperviseurOrDirecteurPolicy">
-                                                <MudNavLink Href="/commercials" Icon="@Icons.Material.Outlined.Groups" Class="linkmenu">
-                                                    Gérer mon équipe
-                                                </MudNavLink>
-                                            </AuthorizedPolicyView>
                                             <MudNavLink Href="/supports" Icon="@Icons.Material.Outlined.AutoStories" Class="linkmenu">
                                                 Supports
                                             </MudNavLink>
                                             <AuthorizedPolicyView Policy="AdminOnly">
-                                                <MudNavLink Href="/users" Icon="@Icons.Material.Outlined.People" Class="linkmenu">
-                                                    Utilisateurs
-                                                </MudNavLink>
                                                 <MudNavLink Href="/managecontent" Icon="@Icons.Material.Filled.InstallDesktop" Class="linkmenu">
                                                     Gérer le contenu
+                                                </MudNavLink>
+                                                <MudNavLink Href="/users" Icon="@Icons.Material.Outlined.People" Class="linkmenu">
+                                                    Utilisateurs
                                                 </MudNavLink>
                                             </AuthorizedPolicyView>
                                             <MudText Class="p-4">

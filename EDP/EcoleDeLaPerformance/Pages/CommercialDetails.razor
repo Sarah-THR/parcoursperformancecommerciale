@@ -204,7 +204,7 @@
     public User userInfo => stateContainerService.UserInfo;
     decimal turnover = 0;
     decimal bonus = 0;
-    DateOnly baseDate = DateOnly.FromDateTime(DateTime.Today);
+    DateOnly baseDate;
     List<TempClass> allContracts = new();
     User commercial = new User();
     int daysSinceMonday;
@@ -245,8 +245,14 @@
 
         monthGoal = await userService.GetUserMonthGoalAsync(userInfo.Name, firstMonthDay);
         monthlyTurnoverProgress = monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
+        
+        var week = userInfo.Plannings.FirstOrDefault(x => x.Id == Convert.ToInt32(weekId));
+        var createdAtDate = week.CreatedAt.Date;
 
-        daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
+        daysSinceMonday = ((int)createdAtDate.DayOfWeek + 6) % 7;
+
+        baseDate = DateOnly.FromDateTime(createdAtDate.AddDays(-daysSinceMonday));
+
         monday = baseDate.AddDays(-daysSinceMonday);
         friday = monday.AddDays(4);
 
