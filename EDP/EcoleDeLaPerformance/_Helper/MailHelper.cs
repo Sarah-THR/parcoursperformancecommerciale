@@ -60,13 +60,13 @@ namespace EcoleDeLaPerformance.Ui.Helper
 
                 mail.IsBodyHtml = true;
                 mail.From = new MailAddress(creatorMail, creatorName);
-                mail.To.Add("s.tahar@xefi.fr");
+                mail.To.Add(newAccountMail);
 
                 mail.Subject = $"Accès Ecole de la performance commerciale";
 
                 mail.Body = $@"<p>Bonjour {newAccountName},</p> 
                             <p>Tu peux maintenant te connecter à la plateforme Ecole de la performance commerciale avec tes identifiants Microsoft. 😊</p> 
-                            <p>Voici le lien pour te connecter : </p> <a href='https://ecoledelaperformance.xefi.fr'>https://ecoledelaperformance.xefi.fr</a>
+                            <p>Voici le lien pour te connecter : </p> <a href='https://preprod-ecoledelaperformance.xefi.fr/'>https://preprod-ecoledelaperformance.xefi.fr/</a>
                             <p>Bonne journée ! </p>";
 
                 ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) { return true; };
