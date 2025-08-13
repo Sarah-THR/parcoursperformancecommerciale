@@ -9,36 +9,71 @@
 @attribute [Authorize(Policy = "AdminOrSuperviseurOrDirecteurPolicy")]
 
 <div class="px-6">
-    @if (isInitialized)
-    {
-        <MudPaper Elevation="1" Class="p-4 mb-6">
-            <MudTable T="UserWithFinance" OnRowClick="RowClickEvent" Items="@userWithFinanceList" Dense="true" Hover="true"
-                      Filter="new Func<UserWithFinance, bool>(FilterFunc1)" HeaderClass="bg-primary bg-opacity-10" Elevation="0" RowClass="cursor-pointer">
+    <MudPaper Elevation="1" Class="p-4 mb-6 d-flex justify-content-center">
+        @if (isInitialized)
+        {
+            <MudTable T="UserWithFinance"
+                      Items="@userWithFinanceList"
+                      OnRowClick="RowClickEvent"
+                      Dense="true"
+                      Hover="true"
+                      Filter="FilterFunc1"
+                      HeaderClass="bg-primary bg-opacity-10"
+                      RowClass="cursor-pointer"
+                      Class="w-100">
 
                 <ToolBarContent>
-                    <MudTextField @bind-Value="searchString" Placeholder="Rechercher un utilisateur" Adornment="Adornment.Start"
-                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                    <MudTextField @bind-Value="searchString"
+                                  Placeholder="Rechercher un utilisateur"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search"
+                                  IconSize="Size.Medium"
+                                  Class="mt-0" />
                     <MudSpacer />
                 </ToolBarContent>
 
                 <HeaderContent>
                     <MudTh>
-                        <MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<UserWithFinance, object>(x => x.User.Name)">
+                        <MudTableSortLabel InitialDirection="SortDirection.Ascending"
+                                           SortBy="new Func<UserWithFinance, object>(x => x.User.Name)">
                             Prénom Nom
                         </MudTableSortLabel>
                     </MudTh>
+
                     <MudTh>
-                        <MudSelect T="string" Label="Statut" @bind-SelectedValues="selectedGrades" Variant="Variant.Text" Dense MultiSelection="true" AdornmentColor="Color.Primary" Adornment="Adornment.End">
+                        <MudSelect T="string"
+                                   Label="Statut"
+                                   @bind-SelectedValues="selectedGrades"
+                                   Variant="Variant.Text"
+                                   Dense
+                                   MultiSelection="true"
+                                   AdornmentColor="Color.Primary"
+                                   Adornment="Adornment.End">
                             @foreach (var grade in gradesList)
                             {
                                 <MudSelectItem Value="@grade">@grade</MudSelectItem>
                             }
                         </MudSelect>
                     </MudTh>
+
                     <MudTh>Directeur</MudTh>
+
                     <MudTh>
-                        <MudSelectExtended MultiSelection="true" @bind-SelectedValues="selectedEntity" ItemCollection="entitiesList" SearchBox="true" SearchBoxAutoFocus="true" T="string" Label="Entité/Site" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Text" SearchBoxClearable="true" Clearable RelativeWidth="DropdownWidth.Adaptive"/>
+                        <MudSelectExtended T="string"
+                                           MultiSelection="true"
+                                           SelectedValues="selectedEntity"
+                                           SelectedValuesChanged="OnEntitySelectionChanged"
+                                           ItemCollection="entitiesList"
+                                           SearchBox="true"
+                                           SearchBoxAutoFocus="true"
+                                           Label="Entité/Site"
+                                           AnchorOrigin="Origin.BottomCenter"
+                                           Variant="Variant.Text"
+                                           SearchBoxClearable="true"
+                                           Clearable="true"
+                                           RelativeWidth="DropdownWidth.Adaptive" />
                     </MudTh>
+
                     <MudTh>CA généré ce mois-ci</MudTh>
                     <MudTh>Variable mois actuel</MudTh>
                 </HeaderContent>
@@ -47,9 +82,7 @@
                     <MudTd DataLabel="Prénom Nom">@context.User.Name</MudTd>
                     <MudTd DataLabel="Statut">@context.User.Grade?.Name</MudTd>
                     <MudTd DataLabel="Directeur">@context.User.Director?.Name</MudTd>
-                    <MudTd DataLabel="Entité/Site">
-                        @context.User.Entity
-                    </MudTd>
+                    <MudTd DataLabel="Entité/Site">@context.User.Entity</MudTd>
                     <MudTd DataLabel="CA généré ce mois-ci">@context.Turnover.ToString("C")</MudTd>
                     <MudTd DataLabel="Variable mois actuel">@context.Bonus.ToString("C")</MudTd>
                 </RowTemplate>
@@ -60,96 +93,124 @@
                                    InfoFormat="{first_item}-{last_item} sur {all_items}"
                                    AllItemsText="Tous" />
                 </PagerContent>
-
             </MudTable>
-
-        </MudPaper>
-    }
-</div>
-
-@code {
-    private bool isInitialized { get; set; }
-    public User userInfo => stateContainerService.UserInfo;
-    List<User?> filteredUserList = new List<User?>();
-    User selectedUser = new User();
-    private IEnumerable<string> selectedEntity { get; set; } = new HashSet<string>();
-    private IEnumerable<string> selectedGrades { get; set; } = new HashSet<string>();
-    List<string> entitiesList;
-    List<string> gradesList;
-    private string searchString = "";
-    List<UserWithFinance> userWithFinanceList = new();
-    DateOnly baseDate = DateOnly.FromDateTime(DateTime.Today);
-    int daysSinceMonday;
-    DateOnly monday;
-    DateOnly friday;
-
-    protected override async System.Threading.Tasks.Task OnInitializedAsync()
-    {
-        var users = await userService.GetUsersAsync();
-
-        List<User> filteredUsers;
-        if (userInfo.Role.Name == "Directeur" || userInfo.Role.Name == "Superviseur")
-        {
-            var favoritesAgencies = await favoritesAgencyService.GetFavoritesAgencyAsync(userInfo.Id);
-            var agencyNames = favoritesAgencies.Select(a => a.AgencyName).Distinct().ToList();
-            filteredUsers = users.Where(x => (x.DirectorId == userInfo.Id || agencyNames.Contains(x.Entity)) && x.DeletedAt == null).ToList();
         }
         else
         {
-            filteredUsers = users.Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null).ToList();
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
         }
-        entitiesList = filteredUsers.Select(u => u.Entity).Where(e => !string.IsNullOrWhiteSpace(e)).Distinct().ToList();
-        gradesList = filteredUsers.Select(u => u.Grade?.Name).Where(e => !string.IsNullOrWhiteSpace(e)).Distinct().ToList();
+    </MudPaper>
+</div>
 
-        DateOnly firstMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
-        DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
+@code {
+    private bool isInitialized;
+    private string searchString = "";
+    private HashSet<string> selectedEntity = new();
+    private IEnumerable<string> selectedGrades = new HashSet<string>();
+    private List<User?> users = new();
+    private List<UserWithFinance> userWithFinanceList = new();
+    private List<User?> filteredUserList = new();
+    private List<string> entitiesList = new();
+    private List<string> gradesList = new();
+    private User selectedUser = new();
+    private HashSet<string> commercialEntities = new();
 
-        var tasks = filteredUsers.Select(async user =>
+    public User userInfo => stateContainerService.UserInfo;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        users = await userService.GetUsersAsync();
+
+        commercialEntities = users
+            .Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null)
+            .Select(u => u.Entity)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        filteredUserList = await FilterUsersByRole(users, userInfo);
+
+        entitiesList = favoritesAgencyService.GetAgenciesAAD();
+        gradesList = filteredUserList
+            .Select(u => u.Grade?.Name)
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Distinct()
+            .ToList();
+
+        userWithFinanceList = await LoadUserFinanceAsync(filteredUserList);
+
+        isInitialized = true;
+    }
+
+    private async Task<List<User>> FilterUsersByRole(List<User?> allUsers, User currentUser)
+    {
+        if (currentUser.Role.Name == "Directeur" || currentUser.Role.Name == "Superviseur")
         {
-            var turnover = await userService.GetUserTurnoverAsync(user.Name, firstMonthDay, lastMonthDay);
-            var bonus = await userService.GetUserBonusAsync(user.Name, firstMonthDay, lastMonthDay);
+            var favoritesAgencies = await favoritesAgencyService.GetFavoritesAgencyAsync(currentUser.Id);
+            var agencyNames = favoritesAgencies.Select(a => a.AgencyName).Distinct().ToList();
+            return allUsers.Where(x => (x.DirectorId == currentUser.Id || agencyNames.Contains(x.Entity)) && x.DeletedAt == null).ToList();
+        }
+        return allUsers.Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null).ToList();
+    }
 
-            return new UserWithFinance
-            {
-                User = user,
-                Turnover = turnover,
-                Bonus = bonus
-            };
+    private async Task<List<UserWithFinance>> LoadUserFinanceAsync(List<User> filteredUsers)
+    {
+        var firstMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
+        var lastMonthDay = firstMonthDay.AddMonths(1).AddDays(-1);
+
+        var tasks = filteredUsers.Select(async u => new UserWithFinance
+        {
+            User = u,
+            Turnover = await userService.GetUserTurnoverAsync(u.Name, firstMonthDay, lastMonthDay),
+            Bonus = await userService.GetUserBonusAsync(u.Name, firstMonthDay, lastMonthDay)
         });
 
-        userWithFinanceList = (await System.Threading.Tasks.Task.WhenAll(tasks)).ToList();
+        return (await System.Threading.Tasks.Task.WhenAll(tasks)).ToList();
+    }
 
-        filteredUserList = filteredUsers;
-        isInitialized = true;
+    private async System.Threading.Tasks.Task OnEntitySelectionChanged(IEnumerable<string> newSelection)
+    {
+        selectedEntity = new HashSet<string>(newSelection ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+
+        List<User> filteredUsers;
+        if (selectedEntity.Count > 0)
+        {
+            filteredUsers = users
+                .Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null && selectedEntity.Contains(x.Entity))
+                .ToList();
+            commercialEntities = filteredUsers.Select(u => u.Entity).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        }
+        else
+        {
+            commercialEntities.Clear();
+            filteredUsers = await FilterUsersByRole(users, userInfo);
+        }
+
+        userWithFinanceList = await LoadUserFinanceAsync(filteredUsers);
+        StateHasChanged();
     }
 
     private bool FilterFunc1(UserWithFinance element) => FilterFunc(element, searchString);
 
-    private bool FilterFunc(UserWithFinance element, string searchString)
+    private bool FilterFunc(UserWithFinance element, string search)
     {
-        bool matchesSearch = string.IsNullOrWhiteSpace(searchString)
-        || element.User.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase);
-
-        bool matchesEntity = selectedEntity.Count() == 0
-            || selectedEntity.Contains(element.User.Entity);
-
-        bool matchesGrade = selectedGrades.Count() == 0
-            || selectedGrades.Contains(element.User.Grade?.Name);
-
-        return matchesSearch && matchesEntity && matchesGrade;
+        return (string.IsNullOrWhiteSpace(search) || element.User.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+            && (selectedEntity.Count == 0 || commercialEntities.Contains(element.User.Entity))
+            && (selectedGrades.Count() == 0 || selectedGrades.Contains(element.User.Grade?.Name));
     }
 
-    private async void RowClickEvent(TableRowClickEventArgs<UserWithFinance> tableRowClickEventArgs)
+    private void RowClickEvent(TableRowClickEventArgs<UserWithFinance> args)
     {
-        if (tableRowClickEventArgs != null)
-        {
-            selectedUser = tableRowClickEventArgs.Item.User;
-            daysSinceMonday = ((int)baseDate.DayOfWeek + 6) % 7;
-            monday = baseDate.AddDays(-daysSinceMonday);
-            friday = monday.AddDays(4);
-            var planningId = selectedUser.Plannings.Where(x => x.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && x.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue)).Select(x => x.Id).FirstOrDefault();
-            navigationManager.NavigateTo($"/history/{selectedUser.Id}/{planningId}");
-        }
+        if (args == null) return;
+
+        selectedUser = args.Item.User;
+        var monday = DateOnly.FromDateTime(DateTime.Today).AddDays(-((int)DateTime.Today.DayOfWeek + 6) % 7);
+        var friday = monday.AddDays(4);
+
+        var planningId = selectedUser.Plannings
+            .Where(x => x.CreatedAt >= monday.ToDateTime(TimeOnly.MinValue) && x.CreatedAt <= friday.ToDateTime(TimeOnly.MinValue))
+            .Select(x => x.Id)
+            .FirstOrDefault();
+
+        navigationManager.NavigateTo($"/commercials/{selectedUser.Id}/{planningId}");
     }
 
     public class UserWithFinance
@@ -158,5 +219,4 @@
         public decimal Turnover { get; set; }
         public decimal Bonus { get; set; }
     }
-
 }

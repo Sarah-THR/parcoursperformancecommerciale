@@ -20,9 +20,8 @@
                                       @bind-Value="model.Email" For="@(() => model.Email)" Validation="@(new EmailAddressAttribute() { ErrorMessage = "Veuillez saisir une adresse email valide" })" Required RequiredError="Email obligatoire !" />
                     </MudItem>
                     <MudItem md="4" lg="4" sm="12">
-                        @* <MudTextField Label="Nom" Immediate="true" @bind-Value="model.Name" For="@(() => model.Name)" Required RequiredError="Prénom Nom obligatoire !" TextChanged="() => HandleSearchChange(model.Name)" /> *@
                         <MudAutocomplete T="string" Label="Nom" @bind-Value="model.Name" SearchFunc="@HandleSearchChange" TextChanged="OnNameSelected"
-                                         ResetValueOnEmptyText="true" SelectValueOnTab="true" Clearable />
+                                         ResetValueOnEmptyText="true" SelectValueOnTab="true" Clearable Required RequiredError="Prénom Nom obligatoire !" />
                     </MudItem>
                     <MudItem md="4" lg="4" sm="12">
                         <MudTextField Label="Entité/Site"

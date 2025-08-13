@@ -1,0 +1,380 @@
+﻿@using EcoleDeLaPerformance.Ui.Interfaces
+@using EcoleDeLaPerformance.Ui.Models
+@using EcoleDeLaPerformance.Ui.Models.BI
+@using EcoleDeLaPerformance.Ui.Services
+@using EcoleDeLaPerformance.Ui.Shared.Components
+@inject StateContainerService stateContainerService
+@inject NavigationManager navigationManager
+@inject IUserService userService
+@inject IContractService contractService
+@inject IBriefService briefService
+@inject IDebriefService debriefService
+@inject IPlanningService planningService
+@inject IJSRuntime JS
+
+<div class="px-6">
+    <MudPaper Elevation="1" Class="p-4 mb-6">
+        <MudButton OnClick='GoBack'
+                   Target="_blank"
+                   Variant="Variant.Text"
+                   StartIcon="@Icons.Material.Filled.ArrowBack"
+                   Color="Color.Primary"
+                   Style="text-transform:none"
+                   Class="mb-6">
+            Retour
+        </MudButton>
+        <MudGrid>
+            <MudItem xs="12" md="6" Class="d-flex">
+                <MudAvatar Size="Size.Large">
+                    @if (commercial.ProfilePicturePath != null)
+                    {
+                        <MudImage Src="@commercial.ProfilePicturePath"></MudImage>
+                    }
+                    else
+                    {
+                        <MudIcon Icon="@Icons.Material.Filled.PhotoCamera" />
+                    }
+                </MudAvatar>
+                <MudText Typo="Typo.h5" Color="Color.Primary" Class="fw-bold textcontent mt-3 mx-4">@commercial.Name</MudText>
+            </MudItem>
+
+            <MudFlexBreak />
+
+            <MudItem xs="12" md="6">
+                <Speedometer MaxValue="100" Amount="Convert.ToDecimal(monthGoal)" Progress="monthlyTurnoverProgress" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #fef2f2, #fee2e2);" MaxHeight="108px">
+                            <MudText Typo="Typo.subtitle1" Class="text-red-600 font-medium">CA généré ce mois-ci</MudText>
+                            <MudText Typo="Typo.h6" Class="text-red-700 font-bold">@turnover.ToString("F") €</MudText>
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudPaper Class="p-4 rounded-lg" Style="background: linear-gradient(to right, #ecfdf5, #d1fae5);" MaxHeight="108px">
+                            <MudText Typo="Typo.subtitle1" Class="text-green-600 font-medium">Variable du mois actuel</MudText>
+                            <MudText Typo="Typo.h6" Class="text-green-700 font-bold">@bonus.ToString("F") €</MudText>
+                        </MudPaper>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+            <MudItem xs="12">
+                <MudPaper Elevation="2" Class="p-4 mb-6">
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="2">
+                        <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleLeft" aria-label="previous" Color="Color.Primary" Size="Size.Large" OnClick="PreviousWeek" Disabled="@(!canGoToPreviousWeek)" />
+                        <MudStack Style="width:100%">
+                            <PlanningDetails User="commercial" WeekId="currentPlanningId" BaseDate="baseDate" @key="currentPlanningId" />
+                            <MudTabs @bind-ActivePanelIndex="_activeTab" Rounded="true" Centered="true" MinimumTabWidth="400px" ActiveTabClass="bg-primary bg-opacity-10">
+                                <MudTabPanel Text="Briefing de la semaine">
+                                    <MudGrid Class="mt-4">
+                                        <MudItem xs="12" lg="6">
+                                            <MudPaper Elevation="1" Class="p-4">
+                                                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                                                    <MudIcon Icon="@Icons.Material.Filled.TrackChanges" Color="Color.Warning" />
+                                                    <MudText Typo="Typo.h6">Engagement de signature de la semaine</MudText>
+                                                </MudStack>
+                                                <MudList Dense="true" T="string" Disabled>
+                                                    @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
+                                                    {
+                                                        @foreach (string signatureCommitment in (brief?.SignatureCommitment ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                                                        {
+                                                            <EngagementItem Text="@signatureCommitment" />
+                                                        }
+                                                    }
+                                                </MudList>
+                                            </MudPaper>
+                                        </MudItem>
+
+                                        <MudItem xs="12" lg="6">
+                                            <MudPaper Elevation="1" Class="p-4">
+                                                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                                                    <MudIcon Icon="@Icons.Material.Filled.AssignmentTurnedIn" Color="Color.Secondary" />
+                                                    <MudText Typo="Typo.h6">Dossiers à checker</MudText>
+                                                </MudStack>
+                                                <MudList Dense="true" T="string" Disabled>
+                                                    @foreach (var brief in briefs.Where(x => x.IsDraft == false).ToList())
+                                                    {
+                                                        @foreach (string filesToCheck in (brief?.FilesToCheck ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                                                        {
+                                                            <FileItem Text="@filesToCheck" />
+                                                        }
+                                                    }
+                                                </MudList>
+                                            </MudPaper>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudTabPanel>
+                                <MudTabPanel Text="Debriefing de la semaine">
+                                    <MudGrid Class="mt-4">
+                                        <MudItem xs="12" lg="6">
+                                            <MudPaper Elevation="1" Class="p-4">
+                                                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                                                    <MudIcon Icon="@Icons.Material.Filled.BarChart" Color="Color.Warning" />
+                                                    <MudText Typo="Typo.h6">Affaires en cours</MudText>
+                                                </MudStack>
+                                                <MudList Dense="true" T="string" Disabled>
+                                                    @foreach (var debrief in debriefs.Where(x => x.IsDraft == false).ToList())
+                                                    {
+                                                        @foreach (string businessInProgress in (debrief?.BusinessInProgress ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                                                        {
+                                                            <EngagementItem Text="@businessInProgress" />
+                                                        }
+                                                    }
+                                                </MudList>
+                                            </MudPaper>
+                                        </MudItem>
+
+                                        <MudItem xs="12" lg="6">
+                                            <MudPaper Elevation="1" Class="p-4">
+                                                <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                                                    <MudIcon Icon="@Icons.Material.Filled.BarChart" Color="Color.Secondary" />
+                                                    <MudText Typo="Typo.h6">Affaires levées</MudText>
+                                                </MudStack>
+                                                <MudList Dense="true" T="string" Disabled>
+                                                    @foreach (var debrief in debriefs.Where(x => x.IsDraft == false).ToList())
+                                                    {
+                                                        @foreach (string completedBusiness in (debrief?.CompletedBusiness ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                                                        {
+                                                            <FileItem Text="@completedBusiness" />
+                                                        }
+                                                    }
+                                                </MudList>
+                                            </MudPaper>
+                                        </MudItem>
+                                        <MudItem xs="12" md="12">
+                                            <MudPaper Elevation="1">
+                                                <MudCardContent>
+                                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+                                                        <MudIcon Icon="@Icons.Material.Filled.Description" Color="Color.Primary" />
+                                                        <MudText Typo="Typo.h6">Dossiers et contrats signés</MudText>
+                                                    </MudStack>
+                                                    <MudGrid>
+                                                        <MudItem xs="12" md="4">
+                                                            <DonutCard Title="Location" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@rentalData" Number="@(rentalData != null && rentalData.Length > 0 ? Convert.ToInt32(rentalData[0]) : 0)" />
+                                                        </MudItem>
+                                                        <MudItem xs="12" md="4">
+                                                            <DonutCard Title="Achats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@purchaseData" Number="@(purchaseData != null && purchaseData.Length > 0 ? Convert.ToInt32(purchaseData[0]) : 0)" />
+                                                        </MudItem>
+                                                        <MudItem xs="12" md="4">
+                                                            <DonutCard Title="Contrats" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@contratData" Number="@(contratData != null && contratData.Length > 0 ? Convert.ToInt32(contratData[0]) : 0)" />
+                                                        </MudItem>
+                                                    </MudGrid>
+                                                </MudCardContent>
+                                            </MudPaper>
+                                        </MudItem>
+                                        <MudItem xs="12" md="12">
+                                            <MudPaper Elevation="1">
+                                                <MudCardContent>
+                                                    <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mb-4">
+                                                        <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Primary" />
+                                                        <div>
+                                                            <MudText Typo="Typo.h6">Nombre de RDV PRA</MudText>
+                                                            <MudText Typo="Typo.caption">(pris - réalisés - à venir)</MudText>
+                                                        </div>
+                                                    </MudStack>
+                                                    <MudGrid>
+                                                        <MudItem xs="12" md="12">
+                                                            <DonutCard Title="Rendez-vous" Icon="@Icons.Material.Filled.Leaderboard" IconColor="Color.Secondary" Data="@appointmentData" Labels="@appointmentLabels" Number="@((int)((appointmentData ?? new double[0]).Sum()))" />
+                                                        </MudItem>
+                                                    </MudGrid>
+                                                </MudCardContent>
+                                            </MudPaper>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudTabPanel>
+                            </MudTabs>
+                        </MudStack>
+                        <MudIconButton Icon="@Icons.Material.Outlined.ArrowCircleRight" aria-label="next" Color="Color.Primary" Size="Size.Large" OnClick="NextWeek" Disabled="@(!canGoToNextWeek)" />
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+</div>
+
+@code {
+    [Parameter]
+    public string userId { get; set; }
+
+    [Parameter]
+    public string weekId { get; set; }
+
+    public User userInfo => stateContainerService.UserInfo;
+    decimal turnover = 0;
+    decimal bonus = 0;
+    DateOnly baseDate;
+    List<TempClass> allContracts = new();
+    User commercial = new User();
+    int daysSinceMonday;
+    DateOnly monday;
+    DateOnly friday;
+    private int _activeTab = 0;
+    List<Brief?> briefs = new();
+    List<Debrief?> debriefs = new();
+    string[] appointmentLabels = new[] { "Rendez-vous à venir", "Rendez-vous réalisés" };
+    double[] appointmentData;
+    DateOnly firstMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1);
+    DateOnly lastMonthDay = new DateOnly(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1);
+    bool canGoToPreviousWeek = true;
+    bool canGoToNextWeek = true;
+    int currentPlanningId;
+    decimal monthGoal = 0;
+    int monthlyTurnoverProgress = 0;
+    double[] rentalData;
+    double[] purchaseData;
+    double[] contratData;
+
+    protected override async System.Threading.Tasks.Task OnInitializedAsync()
+    {
+        currentPlanningId = Convert.ToInt32(weekId);
+
+        commercial = await userService.GetUserByIdAsync(Convert.ToInt32(userId));
+
+        turnover = await userService.GetUserTurnoverAsync(commercial.Name, firstMonthDay, lastMonthDay);
+        bonus = await userService.GetUserBonusAsync(commercial.Name, firstMonthDay, lastMonthDay);
+
+        var allContractsRaw = contractService.GetContractsByPeriod(commercial.Name, firstMonthDay, lastMonthDay);
+        allContracts = new List<TempClass>
+            {
+                new() { label = "Sauvegarde", contracts = allContractsRaw.Where(c => c.Sauvegarde == "OUI").ToList() },
+                new() { label = "Maintenance", contracts = allContractsRaw.Where(c => c.Maintenance == "OUI").ToList() },
+                new() { label = "Sécurité", contracts = allContractsRaw.Where(c => c.Sécurité == "OUI").ToList() }
+            };
+
+        monthGoal = await userService.GetUserMonthGoalAsync(commercial.Name, firstMonthDay);
+        monthlyTurnoverProgress = monthGoal == 0 ? 0 : (int)Math.Round((turnover / monthGoal) * 100);
+
+        var week = commercial.Plannings.FirstOrDefault(x => x.Id == Convert.ToInt32(weekId));
+        var createdAtDate = DateTime.Now;
+        if (week != null)
+        {
+            createdAtDate = week.CreatedAt.Date;
+
+        }
+
+        daysSinceMonday = ((int)createdAtDate.DayOfWeek + 6) % 7;
+
+        baseDate = DateOnly.FromDateTime(createdAtDate.AddDays(-daysSinceMonday));
+
+        monday = baseDate.AddDays(-daysSinceMonday);
+        friday = monday.AddDays(4);
+
+        await LoadWeekAsync();
+    }
+
+
+    private async System.Threading.Tasks.Task LoadWeekAsync()
+    {
+        briefs = await briefService.GetBriefByUserId(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
+        debriefs = await debriefService.GetDebriefByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), commercial.Id);
+
+        rentalData = new double[] { (double)contractService.GetNbContractsNexleaseByUser(commercial.Name, monday, friday) };
+        purchaseData = new double[] { (double)contractService.GetNbContractsSaleByUser(commercial.Name, monday, friday) };
+        contratData = new double[] { (double)contractService.GetNbContractsByUser(commercial.Name, monday, friday) };
+
+        var nbAppointmentsRealised = await userService.GetNbAppointmentsAsync(commercial.Email, monday, baseDate);
+        var nbAppointmentsOnGoing = await userService.GetNbAppointmentsAsync(commercial.Email, baseDate, friday);
+        appointmentData = new double[] { nbAppointmentsOnGoing, nbAppointmentsRealised };
+
+        var previousWeek = await planningService.GetPlanningByUserAsync(
+            monday.AddDays(-7).ToDateTime(TimeOnly.MinValue),
+            friday.AddDays(-7).ToDateTime(TimeOnly.MinValue),
+            commercial.Id
+        );
+        canGoToPreviousWeek = previousWeek != null;
+
+        var nextWeek = await planningService.GetPlanningByUserAsync(
+            monday.AddDays(7).ToDateTime(TimeOnly.MinValue),
+            friday.AddDays(7).ToDateTime(TimeOnly.MinValue),
+            commercial.Id
+        );
+        canGoToNextWeek = nextWeek != null;
+
+        StateHasChanged();
+    }
+
+
+    public async void PreviousWeek()
+    {
+        baseDate = baseDate.AddDays(-7);
+        monday = baseDate.AddDays(-daysSinceMonday);
+        friday = monday.AddDays(4);
+        var week = await planningService.GetPlanningByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), Convert.ToInt32(userId));
+        if (week != null)
+        {
+            currentPlanningId = week.Id;
+            await LoadWeekAsync();
+        }
+        StateHasChanged();
+    }
+
+    public async void NextWeek()
+    {
+        baseDate = baseDate.AddDays(7);
+        monday = baseDate.AddDays(-daysSinceMonday);
+        friday = monday.AddDays(4);
+        var week = await planningService.GetPlanningByUserAsync(monday.ToDateTime(TimeOnly.MinValue), friday.ToDateTime(TimeOnly.MinValue), Convert.ToInt32(userId));
+        if (week != null)
+        {
+            baseDate = DateOnly.FromDateTime(week.CreatedAt);
+            currentPlanningId = week.Id;
+            await LoadWeekAsync();
+        }
+        StateHasChanged();
+    }
+
+    public class TempClass
+    {
+        public string label { get; set; }
+        public List<EcolePerformanceSm?> contracts { get; set; } = new List<EcolePerformanceSm?>();
+    }
+
+    private string[] GetWeekDays()
+    {
+        var culture = System.Globalization.CultureInfo.GetCultureInfo("fr-FR");
+
+        return Enumerable.Range(0, 5)
+                         .Select(offset =>
+                         {
+                             var dayName = monday.AddDays(offset).ToString("dddd", culture);
+                             return char.ToUpper(dayName[0]) + dayName.Substring(1);
+                         })
+                         .ToArray();
+    }
+
+    private RenderFragment GetIndicatorIcon(int goal, int realised) => @<MudIcon Icon="@GetIcon(goal, realised)" Color="@GetColor(goal, realised)" />;
+
+    private Color GetColor(int goal, int realised)
+    {
+        if (goal == 0)
+            return Color.Default;
+
+        if (realised == goal / 2)
+            return Color.Warning;
+
+        if (realised < goal)
+            return Color.Success;
+
+        return Color.Error;
+    }
+
+    private string GetIcon(int goal, int realised)
+    {
+        if (goal == 0)
+            return Icons.Material.Filled.HorizontalRule;
+
+        if (realised == goal / 2)
+            return Icons.Material.Filled.SsidChart;
+
+        if (realised < goal)
+            return Icons.Material.Filled.ArrowOutward;
+
+        return Icons.Material.Filled.Cancel;
+    }
+
+    private async void GoBack()
+    {
+        await JS.InvokeVoidAsync("history.back");
+    }
+}

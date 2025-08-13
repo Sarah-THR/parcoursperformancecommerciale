@@ -40,13 +40,16 @@
                         }
                     </MudTd>
                     <MudTd>
-                        @if (context.UserFormation is not null && context.UserFormation.StatusId is not null)
+                        @if (User.Role.Name == "Commercial")
                         {
-                            @GetStatusBadge(statuses.Where(x => x.Id == context.UserFormation?.StatusId).Select(x => x.Name).FirstOrDefault())
-                        }
-                        else if (User.Role.Name == "Commercial")
-                        {
-                            @GetStatusBadge("En attente")
+                            if (context.UserFormation is not null && context.UserFormation.StatusId is not null)
+                            {
+                                @GetStatusBadge(statuses.Where(x => x.Id == context.UserFormation?.StatusId).Select(x => x.Name).FirstOrDefault())
+                            }
+                            else
+                            {
+                                @GetStatusBadge("En attente")
+                            }
                         }
                         else
                         {

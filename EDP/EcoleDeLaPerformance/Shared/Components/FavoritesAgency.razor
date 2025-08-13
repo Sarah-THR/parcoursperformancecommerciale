@@ -13,12 +13,22 @@
         </MudStack>
         <MudGrid Class="mt-6">
             <MudItem xs="12" md="4">
-                <MudSelect SelectAll="true" SelectAllText="Selectionner toutes les agences" MultiSelection="true" @bind-Value="value" @bind-SelectedValues="options" T="string" Label="Agences" AdornmentIcon="@Icons.Material.Filled.Search">
-                    @foreach (var agency in agencies)
-                    {
-                        <MudSelectItem Value="@agency">@agency</MudSelectItem>
-                    }
-                </MudSelect>
+                <MudSelectExtended T="string"
+                                   SelectAll="true" 
+                                   SelectAllText="Selectionner toutes les agences"
+                                   MultiSelection="true"
+                                   @bind-Value="value" 
+                                   @bind-SelectedValues="options"
+                                   ItemCollection="agencies"
+                                   AdornmentIcon="@Icons.Material.Filled.Search"
+                                   SearchBox="true"
+                                   SearchBoxAutoFocus="true"
+                                   Label="Agences"
+                                   AnchorOrigin="Origin.BottomCenter"
+                                   Variant="Variant.Text"
+                                   SearchBoxClearable="true"
+                                   Clearable="true"
+                                   RelativeWidth="DropdownWidth.Adaptive" />
             </MudItem>
             <MudItem xs="12" md="8" Style="max-height:400px; overflow:auto">
                 @if (options != null)
