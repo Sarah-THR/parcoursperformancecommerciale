@@ -6,35 +6,105 @@
 @inject StateContainerService stateContainerService
 @inject IFormationService formationService
 @inject IUsersFormationService usersFormationService
+@inject IUserService userService
 @attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
 
 <PageTitle>Suivi de formation</PageTitle>
 
 <div class="px-6">
-    <MudPaper Elevation="1" Class="p-4 mb-6">
-        <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
-            <MudIcon Icon="@Icons.Material.Filled.Assignment" Color="Color.Info" />
-            <MudText Typo="Typo.h6">Formation</MudText>
-        </MudStack>
-        <MudGrid Class="align-items-center">
-            <MudItem xs="12" md="9">
-                <TrainingTable UsersFormations="userInfo.UsersFormations.ToList()" Formations="formations" User="userInfo"/>
-            </MudItem>
-            <MudItem xs="12" md="3">
-                <MetricCard Title="Heures de formation" Value="0h" Progress="0" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />
-            </MudItem>
-        </MudGrid>
-    </MudPaper>
+    @if (isInitialized)
+    {
+        <MudPaper Elevation="1" Class="p-4 mb-6">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="1" Class="mb-4">
+                <MudIcon Icon="@Icons.Material.Filled.Assignment" Color="Color.Info" />
+                <MudText Typo="Typo.h6">Formation</MudText>
+            </MudStack>
+            <MudGrid Class="align-items-center">
+                <MudItem xs="12" md="4" Class="ms-4">
+                    <MudAutocomplete T="string"
+                                     Label="Rechercher un commercial"
+                                     Value="commercialName"
+                                     SearchFunc="@HandleSearchChange"
+                                     ValueChanged="OnNameSelected"
+                                     ResetValueOnEmptyText="true"
+                                     SelectValueOnTab="true"
+                                     Adornment="Adornment.End"
+                                     AdornmentIcon="@Icons.Material.Filled.Search"
+                                     Immediate="false" />
+                </MudItem>
+                <MudItem xs="12" md="12" Class="ms-4">
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="1" Class="mb-4">
+                        <MudText Typo="Typo.h6">@commercial.Name</MudText>
+                        @if (commercial.Name != userInfo.Name && userInfo.Role.Name == "Directeur")
+                        {
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="me-6" OnClick="Reload">Afficher mon suivi</MudButton>
+                        }
+                    </MudStack>
+                </MudItem>
+                <MudItem xs="12" md="9">
+                    <TrainingTable UsersFormations="commercial.UsersFormations.ToList()" Formations="formations" User="userInfo" commercial="commercial" />
+                </MudItem>
+                <MudItem xs="12" md="3">
+                    <MetricCard Title="Heures de formation" Value="0h" Progress="0" Color="Color.Success" Icon="@Icons.Material.Filled.AccessTime" Subtitle="OMNYSIS" />
+                </MudItem>
+            </MudGrid>
+        </MudPaper>
+    }
 </div>
 
 @code {
     public User userInfo => stateContainerService.UserInfo;
     List<Models.Formation> formations = new();
     List<UsersFormation> usersFormations = new();
+    public List<User> usersName = new List<User>();
+    public string commercialName;
+    public User commercial;
+    private bool isInitialized { get; set; }
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
+        if (userInfo.Role.Name == "Directeur")
+        {
+            commercial = userInfo;
+            await LoadFormation(commercial);
+        }
+    }
+
+    private async System.Threading.Tasks.Task<IEnumerable<string>> HandleSearchChange(string value, CancellationToken token)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return Enumerable.Empty<string>();
+
+        var users = await userService.GetUsersAsync();
+        usersName = users.Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null).ToList();
+        return usersName.Select(u => u.Name).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private async System.Threading.Tasks.Task LoadFormation(User commercial)
+    {
+        isInitialized = false;
         var allFormations = await formationService.GetFormationsAsync();
-        formations = allFormations.Where(x => x.Grade?.Name == userInfo.Grade?.Name || x.Role?.Name == userInfo?.Role.Name).ToList();
+        formations = allFormations.Where(x => x.Grade?.Name == commercial.Grade?.Name || x.Role?.Name == commercial?.Role.Name).ToList();
+        isInitialized = true;
+    }
+
+    private async System.Threading.Tasks.Task OnNameSelected(string selectedName)
+    {
+        var user = usersName.FirstOrDefault(u => u.Name == selectedName);
+        if (user != null)
+        {
+            commercial = user;
+        }
+        else
+        {
+            commercial = userInfo;
+        }
+        await LoadFormation(commercial);
+    }
+
+    private async System.Threading.Tasks.Task Reload()
+    {
+        commercial = userInfo;
+        await LoadFormation(commercial);
     }
 }

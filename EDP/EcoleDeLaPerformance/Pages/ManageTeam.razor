@@ -146,7 +146,7 @@
         {
             var favoritesAgencies = await favoritesAgencyService.GetFavoritesAgencyAsync(currentUser.Id);
             var agencyNames = favoritesAgencies.Select(a => a.AgencyName).Distinct().ToList();
-            return allUsers.Where(x => (x.DirectorId == currentUser.Id || agencyNames.Contains(x.Entity)) && x.DeletedAt == null).ToList();
+            return allUsers.Where(x => (x.DirectorId == currentUser.Id || agencyNames.Contains(x.Entity)) && x.DeletedAt == null && x.Role.Name == "Commercial").ToList();
         }
         return allUsers.Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null).ToList();
     }

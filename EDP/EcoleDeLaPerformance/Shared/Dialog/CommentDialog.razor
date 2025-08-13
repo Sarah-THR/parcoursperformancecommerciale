@@ -34,7 +34,7 @@
         </MudExRichTextEdit>
     </DialogContent>
     <DialogActions>
-        @if (userInfo.Role.Name != "Commercial")
+        @if (userInfo.Role.Name != "Commercial" && userInfo.Id != UsersFormation.UserId)
         {
             <MudButton OnClick="Cancel">Annuler</MudButton>
             <MudButton Color="Color.Primary" OnClick="Submit">Sauvegarder</MudButton>

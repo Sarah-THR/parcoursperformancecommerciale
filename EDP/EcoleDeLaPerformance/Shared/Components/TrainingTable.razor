@@ -5,6 +5,7 @@
 @inject IUsersFormationService usersFormationService
 @inject IStatusService statusService
 @inject IDialogService DialogService
+@inject IUserService userService
 
 @if (isInitialized)
 {
@@ -22,7 +23,7 @@
                         <MudText Typo="Typo.subtitle2">@context.Formation.Name</MudText>
                     </MudTd>
                     <MudTd>
-                        <MudCheckBox Value="context.UserFormation?.IsValidated ?? false" Color="Color.Primary" ValueChanged="HandleCheckBoxChanged(context)" ReadOnly='User.Role.Name == "Commercial"' />
+                        <MudCheckBox Value="context.UserFormation?.IsValidated ?? false" Color="Color.Primary" ValueChanged="HandleCheckBoxChanged(context)" ReadOnly='User.Role.Name == "Commercial" || User.Id == context.UserFormation.UserId' />
                     </MudTd>
                     <MudTd>
                         @if (context.UserFormation is not null)
@@ -40,7 +41,7 @@
                         }
                     </MudTd>
                     <MudTd>
-                        @if (User.Role.Name == "Commercial")
+                        @if (User.Role.Name == "Commercial" || User.Id == context.UserFormation.UserId)
                         {
                             if (context.UserFormation is not null && context.UserFormation.StatusId is not null)
                             {
@@ -53,7 +54,7 @@
                         }
                         else
                         {
-                            <MudSelect T="string" Label="Statut" Value="@(statusPerRow.ContainsKey(context.Formation.Id) ? statusPerRow[context.Formation.Id] : null)" ValueChanged="@(id => OnStatusChanged(id, context))" Disabled='User.Role.Name == "Commercial"'>
+                            <MudSelect T="string" Label="Statut" Value="context.UserFormation?.StatusId?.ToString()" ValueChanged="@(id => OnStatusChanged(id, context))" Disabled='User.Role.Name == "Commercial" || User.Id == context.UserFormation.UserId'>
                                 @foreach (var status in statuses)
                                 {
                                     <MudSelectItem Value="@status.Id.ToString()">@status.Name</MudSelectItem>
@@ -79,6 +80,9 @@
     [Parameter]
     public User User { get; set; }
 
+    [Parameter]
+    public User commercial { get; set; }
+
     bool isValidated = false;
     List<Status> statuses;
     private bool isInitialized { get; set; }
@@ -96,15 +100,38 @@
         isInitialized = true;
     }
 
-    protected override async void OnParametersSet()
+    protected override async System.Threading.Tasks.Task OnParametersSetAsync()
     {
-        DisplayFormations = Formations.Select(f =>
-            new FormationWithUserData
+        if (UsersFormations == null)
+            UsersFormations = new List<UsersFormation>();
+
+        DisplayFormations = new List<FormationWithUserData>();
+
+        foreach (var f in Formations)
+        {
+            var existingUF = UsersFormations.FirstOrDefault(uf => uf.FormationId == f.Id);
+
+            if (existingUF == null)
+            {
+                var newUF = new UsersFormation
+                {
+                    FormationId = f.Id,
+                    UserId = commercial.Id
+                };
+
+                newUF = await usersFormationService.InsertUsersFormationAsync(newUF);
+
+                UsersFormations.Add(newUF);
+
+                existingUF = newUF;
+            }
+
+            DisplayFormations.Add(new FormationWithUserData
             {
                 Formation = f,
-                UserFormation = UsersFormations.FirstOrDefault(uf => uf.FormationId == f.Id)
-            }).ToList();
-
+                UserFormation = existingUF
+            });
+        }
     }
 
     private RenderFragment GetStatusBadge(string status) => status switch
@@ -139,7 +166,7 @@
             {
                 var newUsersFormation = new UsersFormation()
                 {
-                    UserId = User.Id,
+                    UserId = commercial.Id,
                     FormationId = context.Formation.Id,
                     StatusId = selectedStatus.Id,
                     IsValidated = true,
@@ -149,7 +176,7 @@
             else
             {
                 context.UserFormation.StatusId = selectedStatus.Id;
-                usersFormationService.UpdateUsersFormationAsync(context.UserFormation);
+                await usersFormationService.UpdateUsersFormationAsync(context.UserFormation);
             }
         }
     }
@@ -162,7 +189,7 @@
             {
                 var newUsersFormation = new UsersFormation()
                 {
-                    UserId = User.Id,
+                    UserId = commercial.Id,
                     FormationId = contextItem.Formation.Id,
                     IsValidated = true,
                 };
@@ -170,8 +197,8 @@
             }
             else
             {
-                contextItem.UserFormation.IsValidated = false;
-                usersFormationService.UpdateUsersFormationAsync(contextItem.UserFormation);
+                contextItem.UserFormation.IsValidated = !contextItem.UserFormation.IsValidated;
+                await usersFormationService.UpdateUsersFormationAsync(contextItem.UserFormation);
             }
         });
     }
