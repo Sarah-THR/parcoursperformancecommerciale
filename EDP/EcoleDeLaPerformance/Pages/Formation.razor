@@ -74,12 +74,18 @@
             commercial = userInfo;
             await LoadFormation(commercial);
         }
-        else
+        else if (userInfo.Role.Name == "Superviseur")
         {
             var favoritesAgencies = await favoritesAgencyService.GetFavoritesAgencyAsync(userInfo.Id);
             var agencyNames = favoritesAgencies.Select(a => a.AgencyName).Distinct().ToList();
             commercials = users.Where(x => (x.Role.Name == "Commercial" || x.Role.Name == "Directeur") && x.DeletedAt == null).ToList();
-            commercial = commercials.Where(x => (agencyNames.Contains(x.Entity)) && x.DeletedAt == null).First();
+            commercial = commercials.Where(x => agencyNames.Contains(x.Entity)).First();
+            await LoadFormation(commercial);
+        }
+        else
+        {
+            commercials = users.Where(x => (x.Role.Name == "Commercial" || x.Role.Name == "Directeur") && x.DeletedAt == null).ToList();
+            commercial = commercials.First();
             await LoadFormation(commercial);
         }
     }
