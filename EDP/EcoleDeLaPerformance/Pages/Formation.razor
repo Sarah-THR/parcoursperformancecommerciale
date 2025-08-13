@@ -7,7 +7,7 @@
 @inject IFormationService formationService
 @inject IUsersFormationService usersFormationService
 @inject IUserService userService
-@attribute [Authorize(Policy = "AdminOrCommercialOrDirecteurPolicy")]
+@inject IFavoritesAgencyService favoritesAgencyService
 
 <PageTitle>Suivi de formation</PageTitle>
 
@@ -20,18 +20,21 @@
                 <MudText Typo="Typo.h6">Formation</MudText>
             </MudStack>
             <MudGrid Class="align-items-center">
-                <MudItem xs="12" md="4" Class="ms-4">
-                    <MudAutocomplete T="string"
-                                     Label="Rechercher un commercial"
-                                     Value="commercialName"
-                                     SearchFunc="@HandleSearchChange"
-                                     ValueChanged="OnNameSelected"
-                                     ResetValueOnEmptyText="true"
-                                     SelectValueOnTab="true"
-                                     Adornment="Adornment.End"
-                                     AdornmentIcon="@Icons.Material.Filled.Search"
-                                     Immediate="false" />
+                @if (userInfo.Role.Name != "Commercial")
+                {
+                    <MudItem xs="12" md="4" Class="ms-4">
+                        <MudAutocomplete T="string"
+                        Label="Rechercher un commercial"
+                        Value="commercialName"
+                        SearchFunc="@HandleSearchChange"
+                        ValueChanged="OnNameSelected"
+                        ResetValueOnEmptyText="true"
+                        SelectValueOnTab="true"
+                        Adornment="Adornment.End"
+                        AdornmentIcon="@Icons.Material.Filled.Search"
+                        Immediate="false" />
                 </MudItem>
+                }
                 <MudItem xs="12" md="12" Class="ms-4">
                     <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="1" Class="mb-4">
                         <MudText Typo="Typo.h6">@commercial.Name</MudText>
@@ -56,16 +59,27 @@
     public User userInfo => stateContainerService.UserInfo;
     List<Models.Formation> formations = new();
     List<UsersFormation> usersFormations = new();
-    public List<User> usersName = new List<User>();
+    public List<User> commercials = new List<User>();
     public string commercialName;
     public User commercial;
     private bool isInitialized { get; set; }
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
-        if (userInfo.Role.Name == "Directeur")
+        var users = await userService.GetUsersAsync();
+
+        if (userInfo.Role.Name == "Directeur" || userInfo.Role.Name == "Commercial")
         {
+            commercials = users.Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null).ToList();
             commercial = userInfo;
+            await LoadFormation(commercial);
+        }
+        else
+        {
+            var favoritesAgencies = await favoritesAgencyService.GetFavoritesAgencyAsync(userInfo.Id);
+            var agencyNames = favoritesAgencies.Select(a => a.AgencyName).Distinct().ToList();
+            commercials = users.Where(x => (x.Role.Name == "Commercial" || x.Role.Name == "Directeur") && x.DeletedAt == null).ToList();
+            commercial = commercials.Where(x => (agencyNames.Contains(x.Entity)) && x.DeletedAt == null).First();
             await LoadFormation(commercial);
         }
     }
@@ -75,9 +89,7 @@
         if (string.IsNullOrWhiteSpace(value))
             return Enumerable.Empty<string>();
 
-        var users = await userService.GetUsersAsync();
-        usersName = users.Where(x => x.Role.Name == "Commercial" && x.DeletedAt == null).ToList();
-        return usersName.Select(u => u.Name).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+        return commercials.Select(u => u.Name).Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
     }
 
     private async System.Threading.Tasks.Task LoadFormation(User commercial)
@@ -90,7 +102,7 @@
 
     private async System.Threading.Tasks.Task OnNameSelected(string selectedName)
     {
-        var user = usersName.FirstOrDefault(u => u.Name == selectedName);
+        var user = commercials.FirstOrDefault(u => u.Name == selectedName);
         if (user != null)
         {
             commercial = user;
